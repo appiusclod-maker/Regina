@@ -870,7 +870,7 @@ function renderSettings(){
  <div class="form-row"><label for="googleClientId">Client ID OAuth 2.0 (applicazione web)</label><input id="googleClientId" type="text" autocomplete="off" spellcheck="false" placeholder="12345-xxxxx.apps.googleusercontent.com" value="${esc(state.settings.googleClientId||'')}"><p class="form-help">È un identificativo pubblico, <strong>non</strong> una password né un Client Secret. Inseriscilo una sola volta. Per GitHub Pages configura come origine JavaScript autorizzata <strong>${esc((location.protocol==='https:'||location.hostname==='localhost')?location.origin:'pubblica prima REGINA su GitHub Pages (HTTPS)')}</strong> (senza percorso del repository). Aprendo l'HTML come file non è possibile accedere a Google.</p></div>
  <div class="actions"><button class="btn" data-action="google-save-config">💾 Salva configurazione</button><button class="btn mint" data-action="google-connect">🔐 ${googleAccessToken?'Riautorizza Google':'Collega account Google'}</button><button class="btn primary" data-action="google-sync">↑ Invia prossimi 30 giorni</button><button class="btn" data-action="google-disconnect">Disconnetti</button></div>
  <p class="form-help" id="googleConnectStatus">${googleAccessToken?'✓ Autorizzazione attiva per questa sessione.':'Non collegato. L’accesso Google non viene salvato sul dispositivo.'}</p>
- <p class="form-help">Per configurare l'accesso: in <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a> crea un progetto, abilita <strong>Google Calendar API</strong>, configura la schermata di consenso OAuth (aggiungi il tuo account tra gli utenti di test, se necessario), crea credenziali OAuth per <strong>Applicazione web</strong> e aggiungi l'origine del sito tra le origini JavaScript autorizzate.</p>
+ <p class="form-help">🆕 <strong>Colori Google 2026:</strong> 24 tonalità predefinite e personalizzazioni RGB. Per creare colori aggiuntivi Google chiederà una nuova autorizzazione a gestire le proprietà del calendario (senza modificare i tuoi eventi esistenti al di fuori degli invii REGINA). Se richiesto, aggiungi lo scope <code>https://www.googleapis.com/auth/calendar.calendars</code> al progetto Google Cloud e ricollega l'account.</p><p class="form-help">Per configurare l'accesso: in <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a> crea un progetto, abilita <strong>Google Calendar API</strong>, configura la schermata di consenso OAuth (aggiungi il tuo account tra gli utenti di test, se necessario), crea credenziali OAuth per <strong>Applicazione web</strong> e aggiungi l'origine del sito tra le origini JavaScript autorizzate.</p>
  <p class="form-help">La pubblicazione aggiorna eventi già collegati, senza duplicarli da questa installazione. Non elimina gli eventi da Google quando cancelli una tappa. Le attività senza data rimangono solo in REGINA.</p>
  <div class="actions"><button class="btn" data-action="ics">↓ Esporta scadenze (.ics)</button></div><p class="form-help">Alternativa senza autorizzazione: il file .ics si importa in Google Calendar, <strong>ma Google non conserva i colori delle singole attività</strong> con questa modalità.</p></div>
  <div class="hint warning"><strong>Importante:</strong> la sincronizzazione tra dispositivi non è automatica. Per non perdere REGINA, conserva anche un backup JSON fuori dal browser.</div>`;
@@ -912,18 +912,51 @@ function weekdaysEditor(t){const names=['Dom','Lun','Mar','Mer','Gio','Ven','Sab
 function refreshTaskOptions(){const type=$('taskType')?.value,repeat=document.querySelector('#taskForm select[name="repeat"]')?.value;
  const components=$('componentsBox'),target=$('targetBox'),days=$('weekdaysBox');if(components)components.hidden=type!=='mixed';if(target)target.hidden=!['progressive','frequency'].includes(type);if(days)days.hidden=repeat!=='custom';}
 
-// Colori ufficiali per eventi Google Calendar (1–11). Il colore predefinito segue il fronte.
+// Google Calendar: 24 colori predefiniti dal 2026 + colori RGB personalizzati.
+// I primi 11 mantengono i vecchi colorId (retrocompatibilità).
+ // Gli altri richiedono le etichette evento (eventLabelId, API eventLabelVersion=1).
 const GOOGLE_COLORS={
- '1':['Lavanda','#a4bdfc'], '2':['Salvia','#7ae7bf'], '3':['Uva','#dbadff'],
- '4':['Fenicottero','#ff887c'], '5':['Banana','#fbd75b'], '6':['Mandarino','#ffb878'],
- '7':['Pavone','#46d6db'], '8':['Grafite','#e1e1e1'], '9':['Mirtillo','#5484ed'],
- '10':['Basilico','#51b749'], '11':['Pomodoro','#dc2127']
+ '1':['Lavanda','#7986CB'], '2':['Salvia','#33B679'], '3':['Uva','#8E24AA'],
+ '4':['Fenicottero','#E67C73'], '5':['Banana','#F6BF26'], '6':['Mandarino','#F4511E'],
+ '7':['Pavone','#039BE5'], '8':['Grafite','#616161'], '9':['Mirtillo','#3F51B5'],
+ '10':['Basilico','#0B8043'], '11':['Pomodoro','#D50000'],
+ '#795548':['Cacao','#795548'], '#EF6C00':['Zucca','#EF6C00'],
+ '#F09300':['Mango','#F09300'], '#009688':['Eucalipto','#009688'],
+ '#7CB342':['Pistacchio','#7CB342'], '#C0CA33':['Avocado','#C0CA33'],
+ '#E4C441':['Cedro','#E4C441'], '#4285F4':['Cobalto','#4285F4'],
+ '#B39DDB':['Glicine','#B39DDB'], '#A79B8E':['Betulla','#A79B8E'],
+ '#AD1457':['Radicchio','#AD1457'], '#D81B60':['Fiore di ciliegio','#D81B60'],
+ '#9E69AF':['Ametista','#9E69AF']
 };
 const GOOGLE_DEFAULT_COLORS={health:'10',social:'7',work:'9',creative:'3',services:'8',home:'6'};
-function calendarColor(t){const explicit=String(t?.calendarColorId||'');return GOOGLE_COLORS[explicit]?explicit:(GOOGLE_DEFAULT_COLORS[getFront(t?.frontId)?.cat]||'9');}
-function calendarColorOptions(t){return `<div class="form-row"><label for="taskCalendarColor">🎨 Colore dell'attività su Google Calendar</label><select name="calendarColorId" id="taskCalendarColor"><option value="" ${!t?.calendarColorId?'selected':''}>Automatico (colore del fronte)</option>${Object.entries(GOOGLE_COLORS).map(([id,[label]])=>`<option value="${id}" ${t?.calendarColorId===id?'selected':''}>${label}</option>`).join('')}</select><div class="row" style="margin:8px 0 0"><span id="taskCalendarSwatch" style="display:inline-block;width:24px;height:24px;border-radius:6px;border:1px solid #0002;background:#5484ed" aria-hidden="true"></span><span id="taskCalendarColorName" class="small muted">Anteprima colore</span></div><p class="form-help">Il colore viene applicato davvero quando invii l'evento tramite il collegamento Google API. L'esportazione .ics e il semplice collegamento a Google non possono imporre un colore.</p></div>`;}
-
-function updateCalendarColorPreview(){const select=$('taskCalendarColor');if(!select)return;const cat=getFront($('taskFront')?.value)?.cat||'work';const id=GOOGLE_COLORS[select.value]?select.value:(GOOGLE_DEFAULT_COLORS[cat]||'9');const swatch=$('taskCalendarSwatch'),label=$('taskCalendarColorName');if(swatch)swatch.style.backgroundColor=GOOGLE_COLORS[id][1];if(label)label.textContent=GOOGLE_COLORS[id][0]+(select.value?'':' (proposto per il fronte)');}
+function isGoogleHexColor(s){return /^#[A-F0-9]{6}$/i.test(String(s||''));}
+function calendarColor(t){
+ const explicit=String(t?.calendarColorId||'');
+ const color=isGoogleHexColor(explicit)?explicit.toUpperCase():explicit;
+ return (GOOGLE_COLORS[color]||isGoogleHexColor(color))?color:(GOOGLE_DEFAULT_COLORS[getFront(t?.frontId)?.cat]||'9');
+}
+function calendarColorName(t){const value=calendarColor(t);return GOOGLE_COLORS[value]?.[0]||'Personalizzato '+value;}
+function calendarColorOptions(t){
+ const raw=String(t?.calendarColorId||''),chosen=isGoogleHexColor(raw)?raw.toUpperCase():raw;
+ const custom=isGoogleHexColor(chosen)&&!GOOGLE_COLORS[chosen];
+ return `<div class="form-row"><label for="taskCalendarColor">🎨 Colore dell'attività su Google Calendar</label>
+ <select name="calendarColorId" id="taskCalendarColor"><option value="" ${!chosen?'selected':''}>Automatico (colore del fronte)</option>
+ <optgroup label="Tavolozza completa Google Calendar (24 colori)">${Object.entries(GOOGLE_COLORS).map(([id,[label]])=>`<option value="${id}" ${chosen===id?'selected':''}>${label}</option>`).join('')}</optgroup>
+ <option value="custom" ${custom?'selected':''}>🎨 Personalizzato (scegli qualsiasi colore)</option></select>
+ <div id="taskCalendarCustomRow" class="row" style="display:none;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap"><label for="taskCalendarCustomColor">Colore personalizzato</label><input id="taskCalendarCustomColor" name="calendarCustomColor" type="color" value="${custom?chosen:'#A15CD0'}" style="height:44px;width:80px;padding:3px" aria-label="Scegli colore personalizzato"></div>
+ <div class="row" style="margin:8px 0 0;align-items:center;gap:10px"><span id="taskCalendarSwatch" style="display:inline-block;width:24px;height:24px;flex:0 0 24px;border-radius:6px;border:1px solid #0002;background:#3F51B5" aria-hidden="true"></span><span id="taskCalendarColorName" class="small muted">Anteprima colore</span></div>
+ <p class="form-help">24 colori e tinte RGB personalizzate. Per i colori aggiuntivi REGINA crea (solo al primo utilizzo) un'etichetta colore sul tuo calendario principale: Google richiede anche il permesso di gestire le proprietà del calendario. Collega nuovamente Google dopo l'aggiornamento. L'esportazione .ics non conserva i colori.</p></div>`;
+}
+function updateCalendarColorPreview(){
+ const select=$('taskCalendarColor');if(!select)return;
+ const cat=getFront($('taskFront')?.value)?.cat||'work';
+ const custom=select.value==='custom',customInput=$('taskCalendarCustomColor'),row=$('taskCalendarCustomRow');
+ if(row)row.style.display=custom?'flex':'none';
+ const id=custom?String(customInput?.value||'#A15CD0').toUpperCase():(GOOGLE_COLORS[select.value]?select.value:(GOOGLE_DEFAULT_COLORS[cat]||'9'));
+ const swatch=$('taskCalendarSwatch'),label=$('taskCalendarColorName');
+ if(swatch)swatch.style.backgroundColor=GOOGLE_COLORS[id]?.[1]||id;
+ if(label)label.textContent=(GOOGLE_COLORS[id]?.[0]||'Personalizzato '+id)+(select.value?'':' (proposto per il fronte)');
+}
 function taskModal(id=null,frontId=null){
  const t=id?state.tasks.find(t=>t.id===id):null;
  if(!state.fronts.length){frontModal();notify('Crea prima un fronte, poi una tappa.');return;}
@@ -981,7 +1014,7 @@ function saveTask(form){
  const d=new FormData(form),title=String(d.get('title')||'').trim(),frontId=String(d.get('frontId')||''),front=getFront(frontId);if(!title||!front)return;
  const dueDate=String(d.get('dueDate')||''),dueTime=String(d.get('dueTime')||''),due=dueDate+(dueDate&&dueTime?'T'+dueTime:''),durationMinutes=Math.max(5,Math.min(1440,Number(d.get('durationMinutes'))||30)),repeat=String(d.get('repeat')||'none');
  const choice=String(d.get('rewardKey')||''),rewardAuto=choice==='auto',rewardQty=clampQuantity(d.get('rewardQty'));
- const calendarColorId=GOOGLE_COLORS[String(d.get('calendarColorId')||'')]?String(d.get('calendarColorId')):'',extraRewards=parseExtraRewards(d),type=String(d.get('type')||'simple'),components=componentLines(d.get('componentText')),targetValue=Math.max(1,Math.min(100000,Number(d.get('targetValue'))||3)),weekdays=d.getAll('weekday').map(Number),dependsOn=String(d.get('dependsOn')||''),weekdayTimes=Object.fromEntries([0,1,2,3,4,5,6].map(n=>[n,String(d.get('weekdayTime'+n)||'')]).filter(([n,time])=>/^\d{2}:\d{2}$/.test(time))),endDate=String(d.get('endDate')||''),skipDates=String(d.get('skipDates')||'').split(',').map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(0,90);
+ const selectedGColor=String(d.get('calendarColorId')||''),rawGColor=selectedGColor==='custom'?String(d.get('calendarCustomColor')||''):selectedGColor,googlePickedColor=isGoogleHexColor(rawGColor)?rawGColor.toUpperCase():rawGColor,calendarColorId=(GOOGLE_COLORS[googlePickedColor]||isGoogleHexColor(googlePickedColor))?googlePickedColor:'',extraRewards=parseExtraRewards(d),type=String(d.get('type')||'simple'),components=componentLines(d.get('componentText')),targetValue=Math.max(1,Math.min(100000,Number(d.get('targetValue'))||3)),weekdays=d.getAll('weekday').map(Number),dependsOn=String(d.get('dependsOn')||''),weekdayTimes=Object.fromEntries([0,1,2,3,4,5,6].map(n=>[n,String(d.get('weekdayTime'+n)||'')]).filter(([n,time])=>/^\d{2}:\d{2}$/.test(time))),endDate=String(d.get('endDate')||''),skipDates=String(d.get('skipDates')||'').split(',').map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).slice(0,90);
  if(dueDate&&dueDate<localDate(new Date())&&dueDate>=state.settings.deadlineStart){notify('🔒 Non puoi programmare retroattivamente una tappa: il voto di quel giorno è già definitivo.');return;}
  const oldTask=state.tasks.find(t=>t.id===String(d.get('editId')||''));
  const rewardKey=rewardAuto&&oldTask?.rewardAuto&&oldTask.frontId===frontId?oldTask.rewardKey:rewardAuto?suggestedReward(front.cat):choice;
@@ -1021,7 +1054,7 @@ function googleUrl(t){if(!t.due)return'#';const r=calendarRange(t.due,t.duration
 
 // Integrazione diretta Google Calendar: browser OAuth (senza client secret né server).
 // Unidirezionale: per ogni attività datata invia/aggiorna un evento con colorId.
-let googleAccessToken=null,googleAuthClient=null,googleBusy=false;
+let googleAccessToken=null,googleAuthClient=null,googleBusy=false,googleCalendarLabelsCache=null;
 function googleClientId(){return String(state.settings.googleClientId||'').trim();}
 function googleOriginAllowed(){return location.protocol==='https:'||(location.protocol==='http:'&&['localhost','127.0.0.1'].includes(location.hostname));}
 async function authorizeGoogleCalendar(){
@@ -1031,8 +1064,8 @@ async function authorizeGoogleCalendar(){
  return await new Promise(resolve=>{
   let finished=false;const settle=ok=>{if(finished)return;finished=true;resolve(ok);};
   try{
-   googleAuthClient=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/calendar.events',callback:resp=>{
-    if(resp?.access_token){googleAccessToken=resp.access_token;settle(true);notify('✓ Google Calendar autorizzato per questa sessione.');}
+   googleAuthClient=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.calendars',callback:resp=>{
+    if(resp?.access_token){googleAccessToken=resp.access_token;googleCalendarLabelsCache=null;settle(true);notify('✓ Google Calendar autorizzato per questa sessione.');}
     else{notify('Autorizzazione Google annullata o rifiutata.');settle(false);}
    },error_callback:()=>{notify('Accesso Google non riuscito o finestra chiusa.');settle(false);}});
    googleAuthClient.requestAccessToken({prompt:googleAccessToken?'':'consent'});
@@ -1048,30 +1081,67 @@ function googleEventBody(t){
   const d=new Date(t.due);if(!Number.isFinite(d.getTime()))throw new Error('Orario non valido');
   start={dateTime:d.toISOString()};end={dateTime:new Date(d.getTime()+Math.max(5,Math.min(1440,Number(t.durationMinutes)||30))*60000).toISOString()};
  }else{start={date:taskDueDay(t)};end={date:dateShift(taskDueDay(t),1)};}
- return {summary:name,description:detail,start,end,colorId:calendarColor(t),extendedProperties:{private:{reginaKey:googleEventKey(t)}}};
+ return {summary:name,description:detail,start,end,extendedProperties:{private:{reginaKey:googleEventKey(t)}}};
 }
-async function googleEventRequest(method,endpoint,body){
+async function googleApiRequest(method,url,body){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
- try{const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events'+endpoint,{method,headers:{'Authorization':'Bearer '+googleAccessToken,'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
- const data=await r.json().catch(()=>({}));if(!r.ok){const error=new Error(data?.error?.message||'Errore Google Calendar ('+r.status+')');error.status=r.status;throw error;}return data;
+ try{
+  const options={method,headers:{Authorization:'Bearer '+googleAccessToken,'Content-Type':'application/json'},signal:controller.signal};
+  if(body!==undefined)options.body=JSON.stringify(body);
+  const r=await fetch(url,options),data=await r.json().catch(()=>({}));
+  if(!r.ok){const error=new Error(data?.error?.message||'Errore Google Calendar ('+r.status+')');error.status=r.status;throw error;}
+  return data;
  }finally{clearTimeout(timer);}
+}
+function googleEventRequest(method,endpoint,body){return googleApiRequest(method,'https://www.googleapis.com/calendar/v3/calendars/primary/events'+endpoint,body);}
+function googleCalendarRequest(method,body){return googleApiRequest(method,'https://www.googleapis.com/calendar/v3/calendars/primary',body);}
+// I 13 nuovi preset e i colori RGB usano le etichette Calendar 2026.
+// Si preservano sempre le etichette già esistenti, senza cancellarle o rinominarle.
+async function ensureGoogleEventLabel(hex){
+ const color=hex.toUpperCase();
+ if(!isGoogleHexColor(color))throw new Error('Colore personalizzato non valido.');
+ const current=googleCalendarLabelsCache||await googleCalendarRequest('GET');
+ googleCalendarLabelsCache=current;
+ const labels=Array.isArray(current.labelProperties?.eventLabels)?current.labelProperties.eventLabels:[];
+ let found=labels.find(x=>String(x.backgroundColor||'').toUpperCase()===color);
+ if(found?.id)return found.id;
+ if(labels.length>=200)throw new Error('Il calendario ha già 200 etichette colore: scegli un colore già esistente o eliminane una in Google Calendar.');
+ const name='REGINA · '+(GOOGLE_COLORS[color]?.[0]||'Personalizzato '+color);
+ // L'ID è assegnato da Google. Solo i dati delle etichette vengono modificati.
+ const updated=await googleCalendarRequest('PUT',{labelProperties:{eventLabels:[...labels,{backgroundColor:color,name}]}});
+ googleCalendarLabelsCache=updated;
+ found=(updated.labelProperties?.eventLabels||[]).find(x=>String(x.backgroundColor||'').toUpperCase()===color);
+ if(!found?.id)throw new Error('Google non ha restituito il codice del colore: controlla le autorizzazioni del calendario.');
+ return found.id;
 }
 async function sendGoogleEvent(t){
  if(!t?.due)return false;
- const key=googleEventKey(t),existing=state.googleEvents[key],body=googleEventBody(t);
+ const key=googleEventKey(t),existing=state.googleEvents[key],body=googleEventBody(t),color=calendarColor(t);
+ let labelId=null;
+ if(isGoogleHexColor(color)){
+  labelId=await ensureGoogleEventLabel(color);
+  body.eventLabelId=labelId;
+ }else body.colorId=color;
+ const withLabels=isGoogleHexColor(color),suffix=withLabels?'?eventLabelVersion=1':'';
  let event;
  try{
-  if(existing?.eventId)event=await googleEventRequest('PATCH','/'+encodeURIComponent(existing.eventId),body);
-  else event=await googleEventRequest('POST','',body);
- }catch(e){if(e.status!==404||!existing?.eventId)throw e;event=await googleEventRequest('POST','',body);}
- state.googleEvents[key]={eventId:event.id,date:taskDueDay(t),updatedAt:new Date().toISOString()};save({group:'google-sync'});return true;
+  // Passaggio da un colore nuovo a uno classico: togli prima l'etichetta.
+  if(!withLabels&&existing?.eventId&&existing?.labelId){
+   try{await googleEventRequest('PATCH','/'+encodeURIComponent(existing.eventId)+'?eventLabelVersion=1',{eventLabelId:''});}
+   catch(e){if(e.status!==404)throw e;}
+  }
+  if(existing?.eventId)event=await googleEventRequest('PATCH','/'+encodeURIComponent(existing.eventId)+suffix,body);
+  else event=await googleEventRequest('POST',suffix,body);
+ }catch(e){if(e.status!==404||!existing?.eventId)throw e;event=await googleEventRequest('POST',suffix,body);}
+ state.googleEvents[key]={eventId:event.id,date:taskDueDay(t),labelId,updatedAt:new Date().toISOString()};
+ save({group:'google-sync'});return true;
 }
 async function publishGoogleTask(t){
  if(googleBusy){notify('Sincronizzazione già in corso.');return;}
  if(!t?.due){notify('Assegna una data alla tappa prima di inviarla.');return;}
  if(!googleAccessToken&&!await authorizeGoogleCalendar())return;
  googleBusy=true;
- try{await sendGoogleEvent(t);notify('✓ Evento inviato a Google Calendar con il colore '+GOOGLE_COLORS[calendarColor(t)][0]+'.');}
+ try{await sendGoogleEvent(t);notify('✓ Evento inviato a Google Calendar con il colore '+calendarColorName(t)+'.');}
  catch(e){if(e.status===401)googleAccessToken=null;notify('Google Calendar: '+(e.message||'errore'));}
  finally{googleBusy=false;if(view==='settings')render();}
 }
@@ -2457,7 +2527,7 @@ document.addEventListener('click',e=>{
  case'wipe-start':{const box=$('resetConfirm');if(box){box.hidden=false;box.querySelector('input')?.focus();}break;}
  case'wipe-cancel':{const box=$('resetConfirm');if(box){box.hidden=true;const field=$('wipePhrase');if(field)field.value='';}break;}
  case'wipe-final':resetAll();break;
- case'google-save-config':{const value=$('googleClientId')?.value?.trim()||'';if(value&&!/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(value)){notify('Client ID non valido: deve terminare con .apps.googleusercontent.com');break;}state.settings.googleClientId=value;googleAccessToken=null;save();render();notify('Configurazione Google salvata.');break;}case'google-connect':{const value=$('googleClientId')?.value?.trim()||'';if(value!==googleClientId()){state.settings.googleClientId=value;save();}authorizeGoogleCalendar().then(()=>{if(view==='settings')render();});break;}case'google-disconnect':{if(googleAccessToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(googleAccessToken,()=>{});googleAccessToken=null;googleAuthClient=null;render();notify('Account scollegato da REGINA.');break;}case'google-publish-one':{const t=state.tasks.find(x=>x.id===id)||(id?.startsWith('virtual:')?scheduledTasksForDay(id.slice(-10)).find(x=>x.id===id):null);if(t)publishGoogleTask(t);break;}case'google-sync':publishGoogleMonth();break;case'save-settings':{const name=$('cityName')?.value?.trim();if(name)state.settings.cityName=name;state.settings.penaltyIntensity=$('penaltyIntensity')?.value==='severe'?'severe':'gradual';state.settings.failureMode=$('failureMode')?.value==='none'?'none':'one';save();render();notify('Preferenze salvate.');break;}
+ case'google-save-config':{const value=$('googleClientId')?.value?.trim()||'';if(value&&!/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(value)){notify('Client ID non valido: deve terminare con .apps.googleusercontent.com');break;}state.settings.googleClientId=value;googleAccessToken=null;googleCalendarLabelsCache=null;save();render();notify('Configurazione Google salvata.');break;}case'google-connect':{const value=$('googleClientId')?.value?.trim()||'';if(value!==googleClientId()){state.settings.googleClientId=value;save();}authorizeGoogleCalendar().then(()=>{if(view==='settings')render();});break;}case'google-disconnect':{if(googleAccessToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(googleAccessToken,()=>{});googleAccessToken=null;googleAuthClient=null;googleCalendarLabelsCache=null;render();notify('Account scollegato da REGINA.');break;}case'google-publish-one':{const t=state.tasks.find(x=>x.id===id)||(id?.startsWith('virtual:')?scheduledTasksForDay(id.slice(-10)).find(x=>x.id===id):null);if(t)publishGoogleTask(t);break;}case'google-sync':publishGoogleMonth();break;case'save-settings':{const name=$('cityName')?.value?.trim();if(name)state.settings.cityName=name;state.settings.penaltyIntensity=$('penaltyIntensity')?.value==='severe'?'severe':'gradual';state.settings.failureMode=$('failureMode')?.value==='none'?'none':'one';save();render();notify('Preferenze salvate.');break;}
  case'snap-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isSegmentType(a)){const snap=findSegmentSnap(a,plotPosition(a),{radius:200});if(snap){a.pos=snap.pos;save();render();cityInspect(id);notify('🧲 Pezzi raccordati.');}else notify('Nessun bordo compatibile abbastanza vicino: sposta o ruota i pezzi.');}break;}case'shape-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isLineSegment(a)){const v=['straight','bend','junction','cross'],i=v.indexOf(a.segmentVariant||'straight');a.segmentVariant=v[(i+1)%v.length];save();render();cityInspect(id);}break;}case'reset-asset':{const a=state.assets.find(a=>a.id===id);if(a)delete a.pos;save();render();break;}case'reset-home':delete state.homePositions[id];save();render();break;case'backup':exportBackup();break;case'ics':exportIcs();break;case'import':{const input=$('importFile');if(input){input.scrollIntoView({block:'center',behavior:'smooth'});input.focus();notify('Usa il pulsante «Scegli file» per importare il backup.');}break;}
 
  }});
@@ -2484,7 +2554,7 @@ document.addEventListener('change',e=>{const el=e.target;if(!el.matches('[data-u
  }
 });
 document.addEventListener('change',e=>{const el=e.target;if(!el.matches('[data-ui-pref]'))return;const key=el.dataset.uiPref;if(!['filter','order','density'].includes(key))return;const allowed={filter:['all','pending','done','failed','recurring'],order:['time','front','name','status'],density:['compact','detailed']};if(!allowed[key].includes(el.value))return;uiPrefs[key]=el.value;persistUiPrefs();render();});
-document.addEventListener('change',e=>{const el=e.target;if(el.matches('[data-bonus-category]')){const row=el.closest('.bonus-row');if(row)row.querySelector('[name=bonusKey]').innerHTML=CATALOG[el.value].map(p=>`<option value="${p.key}">${esc(p.icon)} ${esc(p.name)}</option>`).join('');}if(el.id==='taskType'||(el.name==='repeat'&&el.closest('#taskForm')))refreshTaskOptions();if(el.id==='taskCalendarColor')updateCalendarColorPreview();});
+document.addEventListener('change',e=>{const el=e.target;if(el.matches('[data-bonus-category]')){const row=el.closest('.bonus-row');if(row)row.querySelector('[name=bonusKey]').innerHTML=CATALOG[el.value].map(p=>`<option value="${p.key}">${esc(p.icon)} ${esc(p.name)}</option>`).join('');}if(el.id==='taskType'||(el.name==='repeat'&&el.closest('#taskForm')))refreshTaskOptions();if(el.id==='taskCalendarColor'||el.id==='taskCalendarCustomColor')updateCalendarColorPreview();});
 document.addEventListener('change',e=>{const el=e.target;if(!el.matches('[data-arch-kind]'))return;
  const style=ARCH_STYLES[el.value]?el.value:'auto',kind=el.dataset.archKind,id=el.dataset.archId;
  if(kind==='home'){
