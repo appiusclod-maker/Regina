@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14233a">
+<title>REGINA · Recupera i tuoi dati</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#16243a;background:#eaf0f6}
+*{box-sizing:border-box}body{margin:0;padding:24px 13px 80px}main{max-width:670px;margin:10px auto 0;background:#fff;padding:clamp(20px,5vw,39px);border-radius:23px;box-shadow:0 10px 35px #10203f16;border:1px solid #d9e3ee}
+h1{font-size:clamp(23px,6vw,32px);letter-spacing:-.6px;margin:0 0 8px}p{line-height:1.5;color:#42566d}h2{font-size:18px;margin:23px 0 10px}header{display:flex;gap:14px;align-items:center}header .icon{width:54px;height:54px;display:grid;place-items:center;background:#14233a;color:#fff;border-radius:15px;font-size:28px;flex-shrink:0}header small{color:#586b80;font-size:13px;display:block}
+.step{background:#f6f8fb;border:1px solid #dce5ee;border-radius:15px;margin:17px 0;padding:19px}.num{font-size:12px;font-weight:800;background:#193954;color:#fff;padding:4px 9px;border-radius:30px;display:inline-block;margin-bottom:8px}.step h2{margin:0 0 8px}input[type=file]{font-size:16px;display:block;width:100%;max-width:100%;padding:14px 9px;border:2px solid #88a5bb;border-radius:11px;background:#fff;color:#203950;margin-top:12px}button,a.button{font:inherit;font-weight:750;font-size:16px;border:0;border-radius:11px;padding:15px 16px;min-height:48px;background:#14233a;color:#fff;display:inline-block;text-decoration:none;text-align:center;cursor:pointer;width:100%;margin:7px 0}button:disabled{background:#9cabbc;cursor:not-allowed}a.button{background:#2b9f7d}button.secondary{background:#e7eef3;color:#173951}label.accept{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.5;color:#23384f;margin:13px 0}label.accept input{width:22px;height:22px;flex-shrink:0;accent-color:#196d5b}.status{margin-top:13px;border-radius:12px;background:#e8f3fd;color:#193d67;line-height:1.5;padding:13px;white-space:pre-line;overflow-wrap:anywhere}.status.error{background:#fff0f0;color:#a02335}.status.success{background:#e4f7eb;color:#156345}.muted{font-size:13px;color:#66788a}.hide{display:none!important}code{overflow-wrap:anywhere}#fallback{margin-top:16px}details{margin-top:18px}textarea{width:100%;min-height:115px;resize:vertical;border:1px solid #b8c7d5;border-radius:9px;padding:11px;font:13px monospace}a{color:#14598f}
+</style>
+</head>
+<body>
+<main>
+<header><div class="icon">♛</div><div><h1>Recupera REGINA</h1><small>Importazione separata · versione Android</small></div></header>
+<p>Questa pagina importa i tuoi progressi <strong>senza aprire la schermata dinamica di REGINA</strong>. Il file rimane selezionato anche quando torni dal selettore Android.</p>
+<div id="originProblem" class="status error hide" role="alert">Stai aprendo questo file dai Download, non da GitHub Pages. In questo modo il ripristino non raggiunge l'app installata. Apri invece: <strong>https://appiusclod-maker.github.io/Regina/restore.html</strong></div>
+<section class="step"><span class="num">PASSAGGIO 1</span><h2>Scegli il backup JSON</h2><p class="muted">Seleziona il file <strong>regina-backup-2026-10-29 (2).json</strong> o un altro backup REGINA. Non scegliere un file ZIP.</p>
+<input id="backupFile" type="file" accept=".json,application/json,text/plain" aria-label="Seleziona il backup JSON" autocomplete="off">
+<p id="choiceHint" class="muted">Nessun file ancora letto.</p>
+<div id="status" class="status" role="status" aria-live="polite">Seleziona il backup. La pagina non si aggiornerà durante la scelta.</div>
+</section>
+<section class="step"><span class="num">PASSAGGIO 2</span><h2>Conferma il ripristino</h2>
+<label class="accept"><input type="checkbox" id="approve" disabled><span>Ho verificato il file selezionato e voglio sostituire i dati attualmente presenti in questa installazione di REGINA.</span></label>
+<button id="restore" type="button" disabled>👑 Importa i progressi in REGINA</button>
+<p class="muted">L'importazione modifica soltanto i dati conservati sul tuo dispositivo. Non carica il backup su GitHub o su un server.</p>
+</section>
+<section class="step"><span class="num">PASSAGGIO 3</span><h2>Riapri REGINA</h2>
+<a class="button" href="./index.html" id="openApp">Apri REGINA</a>
+<p class="muted">Dopo l'importazione, ritroverai fronti, attività e città nell'app installata.</p>
+</section>
+<details id="fallback"><summary>Se Android continua a non consegnare il file</summary><p class="muted">Puoi anche copiare il contenuto JSON in un editor di testo e incollarlo qui. Questo è un metodo di emergenza; il file originale non viene modificato.</p>
+<textarea id="jsonPaste" placeholder="Incolla qui il testo che inizia con { e finisce con }"></textarea><button id="checkPaste" type="button" class="secondary">Controlla il testo incollato</button></details>
+<p class="muted">Non cancellare il backup dai Download fino a quando non avrai aperto REGINA e controllato i tuoi dati.</p>
+</main>
+<script>
+'use strict';
+const STORE='regina-app-v1';
+const fileInput=document.getElementById('backupFile');
+const status=document.getElementById('status');
+const choiceHint=document.getElementById('choiceHint');
+const approval=document.getElementById('approve');
+const restore=document.getElementById('restore');
+let candidate=null, candidateName='';
+const isWeb=location.protocol==='https:'&&location.hostname.toLowerCase()==='appiusclod-maker.github.io'&&location.pathname.toLowerCase().startsWith('/regina/');
+if(!isWeb){document.getElementById('originProblem').classList.remove('hide');fileInput.disabled=true;document.getElementById('checkPaste').disabled=true;}
+function report(message,type=''){
+ status.textContent=message;status.className='status'+(type?' '+type:'');
+}
+function clearCandidate(){candidate=null;candidateName='';approval.checked=false;approval.disabled=true;restore.disabled=true;}
+function checkJson(raw,name){
+ clearCandidate();
+ if(!raw||raw.length>25*1024*1024)throw Error('Il file è vuoto oppure supera i 25 MB.');
+ let data;try{data=JSON.parse(raw.replace(/^\uFEFF/,''));}catch(e){throw Error('Questo file non contiene JSON valido: '+e.message);}
+ if(data&&data.state&&Array.isArray(data.state.fronts))data=data.state;
+ if(!data||!Array.isArray(data.fronts)||!Array.isArray(data.tasks)||!Array.isArray(data.assets)||typeof data.settings!=='object'||!data.settings||Array.isArray(data.settings))
+  throw Error('Questo non è un backup REGINA compatibile: mancano fronti, tappe, costruzioni o impostazioni.');
+ const summary=`${data.fronts.length} fronti, ${data.tasks.length} tappe, ${data.assets.length} costruzioni`;
+ candidate=data;candidateName=name;
+ choiceHint.textContent='File valido: '+name;
+ approval.disabled=false;
+ report('✅ Backup riconosciuto!\n'+summary+'\nSpunta la conferma qui sotto e premi «Importa i progressi in REGINA».','success');
+}
+async function readSelectedFile(){
+ const f=fileInput.files&&fileInput.files[0];
+ if(!f)return;
+ clearCandidate();report('Lettura del file in corso…');
+ try{
+  const text=await new Promise((resolve,reject)=>{
+   const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(Error('Android non ha permesso di leggere il file.'));reader.readAsText(f,'UTF-8');
+  });
+  checkJson(text,f.name);
+ }catch(err){choiceHint.textContent='File non importato.';report('❌ '+(err.message||String(err)),'error');}
+}
+fileInput.addEventListener('change',readSelectedFile);
+// Alcune versioni Android ritardano la notifica "change" quando si torna dall'app Documenti.
+// La pagina resta statica: in ogni caso la scelta del file non viene cancellata da un render.
+function maybeReadOnReturn(){if(fileInput.files&&fileInput.files.length&&!candidate){setTimeout(readSelectedFile,400);}}
+window.addEventListener('focus',maybeReadOnReturn);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeReadOnReturn();});
+approval.addEventListener('change',()=>{restore.disabled=!(candidate&&approval.checked&&isWeb);});
+restore.addEventListener('click',()=>{
+ if(!candidate||!approval.checked||!isWeb)return;
+ try{
+  const previous=localStorage.getItem(STORE);
+  const newData=JSON.stringify(candidate);
+  if(previous){
+   const safeKey='regina-pre-restore-'+new Date().toISOString().replace(/[:.]/g,'-');
+   try{localStorage.setItem(safeKey,previous);}catch(e){ /* quota: the external original JSON remains intact */ }
+  }
+  localStorage.setItem(STORE,newData);
+  if(localStorage.getItem(STORE)!==newData)throw Error('Il browser non ha confermato il salvataggio.');
+  const summary=`${candidate.fronts.length} fronti, ${candidate.tasks.length} tappe, ${candidate.assets.length} costruzioni`;
+  report('✅ IMPORTAZIONE RIUSCITA!\n'+summary+'\nOra premi «Apri REGINA» oppure riapri la sua icona sulla schermata Home.','success');
+  choiceHint.textContent='Importati: '+candidateName;
+  approval.checked=false;approval.disabled=true;restore.disabled=true;
+ }catch(e){report('❌ Non è stato possibile salvare il backup nel browser: '+(e.message||String(e))+'. I dati originali sono ancora nel file JSON.','error');}
+});
+document.getElementById('checkPaste').addEventListener('click',()=>{
+ if(!isWeb)return;
+ try{checkJson(document.getElementById('jsonPaste').value,'Testo incollato');}catch(e){report('❌ '+e.message,'error');}
+});
+</script>
+</body>
+</html>
