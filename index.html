@@ -1093,6 +1093,7 @@ function exportIcs(){const events=[...state.tasks.filter(t=>t.due).map(t=>({uid:
  lines.push('END:VCALENDAR');download('regina-scadenze.ics',lines.join('\r\n')+'\r\n','text/calendar;charset=utf-8');notify('Esportate '+events.length+' scadenze (senza orario = giornata intera).');}
 function download(name,data,mime){const url=URL.createObjectURL(new Blob([data],{type:mime}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 function exportBackup(){download('regina-backup-'+localDate(new Date())+'.json',JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2),'application/json');notify('Backup JSON scaricato.');}
+let reginaImportPickerOpen=false;
 function importFeedback(text,isError=false){
  const el=$('importStatus');if(el){el.textContent=text;el.dataset.status=isError?'error':'success';}
 }
@@ -1100,6 +1101,7 @@ async function importBackup(file){
  if(!file)return;
  const previousState=state;
  try{
+  reginaImportPickerOpen=false;
   importFeedback('Lettura di «'+file.name+'» in corso…');
   if(file.size>25*1024*1024)throw new Error('Il file supera 25 MB.');
   const raw=typeof file.text==='function'?await file.text():await new Promise((resolve,reject)=>{
@@ -1133,6 +1135,7 @@ async function importBackup(file){
   importFeedback('Importazione non riuscita: '+reason,true);
   notify('Importazione non riuscita. Leggi il messaggio sotto «Scegli file».');
  }finally{
+  reginaImportPickerOpen=false;
   const input=$('importFile');if(input)input.value='';
  }
 }
@@ -2510,6 +2513,12 @@ document.addEventListener('change',e=>{
  notify('🏗️ Modello edilizio aggiornato. Nessuna ricompensa è stata modificata.');
 });
 document.addEventListener('change',e=>{if(e.target.matches('[data-rotation-input="number"]')){const control=e.target.closest('.rotation-controls,.city-rotate-dock');if(control){applyRotation(control.dataset.rotationKind,control.dataset.rotationId,Math.max(0,Math.min(360,Number(e.target.value)||0)));e.target.value=normalizeRotation(e.target.value);}}});
+document.addEventListener('click',e=>{
+ if(e.target.id==='importFile')reginaImportPickerOpen=true;
+},true);
+document.addEventListener('cancel',e=>{
+ if(e.target.id==='importFile'){reginaImportPickerOpen=false;importFeedback('Non è stato selezionato alcun file. Riprova con «Scegli file».');}
+},true);
 document.addEventListener('change',e=>{if(e.target.id==='taskFront'){const cat=getFront(e.target.value)?.cat||'work',sel=$('rewardSelect');if(sel)sel.innerHTML=rewardSelect(cat,suggestedReward(cat),true);const f=$('find-task');if(f)f.value='';updateCalendarColorPreview();}if(e.target.id==='frontCategory'){const cat=e.target.value,sel=$('frontRewardSelect');if(sel)sel.innerHTML=rewardSelect(cat,suggestedReward(cat),true);const f=$('find-front');if(f)f.value='';}if(e.target.id==='importFile'&&e.target.files?.length)importBackup(e.target.files[0]);});
 $('modalLayer').addEventListener('click',e=>{if(e.target===$('modalLayer'))closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();const sh=document.querySelector('.city-immersive');if(sh){cityFullScreen=false;sh.classList.remove('city-immersive');const bt=sh.querySelector('[data-zoom=fullscreen]');if(bt)bt.textContent='⛶';}}});
 migrateBuildingForms();
@@ -2517,7 +2526,14 @@ if(!state.settings.deadlineStart){state.settings.deadlineStart=localDate(new Dat
 render();
 window._reginaLastDay=localDate(new Date());
 setInterval(()=>{const today=localDate(new Date());if(today!==window._reginaLastDay){window._reginaLastDay=today;processOverdue();render();}},30000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){processOverdue();window._reginaLastDay=localDate(new Date());render();}});
+// Android apre il selettore file come attività esterna: al ritorno non ricreare
+// l'input HTML prima che venga emesso il suo evento 'change'.
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){
+ window._reginaLastDay=localDate(new Date());
+ // La schermata Impostazioni è rimasta visibile; non perdere un file appena scelto.
+ if(reginaImportPickerOpen||view==='settings')return;
+ processOverdue();render();
+}});
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 </script>
 </body>
