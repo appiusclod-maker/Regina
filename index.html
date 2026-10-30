@@ -7,7 +7,7 @@
 <meta name="description" content="REGINA — Trasforma i tuoi obiettivi in una città viva.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
-<title>REGINA 7.1 — La mia città</title>
+<title>REGINA 7.2 — La mia città</title>
 <style>
 :root{--bg:#f4f7fb;--ink:#17233b;--muted:#728099;--navy:#101b31;--navy2:#1c2b47;--mint:#32d3aa;--mintlight:#defaf0;--border:#e3e9f2;--orange:#ffae65;--red:#e95c70;--white:#fff;--shadow:0 10px 35px rgba(25,42,76,.065)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.4}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}a{color:#116b6a}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(50,211,170,.65);outline-offset:2px}svg{display:block}.app{display:flex;min-height:100dvh}.sidebar{width:248px;flex-shrink:0;background:var(--navy);color:#fff;padding:26px 16px;position:sticky;top:0;height:100dvh;display:flex;flex-direction:column;gap:30px}.brand{display:flex;gap:12px;align-items:center;padding:0 10px}.crest{height:40px;width:40px;border-radius:14px;background:linear-gradient(135deg,#32d3aa,#82f7c9);display:grid;place-items:center;color:#122039;font-weight:1000;font-size:23px}.brand strong{font-size:18px;letter-spacing:.13em}.brand small{display:block;color:#a3b0c6;font-size:11px;letter-spacing:.08em}.nav-list{display:grid;gap:7px}.navbtn{width:100%;background:none;color:#aab8cf;border:0;border-radius:12px;padding:13px;display:flex;align-items:center;gap:13px;text-align:left;font-weight:600}.navbtn .sym{font-size:20px;width:25px;text-align:center}.navbtn.active{background:#2a3e58;color:#fff}.navbtn:hover{background:#27384f;color:#fff}.sidebar-foot{margin-top:auto;border-top:1px solid #34425b;padding:16px 8px 0;color:#aab8cf;font-size:12px}.sidebar-foot b{display:block;color:#fff;font-size:24px}.main{flex:1;min-width:0;max-width:1650px;padding:32px clamp(18px,3vw,46px) 100px;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:25px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-weight:800;color:#61978d;font-size:11px;margin:0 0 7px}.page-title{font-size:clamp(26px,3vw,37px);letter-spacing:-.045em;line-height:1.1;margin:0;font-weight:850}.page-sub{color:var(--muted);font-size:14px;margin:9px 0 0}.actions,.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:1px solid var(--border);border-radius:11px;padding:11px 14px;background:#fff;color:var(--ink);font-weight:750;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;min-height:40px}.btn:hover{filter:brightness(.97)}.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.btn.mint{background:var(--mint);border-color:var(--mint);color:#12283a}.btn.danger{border-color:#ffd5dc;color:#ab3243;background:#fff1f3}.btn.ghost{background:transparent}.btn.tiny{padding:7px 10px;font-size:12px;min-height:32px}.btn.iconbtn{font-size:18px;padding:7px 13px;min-width:40px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.stat{border-radius:17px;background:white;border:1px solid var(--border);box-shadow:var(--shadow);padding:18px;min-width:0}.stat .s-top{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:700}.stat .s-icon{font-size:20px}.stat .s-value{font-size:clamp(24px,3vw,35px);letter-spacing:-.055em;font-weight:850;margin:8px 0 0;line-height:1.1}.stat .s-foot{font-size:11px;color:var(--muted);margin:7px 0 0}.section{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:18px;min-width:0}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.section h2{font-size:18px;margin:0;letter-spacing:-.03em}.muted{color:var(--muted)}.small{font-size:12px}.badge{display:inline-flex;align-items:center;border-radius:999px;background:#edf2f7;padding:5px 9px;font-size:11px;font-weight:800;color:#495b75;gap:5px}.badge.red{background:#ffedf0;color:#bf3c4e}.badge.green{background:#e4faf0;color:#167858}.badge.orange{background:#fff3e5;color:#9d6326}.progress{height:8px;border-radius:99px;background:#e6ecf5;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,#16a785,#53dfb6);transition:width .3s}.empty{text-align:center;padding:38px 22px;color:var(--muted);background:linear-gradient(180deg,#fff,#fbfdff);border:1px dashed #d9e2ed;border-radius:15px}.empty .big{font-size:42px;display:block;margin-bottom:8px}.empty h3{margin:6px 0;color:var(--ink);font-size:17px}.empty p{max-width:460px;margin:8px auto 17px;font-size:13px}.task-list{display:grid;gap:8px}.task{display:flex;align-items:center;gap:12px;border:1px solid var(--border);padding:12px;border-radius:12px;background:#fff;min-width:0}.task:hover{border-color:#c5d6e6}.task.checked{background:#f7fffb}.task.failed{background:#fff9fa}.task-check{width:33px;height:33px;flex-shrink:0;border-radius:10px;border:2px solid #cbd7e4;background:#fff;color:#fff;font-weight:900;font-size:18px}.task.checked .task-check{background:#28bd93;border-color:#28bd93}.task-main{min-width:0;flex:1}.task-name{font-weight:750;font-size:14px;overflow-wrap:anywhere}.task.checked .task-name{text-decoration:line-through;color:#77869a}.task-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:11px;margin-top:4px}.task-actions{display:flex;gap:5px;align-items:center;flex-shrink:0}.task-points{max-width:37%;white-space:normal;text-align:center;font-size:12px;font-weight:800;color:#128a6b;background:#e5f9f1;border-radius:9px;padding:6px 7px}.task-calendar-inline{border:1px solid #cadbea;color:#335476;background:#f1f7ff;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:750;min-height:27px}.task-fail{border:0;background:#ffedf0;border-radius:9px;padding:7px 9px;color:#ba4050;font-size:12px;font-weight:850}.task-edit{border:0;background:#eef2f8;border-radius:9px;padding:7px 10px;color:#64758c;font-weight:850}.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:15px}.goal-card{border:1px solid var(--border);border-radius:17px;background:#fff;padding:18px;box-shadow:var(--shadow)}.goal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.goal-title{font-weight:850;font-size:17px;margin:12px 0 8px;overflow-wrap:anywhere}.goal-desc{font-size:12px;color:var(--muted);min-height:18px}.goal-footer{display:flex;justify-content:space-between;gap:9px;align-items:center;margin-top:14px}.goal-expanded{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}.front-metrics{display:flex;gap:6px;flex-direction:column;font-size:12px;color:#63758b;margin-top:11px}.front-metrics strong{color:#243851}.monthly-series{padding:10px 12px;background:#f3f8ff;border:1px solid #e2ebf6;border-radius:10px;margin-top:10px;font-size:12px}.series-line{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #dfebf4}.series-line .btn{margin-left:auto}.series-line:last-child{border:0}.goal-mini{flex-wrap:wrap}.goal-mini button{margin-left:auto}.goal-mini-list{display:grid;gap:7px;margin-top:12px}.goal-mini{display:flex;gap:7px;align-items:flex-start;font-size:12px}.goal-mini b{font-weight:700}.goal-mini span{color:#7c8da2}.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700}.chip.selected{background:#20304a;color:#fff;border-color:#20304a}.datebar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:17px}.datebar h2{font-size:19px;letter-spacing:-.025em;margin:0}.date-controls{display:flex;gap:5px;align-items:center}.day-group{margin-bottom:18px}.day-head{font-size:13px;font-weight:800;color:#4e617d;margin-bottom:8px;display:flex;gap:7px;align-items:center}.month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--border);border-radius:13px;overflow:hidden;background:white}.month-weekday{background:#eff4fa;padding:12px 3px;text-align:center;color:#64748c;font-size:11px;font-weight:800}.month-cell{min-height:92px;border-right:1px solid var(--border);border-top:1px solid var(--border);background:white;text-align:left;padding:9px;display:flex;flex-direction:column;gap:4px;min-width:0}.month-cell:nth-child(7n){border-right:0}.month-cell.outside{background:#f8fafd;color:#a5b3c4}.month-cell.today{background:#e9fff6}.month-cell:hover{background:#eff8ff}.month-num{font-size:12px;font-weight:800}.month-pill{font-size:10px;border-radius:5px;padding:3px 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#edf2fb;color:#3d587a}.month-pill.done{background:#ddf5e7;color:#147651}.month-pill.failed{background:#ffe9ee;color:#bd3c4e}.week-summary{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:19px}.week-day{border:1px solid var(--border);background:white;border-radius:12px;padding:12px 4px;text-align:center;font-size:11px;color:var(--muted)}.week-day strong{display:block;margin:4px 0;font-size:19px;color:var(--ink)}.week-day.today{border-color:#36cca2;background:#eafff6}.week-day b{font-size:11px;color:#18866a}.city-hero{background:linear-gradient(120deg,#172741,#293c58);border-radius:18px;padding:17px 20px;color:#fff;margin-bottom:18px;display:flex;justify-content:space-between;gap:10px;align-items:center}.city-hero h2{margin:2px 0 4px;font-size:23px}.city-hero p{margin:0;color:#b9c7d9;font-size:12px}.city-shell{overflow:hidden;border-radius:19px;border:1px solid #c7d4dc;position:relative;background:#d5cec1;box-shadow:var(--shadow)}.city-shell svg{width:100%;height:min(65vh,710px);min-height:390px;touch-action:none;user-select:none}.city-tools{position:absolute;right:13px;top:13px;display:flex;flex-direction:column;gap:6px}.city-tools button{width:41px;height:41px;border:1px solid #e1e5ef;border-radius:11px;background:#fff;box-shadow:0 3px 9px #0002;font-size:19px;font-weight:800}.city-legend{position:absolute;bottom:12px;left:12px;max-width:min(430px,calc(100% - 25px));background:#fffef9ec;border:1px solid #fff;border-radius:12px;padding:9px 12px;font-size:11px;box-shadow:0 4px 12px #0001}.city-inspector{margin:12px 0 0;display:flex;gap:11px;align-items:center;min-height:59px;border:1px solid var(--border);border-radius:13px;padding:11px;background:#fff}.rotation-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 5px;padding:11px;background:#f1f7fa;border-radius:12px;border:1px solid #d9e8ee;max-width:650px}.rotation-controls label{font-size:12px;font-weight:800;white-space:nowrap;color:#304960}.rotation-controls input[type=range]{flex:1 1 130px;min-width:90px;accent-color:#168e74;cursor:pointer;touch-action:pan-x}.rotation-controls input[type=number]{width:68px;min-width:0;padding:7px;border-radius:8px;border:1px solid #b7cad4;background:#fff;font-weight:750;font-size:13px}.rotation-controls .rot-deg{font-weight:800;color:#375469;font-size:12px}.rotation-controls .btn{padding:6px 10px;min-height:35px}.city-inspector>div{min-width:0;flex:1}.city-inspector{align-items:flex-start}
@@ -250,7 +250,7 @@ window.addEventListener('error',function(e){
 <script>
 'use strict';
 /* REGINA 6.2.1: obiettivi flessibili, magazzino e ricompense cumulative; modelli edilizi variati automaticamente e personalizzabili, compatibilità con 4.9. */
-const VERSION=28,STORE='regina-app-v1',CHECKPOINT_STORE='regina-manual-checkpoint-v1';
+const VERSION=30,STORE='regina-app-v1',CHECKPOINT_STORE='regina-manual-checkpoint-v1';
 const CATS={
  health:{name:'Sport e salute',icon:'🌿',short:'Natura e sport',color:'#48b88c',zone:'Parco e paesaggio'},
  social:{name:'Contatti e relazioni',icon:'🚊',short:'Vie e trasporti',color:'#638ed5',zone:'Mobilità e connessioni'},
@@ -418,12 +418,17 @@ function logEvent(type,desc,custom={}){const s=getStats(),prev=state.history.fin
 // Gazzetta cittadina: archivio indipendente dalle attività personali.
 // Si registrano SOLO fatti urbani effettivi: nuove strutture collocate, danni, crolli, riparazioni.
 // Le bozze non vengono mostrate né stampate prima della chiusura del giorno a mezzanotte.
-function cityPressRecord(kind,asset,before,day=localDate(new Date())){
- if(!asset||!/^\d{4}-\d{2}-\d{2}$/.test(day)||day<(state.settings.pressStart||day)||state.cityEditions?.[day])return;
+function cityPressRecord(kind,asset,before,day=localDate(new Date()),fromName=''){
+ if(!asset||!/^(\d{4})-(\d{2})-(\d{2})$/.test(day)||day<(state.settings.pressStart||day)||state.cityEditions?.[day])return;
  const after=getStats();
  state.cityPressEvents=state.cityPressEvents||[];
- state.cityPressEvents.push({day,kind,name:String(asset.name||'Struttura'),cat:asset.cat||'work',assetKind:asset.kind||'building',jobsAfter:after.jobs,popAfter:after.pop,deltaJobs:after.jobs-(before?.jobs??after.jobs),deltaPop:after.pop-(before?.pop??after.pop)});
+ state.cityPressEvents.push({day,kind,assetId:asset.id||'',name:String(asset.name||'Struttura'),
+  fromName:String(fromName||''),cat:asset.cat||'work',assetKind:asset.kind||'building',
+  beforeJobs:before?.jobs??after.jobs,beforePop:before?.pop??after.pop,
+  jobsAfter:after.jobs,popAfter:after.pop,deltaJobs:after.jobs-(before?.jobs??after.jobs),
+  deltaPop:after.pop-(before?.pop??after.pop),efficiency:Math.round(assetEfficiency(asset)*100)});
 }
+
 function cityNewsArticle(event){
  const n=event.count||1,name=event.name,plural=n>1;
  const change=event.kind;
@@ -445,64 +450,137 @@ function cityNewsArticle(event){
  if(event.deltaPop<0)body+=' Si registra un calo di '+Math.abs(event.deltaPop)+' residenti.';
  return {kind:change,headline,body,cat:event.cat};
 }
+// REGINA 7.2.1 — Un solo editorialista, un fatto principale scelto per impatto
+// sulla vita urbana e NON per semplice ordine cronologico. Tutto è diegetico:
+// niente nomi di attività, fronti, valutazioni personali, piani o premi.
+function editorialEvents(all){
+ const groups=new Map();
+ for(const e of all){
+  if(!['opening','damage','ruin','repair','redevelopment'].includes(e.kind))continue;
+  const key=[e.kind,e.name,e.assetKind,e.fromName||''].join('|');
+  const old=groups.get(key);
+  if(old){old.count++;old.deltaJobs+=(Number(e.deltaJobs)||0);old.deltaPop+=(Number(e.deltaPop)||0);
+   old.efficiency=e.efficiency??old.efficiency;}
+  else groups.set(key,{...e,count:1,deltaJobs:Number(e.deltaJobs)||0,deltaPop:Number(e.deltaPop)||0});
+ }
+ return [...groups.values()];
+}
+function editorialWeight(e,stats){
+ // Chi perde più abitanti/lavoro, o chi introduce un servizio necessario,
+ // precede la cronaca meramente estetica. Una rovina senza ripercussioni
+ // non deve oscurare un'apertura che cambia davvero la città.
+ const severity={ruin:24,damage:16,repair:20,redevelopment:13,opening:9}[e.kind]||0;
+ const kind=({road:22,service:17,office:10,factory:11,shop:13,sport:7,culture:8,rail:17,vehicle:7,water:5,mountain:2,natural:3})[e.assetKind]||4;
+ const jobs=Math.abs(Number(e.deltaJobs)||0),pop=Math.abs(Number(e.deltaPop)||0);
+ const scaleJobs=Math.max(18,Number(stats.jobs)||0),scalePop=Math.max(12,Number(stats.pop)||0);
+ const reach=Math.min(90,jobs*1.35+pop*.9)+Math.min(40,48*jobs/scaleJobs+46*pop/scalePop);
+ const multiplicity=Math.min(15,Math.max(0,(Number(e.count)||1)-1)*3);
+ return Math.round((severity+kind+reach+multiplicity)*100)/100;
+}
+function editorialEventSentence(e){
+ const name='«'+String(e.name||'una struttura')+'»';
+ if(e.kind==='ruin')return name+' è diventata inutilizzabile: ciò che prima era a disposizione della città non lo è più.';
+ if(e.kind==='damage')return name+' ha subito danni e funziona a capacità ridotta'+(Number.isFinite(Number(e.efficiency))&&e.efficiency!==null?' (circa il '+e.efficiency+'% dell’efficienza originaria)':'')+'.';
+ if(e.kind==='repair')return name+' è stata rimessa in funzione dopo i danni subiti: un recupero concreto, non una semplice promessa.';
+ if(e.kind==='redevelopment')return 'Lo spazio prima occupato da «'+(e.fromName||'un’altra struttura')+'» ospita adesso '+name+': cambia l’uso di una parte della città.';
+ if(e.assetKind==='road')return 'Con '+name+' si aggiunge un tratto alla viabilità. Resta essenziale capire quanto sia continuo il collegamento con il resto dell’abitato.';
+ if(e.assetKind==='factory'||e.assetKind==='office')return name+' entra in funzione: un’attività economica in più, da valutare anche per il suo peso sull’occupazione.';
+ if(e.assetKind==='service')return name+' si aggiunge ai servizi cittadini: una presenza concreta, soprattutto là dove le dotazioni sono ancora scarse.';
+ if(e.assetKind==='shop')return name+' apre e amplia l’offerta commerciale locale, un tassello utile alla vita di tutti i giorni.';
+ if(e.assetKind==='natural'||e.assetKind==='mountain'||e.assetKind==='water')return name+' modifica il paesaggio urbano; l’effetto è soprattutto visibile sul territorio, più che sui posti di lavoro.';
+ return name+' entra a far parte della città e ne modifica le dotazioni effettive.';
+}
 function cityDailyEditorial(day,all,stats){
- // Cronaca diegetica: mai utilizzare titoli di attività, voti, fronti o decisioni private.
- // Le scene sono esempi concreti basati SOLO su strutture, danni e dati urbani reali.
- const placed=state.assets.filter(a=>!a.stored),live=placed.filter(a=>assetEfficiency(a)>0),
-  services=live.filter(a=>a.cat==='services'),shops=live.filter(a=>a.cat==='home'),
-  workplaces=live.filter(a=>Number(a.jobs)>0),
-  roads=live.filter(a=>a.kind==='road'&&a.cat==='social'),
-  nature=live.filter(a=>a.cat==='health'&&['natural','sport','water'].includes(a.kind));
- const changes={opening:all.filter(e=>e.kind==='opening'),damage:all.filter(e=>e.kind==='damage'),ruin:all.filter(e=>e.kind==='ruin'),repair:all.filter(e=>e.kind==='repair')};
- const jobsDelta=all.reduce((v,e)=>v+(Number(e.deltaJobs)||0),0),popDelta=all.reduce((v,e)=>v+(Number(e.deltaPop)||0),0);
- const dayIndex=Number(day.replace(/-/g,''))%4;
- const first=(items)=>items.length?items[dayIndex%items.length]:null;
- const aName=(a)=>a?.name||'una struttura cittadina';
- const uniqueNames=(arr,max=3)=>[...new Set(arr.map(e=>e.name).filter(Boolean))].slice(0,max);
- const howMany=(n,one,many)=>n+' '+(n===1?one:many);
- const selectExample=(items)=>first(items)?.name||'';
- const broken=changes.ruin.length?first(changes.ruin):first(changes.damage);
- const opened=first(changes.opening),fixed=first(changes.repair);
- const concrete=selectExample(workplaces)||selectExample(services)||selectExample(shops)||selectExample(roads)||selectExample(nature);
- let headline='',paragraphs=[];
- if(changes.ruin.length){
-  headline='CITTÀ SOTTO SHOCK: '+aName(broken).toUpperCase()+' IN ROVINA!';
-  paragraphs.push('È una ferita impossibile da nascondere: '+aName(broken)+' risulta inutilizzabile. Non si tratta di un semplice problema estetico: quando una struttura perde completamente le proprie funzioni, le conseguenze si riflettono sulla capacità di lavorare e di utilizzare i servizi urbani.'+(changes.ruin.length>1?' Nella stessa giornata sono state registrate '+changes.ruin.length+' segnalazioni di strutture in rovina.':''));
- }else if(changes.damage.length){
-  headline='ALLARME NEI QUARTIERI: '+aName(broken).toUpperCase()+' IN DIFFICOLTÀ!';
-  paragraphs.push('Le crepe della città sono ormai visibili: '+aName(broken)+' funziona a capacità ridotta. '+(changes.damage.length>1?'Non è un episodio isolato: si contano '+changes.damage.length+' segnalazioni di danno, anche ripetute sulle stesse strutture.':'È un segnale d’allarme che non può essere ignorato.')+' La questione, per chi vive qui, è molto concreta: mantenere in funzione ciò che esiste prima di inaugurare altro.');
- }else if(changes.repair.length){
-  headline='LA RIVINCITA DELLA CITTÀ: '+aName(fixed).toUpperCase()+' TORNA IN VITA!';
-  paragraphs.push('Una notizia che cambia il volto della giornata: '+aName(fixed)+' è tornata pienamente operativa dopo il recupero. '+(changes.repair.length>1?'Sono '+changes.repair.length+' gli interventi conclusi.':'Una sola riapertura, ma dal peso concreto.')+' Dove prima c’era una struttura compromessa, ora tornano funzioni e opportunità.');
- }else if(changes.opening.length){
-  headline=stats.pop>45?'ESPANSIONE SENZA FRENI? LA CITTÀ CAMBIA VOLTO!':'SVOLTA STORICA: LA CITTÀ PRENDE FORMA!';
-  const names=uniqueNames(changes.opening);
-  paragraphs.push('Il nuovo volto urbano ha nomi precisi: '+names.join(', ')+'. '+(changes.opening.length===1?'Una sola nuova presenza, ma abbastanza per cambiare l’aspetto di una parte del tessuto cittadino.':'In totale sono stati collocati '+changes.opening.length+' nuovi elementi.')+' La questione ora è capire come ciascuna struttura si inserisca nella vita di chi abita e lavora qui.');
+ const changes=editorialEvents(all).sort((a,b)=>editorialWeight(b,stats)-editorialWeight(a,stats)||
+  String(a.name).localeCompare(String(b.name),'it'));
+ const main=changes[0]||null;
+ const index=Number(day.replace(/-/g,''))%4;
+ const placed=state.assets.filter(a=>!a.stored),active=placed.filter(a=>assetEfficiency(a)>0);
+ const pick=(fn)=>active.find(fn)?.name||'';
+ const service=pick(a=>a.cat==='services');
+ const shop=pick(a=>a.cat==='home');
+ const workplace=pick(a=>Number(a.jobs)>0);
+ const road=pick(a=>segmentFamily(a)==='road');
+ const green=pick(a=>a.kind==='natural'||a.kind==='sport');
+ const shortage=[];
+ if(!service)shortage.push('servizi pubblici ancora assenti');
+ if(!shop)shortage.push('nessun negozio di vicinato');
+ if(!road)shortage.push('nessun tratto stradale disponibile');
+ const trendJobs=all.reduce((s,e)=>s+(Number(e.deltaJobs)||0),0);
+ const trendPop=all.reduce((s,e)=>s+(Number(e.deltaPop)||0),0);
+ const changeWords=(n,pos,neg)=>n>0?pos+' '+n:n<0?neg+' '+Math.abs(n):'';
+ const headName=main?String(main.name||'Città').toLocaleUpperCase('it-IT').slice(0,75):'';
+ let headline='',paragraphs=[],tone='neutral';
+ if(main){
+  if(main.kind==='ruin'){
+   tone='negative';headline='COLPO DURISSIMO ALLA CITTÀ: '+headName+' IN ROVINA!';
+  }else if(main.kind==='damage'){
+   tone='negative';headline='SCATTA L’ALLARME: '+headName+' IN GRAVI DIFFICOLTÀ!';
+  }else if(main.kind==='repair'){
+   tone='positive';headline='LA RIVINCITA DI '+headName+': SI RIPARTE!';
+  }else if(main.kind==='redevelopment'){
+   tone='mixed';headline='SVOLTA NEL QUARTIERE: '+headName+' CAMBIA LA MAPPA!';
+  }else if(main.assetKind==='road'){
+   tone='positive';
+   headline='VIABILITÀ, SVOLTA ATTESA: UN NUOVO TRATTO DI '+headName+'!';
+  }else if((Number(main.deltaJobs)||0)>0){
+   tone='positive';headline='LAVORO IN FERMENTO: '+headName+' DÀ UNA SCOSSA ALLA CITTÀ!';
+  }else if((Number(main.deltaPop)||0)>0){
+   tone='positive';headline='NUOVI RESIDENTI, NUOVE PROSPETTIVE: '+headName+' CAMBIA GLI EQUILIBRI!';
+  }else if(main.assetKind==='service'||main.assetKind==='shop'){
+   tone='positive';headline='FINALMENTE UN SERVIZIO IN PIÙ: '+headName+' APRE!';
+  }else{
+   tone='positive';headline='IL PAESAGGIO CAMBIA: '+headName+' È LA NOVITÀ DEL GIORNO!';
+  }
+  paragraphs.push(editorialEventSentence(main));
+  const directJobs=changeWords(Number(main.deltaJobs)||0,'Ha contribuito alla creazione di','Ha contribuito alla perdita di');
+  const directPop=changeWords(Number(main.deltaPop)||0,'La popolazione cresce di','La popolazione cala di');
+  const facts=[];
+  if(directJobs)facts.push(directJobs+' '+(Math.abs(main.deltaJobs)===1?'posto di lavoro':'posti di lavoro'));
+  if(directPop)facts.push(directPop+' '+(Math.abs(main.deltaPop)===1?'residente':'residenti'));
+  if(facts.length)paragraphs[0]+=' '+facts.join('. ')+'.';
+
+  // Solo dopo il fatto di maggiore impatto vengono citati i cambiamenti secondari.
+  const others=changes.slice(1).filter(x=>editorialWeight(x,stats)>=12).slice(0,2);
+  if(others.length){
+   const verbs={opening:'ha aperto',damage:'ha subito danni',ruin:'è finito in rovina',repair:'è tornato operativo',redevelopment:'ha cambiato destinazione'};
+   paragraphs.push('Il resto della giornata non è rimasto immobile: '+others.map(e=>'«'+e.name+'» '+(verbs[e.kind]||'è cambiato')).join('; ')+'. Ma la notizia decisiva resta '+String(main.name)+', per le sue conseguenze sul tessuto urbano.');
+  }
  }else{
-  headline=stats.pop>0?(['UNA CITTÀ VIVA, MA GUAI A DORMIRE SUGLI ALLORI','DIETRO LA CALMA, LE DOMANDE DEI QUARTIERI','IL GIORNO SENZA INAUGURAZIONI: COME SI VIVE DAVVERO?','CITTÀ IN EQUILIBRIO: QUANTO POTRÀ DURARE?'][dayIndex]):'SENZA RESIDENTI, LA GRANDE SFIDA È ANCORA APERTA';
-  paragraphs.push(concrete?'Oggi lo sguardo cade su '+concrete+'. Non si registrano nuove aperture o incidenti strutturali, ma le condizioni quotidiane dipendono sempre da ciò che la città riesce concretamente a offrire.':'Nessuna nuova apertura, nessun edificio riparato o crollato. Il territorio è ancora scarsamente attrezzato: per parlare davvero di vita urbana serviranno attività, collegamenti e servizi.');
+  headline=stats.pop>0?[
+   'DIETRO LE FACCIATE: COME SI VIVE DAVVERO IN CITTÀ?',
+   'NESSUN COLPO DI SCENA, MA LA CITTÀ NON SI FERMA',
+   'GIORNATA SENZA INAUGURAZIONI: COSA FUNZIONA E COSA MANCA?',
+   'LA CITTÀ ALLA PROVA DELLA NORMALITÀ: BASTA CIÒ CHE C’È?'
+  ][index]:'CITTÀ ANCORA SENZA RESIDENTI: LA SVOLTA NON ARRIVA';
+  const example=service||shop||workplace||road||green;
+  paragraphs.push(example?'Nessuna inaugurazione, chiusura o riparazione rilevata oggi. Nella vita urbana resta però un punto concreto: «'+example+'» fa parte delle strutture disponibili. Sono le dotazioni già presenti, e non i grandi annunci, a definire le possibilità della città.':'Non risultano nuove aperture, danni o riparazioni. Il territorio dispone ancora di poche strutture: prima delle grandi promesse, servono luoghi di lavoro, collegamenti e servizi effettivi.');
  }
- if(changes.opening.length&&(changes.damage.length||changes.ruin.length||changes.repair.length)){
-  const names=uniqueNames(changes.opening);
-  paragraphs.push('Nello stesso giorno, però, sono comparsi anche nuovi elementi: '+names.join(', ')+'. Il contrasto è evidente: mentre alcune parti della città cambiano volto, altre fanno i conti con problemi strutturali. La crescita non elimina automaticamente le fragilità.');
+ // Bilancio osservabile: non attribuisce mai la causa a obiettivi personali.
+ if(trendJobs!==0||trendPop!==0){
+  const lines=[];
+  if(trendJobs)lines.push('il saldo dei posti di lavoro è '+(trendJobs>0?'+':'')+trendJobs);
+  if(trendPop)lines.push('quello dei residenti è '+(trendPop>0?'+':'')+trendPop);
+  paragraphs.push('A fine giornata, '+lines.join(' e ')+'. Il bilancio urbano è di '+stats.jobs+' posti di lavoro e '+stats.pop+' abitanti. Questi dati descrivono una trasformazione osservabile, da valutare in rapporto alle dimensioni della città.');
+ }else if(stats.pop||stats.jobs){
+  paragraphs.push('L’economia urbana conta oggi '+stats.jobs+' posti di lavoro e '+stats.pop+' abitanti. Non è emersa una variazione occupazionale o demografica nei fatti registrati, ma l’equilibrio quotidiano dipende anche dalla disponibilità dei servizi.');
  }
- const employment=jobsDelta>0?'Sono stati creati '+howMany(jobsDelta,'posto di lavoro','posti di lavoro')+'. ':jobsDelta<0?'Sono andati perduti '+howMany(Math.abs(jobsDelta),'posto di lavoro','posti di lavoro')+'. ':'';
- const residents=popDelta>0?'I residenti sono aumentati di '+popDelta+'. ':popDelta<0?'I residenti sono diminuiti di '+Math.abs(popDelta)+'. ':'';
- if(employment||residents)paragraphs.push('I numeri danno la misura del cambiamento: '+employment+residents+'Il bilancio attuale è di '+stats.pop+' abitanti e '+stats.jobs+' posti di lavoro: dati che incidono sulle prospettive di ogni quartiere.');
- else paragraphs.push('I dati del giorno fissano '+stats.pop+' abitanti e '+stats.jobs+' posti di lavoro. '+(stats.pop?'Per le famiglie, però, il vero termometro non è un numero: contano la possibilità di muoversi, trovare negozi, accedere ai servizi e avere luoghi in cui incontrarsi.':'Senza una popolazione stabile, la sfida è trasformare infrastrutture e attività isolate in un centro capace di attirare residenti.'));
- const serviceName=selectExample(services),shopName=selectExample(shops),workName=selectExample(workplaces),roadName=selectExample(roads),greenName=selectExample(nature);
- let needs=[];
- if(!services.length)needs.push('mancano ancora servizi pubblici funzionanti');
- else needs.push('i servizi comprendono '+(serviceName||howMany(services.length,'struttura','strutture')));
- if(!shops.length)needs.push('il commercio di vicinato è ancora assente');
- else needs.push('per gli acquisti si può fare riferimento, fra l’altro, a '+shopName);
- if(!roads.length)needs.push('la rete stradale non ha ancora tratti disponibili');
- else needs.push('la rete di collegamento include '+roadName);
- let context=needs.join('; ')+'.';
- if(workName)context+=' Sul fronte delle attività economiche, un esempio concreto è '+workName+'.';
- if(greenName)context+=' Per il tempo libero e il paesaggio, si distingue '+greenName+'.';
- paragraphs.push('Ecco la fotografia concreta della vita urbana: '+context+' '+(stats.quality<45?'È difficile parlare di una città comoda quando restano tanti bisogni elementari scoperti.':stats.quality<75?'I progressi sono evidenti, ma l’equilibrio fra servizi, commercio e accessibilità resta decisivo.':'La qualità delle dotazioni è incoraggiante, ma mantenerle efficienti sarà la vera prova nel tempo.'));
- return {headline,paragraphs:paragraphs.slice(0,4),day};
+ // L'esempio di vita concreta non inventa interviste, traffico o affluenze.
+ const details=[];
+ if(shop)details.push('per gli acquisti c’è «'+shop+'»');
+ if(service)details.push('fra i servizi compare «'+service+'»');
+ if(road)details.push('la rete viaria comprende «'+road+'»');
+ if(workplace)details.push('sul versante economico è presente «'+workplace+'»');
+ if(green)details.push('lo spazio verde include «'+green+'»');
+ if(details.length)paragraphs.push('Per capire la vita di tutti i giorni basta guardare esempi precisi: '+details.slice(0,3).join('; ')+'. '+(shortage.length?'Restano lacune importanti: '+shortage.slice(0,2).join(' e ')+'.':'La presenza di queste strutture è un punto di partenza; non basta da sola a dimostrare che ogni quartiere sia ben servito.'));
+ else paragraphs.push('Per ora mancano luoghi concreti a cui appoggiare una vita quotidiana organizzata: '+(shortage.length?shortage.join(', '):'le dotazioni restano insufficienti')+'.');
+ const closing=main?.kind==='ruin'||main?.kind==='damage'?
+  'Il punto non è l’allarme in sé, ma ciò che resta utilizzabile domani: una città credibile deve saper conservare le proprie strutture, non soltanto inaugurarne di nuove.':
+  main?.kind==='repair'?'La ricostruzione dà risultati misurabili, ma il successo si giudicherà dalla tenuta delle strutture nei giorni successivi.':
+  main?.kind==='opening'||main?.kind==='redevelopment'?'La novità è reale. Resta da capire se si trasformerà in un vantaggio quotidiano per chi abita e lavora qui, oppure in un elemento isolato.':
+  'La normalità è un banco di prova severo: ciò che funziona conta, ma anche le assenze raccontano come si vive in città.';
+ if(paragraphs.length>=4)paragraphs[3]+=' '+closing;else paragraphs.push(closing);
+ return {headline,paragraphs:paragraphs.slice(0,4),day,tone,spotlight:main?{kind:main.kind,name:main.name,score:editorialWeight(main,stats)}:null};
 }
 
 function cityPressPublish(day){
@@ -537,20 +615,25 @@ function clampQuantity(v){return Math.min(100,Math.max(1,Math.floor(Number(v)||1
 // Priorità urbane: scelta deterministica, senza sorteggi e senza creare elementi gratis.
 // Un premio automatico può appartenere a una categoria diversa da quella del fronte
 // quando l'equilibrio cittadino lo richiede (ad esempio, una via d'accesso alle case).
-function cityNeedReward(requestedCat){
- const all=state.assets.filter(a=>a.condition!=='ruined');
+function cityNeedReward(requestedCat,assets=state.assets){
+ const all=assets.filter(a=>a.condition!=='ruined');
  const n=all.length;
  const byName=name=>all.filter(a=>a.name===name).length;
  const count=cat=>all.filter(a=>a.cat===cat&&!(cat==='social'&&a.kind==='road')).length;
- const roadCount=all.filter(a=>a.cat==='social'&&a.kind==='road'&&segmentFamily(a)!=='rail').length;
- const nonRoad=all.filter(a=>!isLineSegment(a)&&a.kind!=='road'&&a.kind!=='water').length;
+ const roadCount=all.filter(a=>segmentFamily(a)==='road').length;
+ // Ogni strada è un premio conquistato: dimensioniamo la rete sugli edifici
+ // effettivi, non sui rilievi e sugli alberi, che non richiedono un accesso carrabile.
+ const nonRoad=all.filter(a=>!isLineSegment(a)&&!['natural','mountain','water','vehicle'].includes(a.kind)).length;
+ const workplaces=all.filter(a=>Number(a.jobs)>0&&!['road','water','natural','mountain'].includes(a.kind)).length;
+ const roadTarget=Math.max(1,Math.ceil((nonRoad+Math.min(3,Math.ceil(workplaces/2)))/3));
  const has=key=>Object.values(CATALOG).flat().find(a=>a.name===key)||null;
  const select=name=>has(name);
  if(n===0)return select('Ufficio');
- if(nonRoad>0&&roadCount<Math.max(1,Math.ceil((nonRoad+Math.max(0,getHousingPlan().length))/3)))return select('Via');
+ if(nonRoad>0&&roadCount<roadTarget)return select('Via');
  if(count('work')===0)return select('Ufficio');
  if(count('services')===0)return select('Ambulatorio');
  if(count('home')===0)return select('Alimentari');
+ if(n>=6&&count('health')===0)return select('Giardino');
  if(n>=5&&byName('Farmacia')===0)return select('Farmacia');
  if(n>=7&&byName('Asilo nido')===0)return select('Asilo nido');
  if(n>=9&&byName('Scuola primaria')===0)return select('Scuola primaria');
@@ -559,22 +642,90 @@ function cityNeedReward(requestedCat){
  if(n>=19&&byName('Caserma dei pompieri')===0)return select('Caserma dei pompieri');
  if(n>=25&&byName('Ospedale')===0)return select('Ospedale');
  if(n>=30&&byName('Stazione ferroviaria')===0)return select('Stazione ferroviaria');
+ if(n>=32&&byName('Stazione ferroviaria')>0&&all.filter(a=>segmentFamily(a)==='rail').length<Math.max(1,Math.ceil((n-30)/12)))return select('Ferrovia');
  const options=(CATALOG[requestedCat]||CATALOG.work).filter(x=>x.kind!=='water'||x.name!=='Mare');
  // Scegli attrezzature proporzionate alla scala urbana. Mai stadi nella prima fase.
  const maxTier=n<10?18:n<22?45:n<45?85:999;
- const feasible=options.filter(x=>(x.min||0)<=maxTier) .filter(x=>!(x.kind==='road'&&roadCount>Math.max(1,Math.ceil((nonRoad+getHousingPlan().length)/3))));
+ const feasible=options.filter(x=>(x.min||0)<=maxTier) .filter(x=>!(x.kind==='road'&&roadCount>=roadTarget));
  const pool=feasible.length?feasible:options;
  const rank=a=>{
   const own=all.filter(x=>x.key===a.key).length;
-  const essential= a.kind==='office'&&count('work')<3?-8:a.kind==='natural'&&count('health')<2?-6:0;
+  const essential=(a.kind==='office'&&count('work')<3?-8:0)+({'Albero lungo la via':-14,'Parco giochi':-10,'Orto':-7,'Giardino':-11}[a.name]||0);
   return own*18+(a.min||0)/15+essential;
  };
  return [...pool].sort((a,b)=>rank(a)-rank(b)||a.key.localeCompare(b.key))[0]||null;
 }
+// REGINA 7.2 — Una conquista vale sempre una singola unità; solo le sue
+// caratteristiche possono essere ripianificate. I premi scelti esplicitamente
+// e le personalizzazioni manuali restano intoccabili.
+function migrateAutoRewardProvenance(){
+ const groups=new Map();
+ for(const a of state.assets){
+  if(a.autoManaged!==undefined)continue;
+  const owner=a.goalBonus?getFront(a.sourceFront):state.tasks.find(t=>t.id===a.sourceTask);
+  if(!owner){a.autoManaged=false;continue;}
+  const g=(a.goalBonus?'front:':'task:')+owner.id;
+  if(!groups.has(g))groups.set(g,{owner,items:[]});
+  groups.get(g).items.push(a);
+ }
+ for(const {owner,items} of groups.values()){
+  const extras=new Map();
+  for(const r of owner.extraRewards||[]){const k=r.cat+'::'+r.key;extras.set(k,(extras.get(k)||0)+clampQuantity(r.qty));}
+  // In una vecchia versione i bonus avevano conservato la loro tipologia.
+  // Non scambiarli erroneamente per un premio automatico.
+  for(const a of items){
+   const k=a.cat+'::'+a.key,remaining=extras.get(k)||0;
+   if(remaining>0){extras.set(k,remaining-1);a.autoManaged=false;a.rewardOriginCat=a.cat;a.rewardOriginKey=a.key;}
+  }
+  for(const a of items){
+   if(a.autoManaged!==undefined)continue;
+   a.autoManaged=owner.rewardAuto===true;
+   if(a.autoManaged){const cat=a.goalBonus?owner.cat:(getFront(owner.frontId)?.cat||a.cat);a.rewardOriginCat=cat;a.rewardOriginKey=owner.rewardKey;}
+   else{a.rewardOriginCat=a.cat;a.rewardOriginKey=a.key;}
+  }
+ }
+}
+function isReplannableReward(a){
+ const owner=a?.goalBonus?getFront(a?.sourceFront):state.tasks.find(t=>t.id===a?.sourceTask);
+ if(!owner||owner.rewardAuto!==true)return false;
+ return a?.autoManaged===true&&a.manualCatalog!==true&&a.manualPosition!==true&&a.manualRotation!==true&&
+   normalizeRotation(a.rotation)===0&&
+   !Number(a.damageLevel)&&a.condition!=='ruined'&&
+   !(a.archStyle&&a.archStyle!=='auto')&&!a.archForm;
+}
+function replanEarnedRewards(day=localDate(new Date())){
+ if(state.settings.smartRewards===false)return {converted:0,roads:0};
+ migrateAutoRewardProvenance();
+ const candidates=state.assets.filter(isReplannableReward).sort((a,b)=>
+  String(a.createdAt||'').localeCompare(String(b.createdAt||''))||String(a.id).localeCompare(String(b.id)));
+ const candidateIds=new Set(candidates.map(a=>a.id));
+ const projected=state.assets.filter(a=>!candidateIds.has(a.id)).map(a=>({...a}));
+ const decisions=[];
+ for(const a of candidates){
+  const origin=a.rewardOriginCat||getFront(a.sourceFront)?.cat||a.cat;
+  const proto=cityNeedReward(origin,projected)||rewardAsset(a.cat,a.key);
+  if(!proto)continue;
+  decisions.push({a,proto});
+  projected.push({...a,cat:proto.cat,key:proto.key,name:proto.name,kind:proto.kind,jobs:proto.jobs});
+ }
+ let converted=0,roads=0;
+ for(const {a,proto} of decisions){
+  if(a.cat===proto.cat&&a.key===proto.key)continue;
+  const before=a.stored?null:getStats(),oldName=a.name;
+  const oldFamily=segmentFamily(a);
+  Object.assign(a,{cat:proto.cat,key:proto.key,name:proto.name,icon:proto.icon,kind:proto.kind,jobs:proto.jobs});
+  if(oldFamily!==segmentFamily(a)||a.autoForm){delete a.autoForm;delete a.segmentVariant;a.segmentVariant='straight';a.rotation=0;}
+  if(!a.stored)cityPressRecord('redevelopment',a,before,day,oldName);
+  converted++;
+  if(segmentFamily(a)==='road')roads++;
+ }
+ return {converted,roads};
+}
+
 function effectiveReward(cat,key,sourceTask,sourceFront,goalBonus,rewardGroup,allowSmart=true){
  const t=sourceTask?state.tasks.find(t=>t.id===sourceTask):null;
  const f=getFront(sourceFront);
- const automatic=allowSmart&&!rewardGroup&&state.settings.smartRewards!==false&&(t?t.rewardAuto===true:goalBonus&&f?.rewardAuto===true);
+ const automatic=allowSmart&&state.settings.smartRewards!==false&&(t?t.rewardAuto===true:goalBonus&&f?.rewardAuto===true);
  if(!automatic)return rewardAsset(cat,key);
  return cityNeedReward(cat)||rewardAsset(cat,key);
 }
@@ -602,7 +753,9 @@ function grantRewards(cat,key,qty,sourceFront,sourceTask=null,goalBonus=false,re
   const buildingKind=buildingGroup({kind:proto.kind,cat:chosenCat,name:proto.name});
   const formIndex=state.assets.filter(a=>buildingGroup(a)===buildingKind).length;
   const autoForm=buildingKind?availableBuildingForms(buildingKind)[formIndex%availableBuildingForms(buildingKind).length]:null;
-  const asset={id:uid('a'),key:proto.key,cat:chosenCat,name:proto.name,icon:proto.icon,kind:proto.kind,jobs:proto.jobs,sourceTask,sourceFront,goalBonus,rewardGroup,stored:true,layer:null,createdAt:new Date().toISOString(),slot:nextPlot(chosenCat),rotation:0,segmentVariant:'straight',...(autoForm?{autoForm}:{})};
+  const t=sourceTask?state.tasks.find(x=>x.id===sourceTask):null,f=getFront(sourceFront);
+  const autoManaged=allowSmart&&(t?.rewardAuto===true||goalBonus&&f?.rewardAuto===true);
+  const asset={id:uid('a'),key:proto.key,cat:chosenCat,name:proto.name,icon:proto.icon,kind:proto.kind,jobs:proto.jobs,sourceTask,sourceFront,goalBonus,rewardGroup,autoManaged,rewardOriginCat:cat,rewardOriginKey:key,stored:true,layer:null,createdAt:new Date().toISOString(),slot:nextPlot(chosenCat),rotation:0,segmentVariant:'straight',...(autoForm?{autoForm}:{})};
   state.assets.push(asset);created.push(asset.name);
  }
  return created;
@@ -623,8 +776,8 @@ function reconcilePartialGroup(task){const group=partialRewardGroup(task);const 
   v.total+=r.qty*f;v.sourceTask=t.id;goals.set(k,v);
  }}
  const existing=state.assets.filter(a=>a.rewardGroup===group);
- const keys=new Set([...goals.keys(),...existing.map(a=>a.cat+'::'+a.key)]);
- for(const k of keys){const goal=goals.get(k),owned=existing.filter(a=>a.cat+'::'+a.key===k);const target=goal?Math.floor(goal.total+1e-7):0;
+ const keys=new Set([...goals.keys(),...existing.map(a=>(a.rewardOriginCat||a.cat)+'::'+(a.rewardOriginKey||a.key))]);
+ for(const k of keys){const goal=goals.get(k),owned=existing.filter(a=>(a.rewardOriginCat||a.cat)+'::'+(a.rewardOriginKey||a.key)===k);const target=goal?Math.floor(goal.total+1e-7):0;
   if(owned.length>target){const remove=new Set(owned.slice(target).map(a=>a.id));state.assets=state.assets.filter(a=>!remove.has(a.id));}
   if(goal&&owned.length<target)grantRewards(goal.cat,goal.key,target-owned.length,goal.frontId,goal.sourceTask,false,group);
  }
@@ -1039,7 +1192,7 @@ function renderFronts(){const options=`<button class="chip ${goalFilter==='all'?
  const onceTasks=tasks.filter(t=>!t.repeat||t.repeat==='none');
  return `<div class="goal-card"><div class="goal-top"><span class="badge" style="background:${c.color}1b;color:#344459">${c.icon} ${c.name}</span>${f.awarded?'<span class="badge green">★ Conquistato</span>':f.failed?'<span class="badge red">✕ Fronte fallito</span>':`<span class="badge">${esc(rewardSummary(f.cat,f.rewardKey,f.rewardQty))}</span>`}</div><h3 class="goal-title">${esc(f.title)}</h3><div class="goal-desc">${f.deadline?'Traguardo: '+fmtDate(f.deadline):'Traguardo senza scadenza'}${failed?' · '+failed+' attività fallite':''}</div><div class="front-metrics">${onceInfo}${recurringInfo||'<span>Nessuna ricorrenza programmata</span>'}</div><div class="progress" style="margin-top:14px" role="progressbar" aria-label="Avanzamento del fronte nel mese corrente" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div style="width:${pct}%"></div></div><div class="goal-footer"><b class="small">${pct}% ${r.series.length?'avanzamento del mese':'completato'}</b><div class="actions"><button class="btn tiny" data-action="add-for-front" data-id="${f.id}">＋ Tappa</button><button class="btn tiny" data-expand="${f.id}">${goalExpanded===f.id?'Chiudi':'Dettagli'}</button></div></div>${goalExpanded===f.id?`<div class="goal-expanded"><div class="actions"><button class="btn tiny" data-action="edit-front" data-id="${f.id}">✎ Modifica fronte</button>${f.failed?`<button class="btn tiny mint" data-action="retry-front" data-id="${f.id}">↻ Riprova fronte</button>`:`<button class="btn tiny danger" data-action="fail-front" data-id="${f.id}">✕ Fronte fallito</button>`}<button class="btn tiny danger" data-action="delete-front" data-id="${f.id}">Elimina</button></div>${rowDetails}<div class="goal-mini-list">${onceTasks.length?onceTasks.sort(taskSort).map(t=>`<div class="goal-mini"><span>${t.status==='done'?'✅':t.status==='failed'?'❌':'⬜'}</span><b>${esc(t.title)}</b><span>${t.due?fmtDate(taskDueDay(t)):'Senza data'}</span><button class="btn tiny" data-action="plan-task" data-id="${t.id}" title="Aggiungi o cambia data, ora e durata">📅 Pianifica</button></div>`).join(''):'<p class="muted small">Nessuna tappa una tantum.</p>'}</div>${r.series.length?`<p class="form-help">Per impostare data e orario di una singola ricorrenza, apri il giorno nella sezione Oggi o Mese e usa 📅 Pianifica.</p>`:''}</div>`:''}</div>`;}).join('')}</div>`:emptyHtml('Nessun fronte in questa sezione','I fronti raccolgono le tappe che conducono a un obiettivo finale.','new-front','Crea un fronte','🎯')}<div class="section" style="margin-top:18px"><h2>Come viene calcolata la percentuale?</h2><p class="muted small">Le attività <strong>ricorrenti</strong> sono calcolate soltanto sulle date previste nel <strong>mese corrente</strong>, comprese quelle ancora da svolgere. Il mese successivo ripartono da 0%, senza cancellare le conquiste precedenti. Le tappe non ricorrenti mantengono invece il loro avanzamento complessivo. Nelle attività miste o progressive si tiene conto della percentuale effettivamente svolta. Per ogni fronte i due contributi sono mostrati separatamente.</p><p class="muted small">Il premio finale resta legato alle tappe non ricorrenti; le ricorrenze assegnano i premi a ogni esecuzione.</p></div>`;}
 function renderInventory(){const stored=state.assets.filter(a=>a.stored),placed=state.assets.filter(a=>!a.stored),groups=new Map();for(const a of stored){const key=a.cat+':'+a.key;const x=groups.get(key)||{a,items:[]};x.items.push(a);groups.set(key,x);}
- return header('Magazzino delle conquiste','Le ricompense si accumulano qui fino alla chiusura della giornata; REGINA le inserisce automaticamente nella città. Puoi comunque personalizzare tutto a mano.')+
+ return header('Magazzino delle conquiste','Le conquiste vengono collocate e, se automatiche, adattate ai bisogni urbani alla chiusura della giornata. I premi scelti a mano sono intoccabili.')+
  `<div class="section"><h2>🎁 ${stored.length} elementi in attesa di essere collocati</h2><p class="muted small">Le strutture si inseriranno automaticamente nella città alla mezzanotte o quando chiudi la giornata. Puoi anticipare la sistemazione dal pulsante qui sotto.</p>
  <div class="actions"><button class="btn mint" data-action="place-all" ${stored.length?'':'disabled'}>🏗️ Colloca ora (senza chiudere la giornata)</button><button class="btn" data-view="city">Apri la città</button></div>
  ${groups.size?`<div class="card-grid" style="margin-top:15px">${[...groups.values()].map(({a,items})=>`<div class="section"><h3 style="margin-top:0">${esc(a.icon)} ${esc(a.name)}</h3><p class="muted small">${esc(getCat(a.cat).short)} · ${items.length} ${items.length===1?'pezzo':'pezzi'} disponibili</p><div class="actions"><button class="btn tiny mint" data-action="place-manual" data-id="${a.id}">📍 Scegli il punto</button><button class="btn tiny" data-action="place-auto" data-id="${a.id}">Colloca 1</button><button class="btn tiny" data-action="place-group" data-id="${a.id}">Colloca tutti</button></div></div>`).join('')}</div>`:emptyHtml('Il magazzino è vuoto','Completa un obiettivo e la città incorporerà la nuova struttura al termine della giornata.','new-task','Aggiungi attività','🎁')}</div>
@@ -1061,7 +1214,7 @@ function renderSettings(){
  const cp=checkpointInfo();
  return header('Impostazioni','Salva, recupera, annulla le modifiche oppure ricomincia in sicurezza.',false)+
  `<div class="settings-grid"><div class="section"><h2>🏙️ La tua città</h2><div class="form-row"><label for="cityName">Nome della città</label><input id="cityName" maxlength="55" value="${esc(state.settings.cityName)}"></div><button class="btn primary" data-action="save-settings">Salva nome e preferenze</button><p class="form-help">Tutti gli elementi conquistati possono essere spostati e ruotati; i nomi appaiono soltanto alla selezione.</p></div>
- <div class="section"><h2>🤖 Urbanistica automatica</h2><p class="muted small">Le ricompense automatiche seguono le necessità della città: prima lavoro, collegamenti, assistenza, negozi e scuole; poi cultura e grandi opere. Le costruzioni vengono disposte automaticamente vicino al nucleo abitato alla chiusura di ogni giornata. Puoi comunque spostare e ruotare ogni elemento e scegliere i tuoi premi manualmente.</p><div class="actions"><button class="btn mint" data-action="auto-city-now">🏙️ Organizza la città ora</button><button class="btn" data-action="auto-city-switch">${state.settings.autoCity===false?'Attiva urbanistica automatica':'Disattiva urbanistica automatica'}</button></div></div><div class="section"><h2>⏳ Scadenze, arretrati, danni e crolli</h2><div class="hint warning"><strong>Mezzanotte = voto definitivo, non perdita degli impegni.</strong> Le attività non quotidiane incomplete vengono riportate nei giorni seguenti e continuano a pesare sul voto fino al completamento. Le routine giornaliere si archiviano normalmente. La stessa attività arretrata non provoca nuovi danni edilizi ogni giorno. Puoi inoltre definire una scadenza finale facoltativa per ogni tappa.</div><div class="form-row"><label>Intensità delle conseguenze</label><select id="penaltyIntensity"><option value="gradual" ${state.settings.penaltyIntensity!=='severe'?'selected':''}>Progressiva: danno → danno grave → distruzione</option><option value="severe" ${state.settings.penaltyIntensity==='severe'?'selected':''}>Severa: rovina più rapidamente</option></select></div><div class="form-row"><label>Conseguenze edilizie</label><select id="failureMode"><option value="one" ${state.settings.failureMode!=='none'?'selected':''}>Edifici deteriorati e poi distrutti</option><option value="none" ${state.settings.failureMode==='none'?'selected':''}>Solo voto e notizia, senza danni agli edifici</option></select></div><button class="btn primary" data-action="save-settings">Salva preferenze</button><p class="form-help">La regola decorre dal ${esc(fmtDate(state.settings.deadlineStart))}, senza penalizzazioni retroattive precedenti all'installazione. Non riguarda le tappe senza data. Per riparare una struttura, selezionala e crea una nuova attività.</p></div>
+ <div class="section"><h2>🤖 Urbanistica automatica</h2><p class="muted small">REGINA sceglie le ricompense <strong>in base ai bisogni della città</strong>: prima luoghi di lavoro, strade di accesso, ambulatori, alimentari e scuole, poi servizi specialistici. Alla chiusura della giornata può <strong>riconvertire anche vecchie ricompense automatiche</strong> (senza aggiungere o cancellare pezzi) per completare i collegamenti e gli altri servizi mancanti. Non cambia strutture scelte manualmente, riposizionate a mano, bloccate, danneggiate o distrutte. Se vuoi conservarne una, selezionala sulla mappa e premi «🔒 Conserva questa struttura». Questa è una pianificazione semplificata, non una simulazione completa della viabilità.</p><div class="actions"><button class="btn mint" data-action="auto-city-now">🏙️ Ricalcola bisogni e organizza</button><button class="btn" data-action="auto-city-switch">${state.settings.autoCity===false?'Attiva urbanistica automatica':'Disattiva urbanistica automatica'}</button></div></div><div class="section"><h2>⏳ Scadenze, arretrati, danni e crolli</h2><div class="hint warning"><strong>Mezzanotte = voto definitivo, non perdita degli impegni.</strong> Le attività non quotidiane incomplete vengono riportate nei giorni seguenti e continuano a pesare sul voto fino al completamento. Le routine giornaliere si archiviano normalmente. La stessa attività arretrata non provoca nuovi danni edilizi ogni giorno. Puoi inoltre definire una scadenza finale facoltativa per ogni tappa.</div><div class="form-row"><label>Intensità delle conseguenze</label><select id="penaltyIntensity"><option value="gradual" ${state.settings.penaltyIntensity!=='severe'?'selected':''}>Progressiva: danno → danno grave → distruzione</option><option value="severe" ${state.settings.penaltyIntensity==='severe'?'selected':''}>Severa: rovina più rapidamente</option></select></div><div class="form-row"><label>Conseguenze edilizie</label><select id="failureMode"><option value="one" ${state.settings.failureMode!=='none'?'selected':''}>Edifici deteriorati e poi distrutti</option><option value="none" ${state.settings.failureMode==='none'?'selected':''}>Solo voto e notizia, senza danni agli edifici</option></select></div><button class="btn primary" data-action="save-settings">Salva preferenze</button><p class="form-help">La regola decorre dal ${esc(fmtDate(state.settings.deadlineStart))}, senza penalizzazioni retroattive precedenti all'installazione. Non riguarda le tappe senza data. Per riparare una struttura, selezionala e crea una nuova attività.</p></div>
  <div class="section"><h2>💾 Salvataggi e recupero</h2><div class="settings-security"><strong>✓ Salvataggio automatico attivo</strong><div class="settings-status" id="saveInfo">${lastSavedAt?'Ultimo salvataggio: '+esc(new Date(lastSavedAt).toLocaleString('it-IT')):'Ogni attività, edificio o preferenza salvata viene registrata localmente.'}</div><p class="form-help">Usa anche il backup JSON: il salvataggio del browser non si trasferisce da solo su altri dispositivi.</p></div>
  <div class="actions"><button class="btn primary" data-action="save-now">💾 Salva adesso</button><button class="btn mint" data-action="backup">↓ Esporta backup JSON</button></div>
  <div class="form-row"><label for="importFile">📂 Importa un backup precedente (file .json)</label><input class="import-input" type="file" id="importFile" accept=".json,application/json,text/plain" aria-describedby="importStatus"><p id="importStatus" class="import-status" role="status" aria-live="polite">Tocca «Scegli file» e seleziona il backup nei Download. Dopo la selezione REGINA chiederà conferma. Non caricare il file su GitHub.</p></div>
@@ -1102,7 +1255,7 @@ function rewardSelect(cat,selected='',autoSelected=false,query='',showAll=false)
 }
 function rewardFields(cat,key,qty,prefix='task',autoSelected=true){
  const selectId=prefix==='front'?'frontRewardSelect':'rewardSelect';
- return `<div class="reward-search"><label for="find-${prefix}">🔎 Cerca fra le strutture disponibili</label><div class="reward-search-row"><input type="search" id="find-${prefix}" data-reward-search="${prefix}" placeholder="Es. stadio, ponte, museo, ristorante…" autocomplete="off"><button type="button" class="btn tiny" data-action="rewards-all" data-prefix="${prefix}" aria-label="Mostra tutto il catalogo">Mostra tutte</button></div><small>${CATALOG[cat]?.length||0} strutture in questo fronte; puoi cercare per nome.</small></div><div class="form-two reward-choice"><div class="form-row"><label for="${selectId}">Che cosa conquisterai? *</label><select id="${selectId}" name="rewardKey" required>${rewardSelect(cat,key,autoSelected)}</select></div><div class="form-row"><label>Quanti pezzi / strutture? *</label><input type="number" name="rewardQty" min="1" max="100" step="1" required value="${clampQuantity(qty)}"></div></div><p class="form-help">✨ Di default REGINA propone un premio diverso per ogni attività del fronte. Puoi sostituirlo scegliendolo dal menu. Per le attività ricorrenti, se mantieni «Automatica», la tappa successiva riceverà una nuova proposta. Il premio di questa tappa è già deciso e non cambierà all'improvviso quando lo completi. Ogni unità è una struttura separata, spostabile e ruotabile a 360°.</p>`;
+ return `<div class="reward-search"><label for="find-${prefix}">🔎 Cerca fra le strutture disponibili</label><div class="reward-search-row"><input type="search" id="find-${prefix}" data-reward-search="${prefix}" placeholder="Es. stadio, ponte, museo, ristorante…" autocomplete="off"><button type="button" class="btn tiny" data-action="rewards-all" data-prefix="${prefix}" aria-label="Mostra tutto il catalogo">Mostra tutte</button></div><small>${CATALOG[cat]?.length||0} strutture in questo fronte; puoi cercare per nome.</small></div><div class="form-two reward-choice"><div class="form-row"><label for="${selectId}">Che cosa conquisterai? *</label><select id="${selectId}" name="rewardKey" required>${rewardSelect(cat,key,autoSelected)}</select></div><div class="form-row"><label>Quanti pezzi / strutture? *</label><input type="number" name="rewardQty" min="1" max="100" step="1" required value="${clampQuantity(qty)}"></div></div><p class="form-help">✨ Di default REGINA propone un premio diverso per ogni attività del fronte. Puoi sostituirlo scegliendolo dal menu. Per le attività ricorrenti, se mantieni «Automatica», la tappa successiva riceverà una nuova proposta. Con «Automatica», anche una ricompensa già conquistata può essere riconvertita alla chiusura della giornata, se la città ne ha più bisogno altrove; le ricompense scelte a mano non cambiano. Ogni unità è una struttura separata, spostabile e ruotabile a 360°.</p>`;
 }
 function extraRewardRow(r=null){const cat=CATALOG[r?.cat]?r.cat:'health',proto=CATALOG[cat];return `<div class="bonus-row" style="padding:10px;border:1px solid #dce7ea;border-radius:10px;margin:8px 0;display:grid;gap:8px">
  <div class="form-two"><div class="form-row"><label>Categoria</label><select name="bonusCat" data-bonus-category>${Object.entries(CATS).map(([id,c])=>`<option value="${id}" ${id===cat?'selected':''}>${c.icon} ${c.short}</option>`).join('')}</select></div><div class="form-row"><label>Quantità</label><input type="number" name="bonusQty" min="1" max="100" value="${clampQuantity(r?.qty||1)}"></div></div>
@@ -1465,51 +1618,86 @@ function getHousingPlan(){
  }
  return plan;
 }
-// Nucleo urbano compatto, con un'arteria a segmenti realmente guadagnati.
-// Le coordinate automatiche sono stabili e possono essere sovrascritte a mano.
+// REGINA 7.1.1 · Il nucleo urbano deve essere riconoscibile anche con poche conquiste.
+// Strade, binari, acqua, verde e edifici qui sono ESCLUSIVAMENTE elementi realmente conquistati.
+// Il planner riserva spazi per future vie ma NON inventa tratti stradali.
+const URBAN_CORE={x:720,y:730};
+const NEIGHBORHOOD_LOTS={
+ // Servizi e negozi affacciano sull'asse centrale. I primi lotti sono vicini alle case.
+ civic:[[585,618],[780,615],[950,618],[650,505],[1090,620],[980,500],[520,1085],[770,1075],[1030,1070]],
+ // Produzione a un'estremità del quartiere, non fra le abitazioni.
+ productive:[[1055,650],[1180,700],[1120,1010],[1230,880],[1150,510]],
+ // Verde pubblico, boschetti e impianti sportivi a bordo dell'abitato.
+ green:[[460,830],[1080,875],[455,970],[1020,465],[420,595],[1120,1050]],
+ // Monti e rilievi in un unico paesaggio periurbano, NON in fila tra gli edifici.
+ landscape:[[410,510],[470,435],[520,555],[380,610],[545,405],[355,445]],
+ // Parcheggi e mezzi vicini ai collegamenti reali.
+ transit:[[550,745],[880,745],[1050,745],[520,1020]],
+ // Acqua superficiale, evitando la fascia dove passano strade e abitazioni.
+ lake:[[365,915],[325,1040],[435,1060],[350,1150]]
+};
+function urbanLot(family,index){
+ const cells=NEIGHBORHOOD_LOTS[family]||NEIGHBORHOOD_LOTS.civic;
+ if(index<cells.length)return {x:cells[index][0],y:cells[index][1]};
+ // Le espansioni sono in piccoli settori contigui; non si sparpagliano su tutta la mappa.
+ // Ogni quartiere extra mantiene lo stesso disegno, verso est e poi verso sud.
+ const extra=index-cells.length,cluster=Math.floor(extra/cells.length),spot=cells[extra%cells.length];
+ const row=Math.floor(cluster/2)+1,side=cluster%2;
+ return {x:spot[0]+(side?320:-35),y:spot[1]+row*430};
+}
+function urbanFamily(a){
+ if(a.kind==='mountain')return 'landscape';
+ if(a.kind==='natural'||a.kind==='sport')return 'green';
+ if(a.kind==='vehicle')return 'transit';
+ if(a.kind==='water')return 'lake';
+ if(a.kind==='factory'||a.kind==='industrial')return 'productive';
+ return 'civic';
+}
 function cityAutoSlot(a,index,railIndex,roadIndex,waterIndex){
  const family=isSegmentType(a)?segmentFamily(a):null;
- if(family==='road'||family==='bike'){
-  const k=roadIndex;
-  return {x:710+k*100,y:635};
- }
- if(family==='rail'){
-  const k=railIndex,tile=Math.floor(k/10),i=k%10,q=tileXY(tile);
-  return {x:q.x*MAPW+400+i*100,y:q.y*FLOORH+1170};
- }
- if(family==='river'){
-  const k=waterIndex,tile=Math.floor(k/9),i=k%9,q=tileXY(tile);
-  return {x:q.x*MAPW+210+i*100,y:q.y*FLOORH+1100};
- }
- const k=index,tile=Math.floor(k/12),cell=k%12,q=tileXY(tile);
- const cols=[720,560,880,400,1040,1200],row=Math.floor(cell/6);
- return {x:q.x*MAPW+cols[cell%6],y:q.y*FLOORH+(row===0?390:215)};
+ if(family==='road')return {x:660+roadIndex*100,y:730};
+ if(family==='bike')return {x:660+roadIndex*100,y:1030};
+ if(family==='rail')return {x:660+railIndex*100,y:1170};
+ if(family==='river')return {x:270,y:610+waterIndex*100};
+ if(family==='lake'||family==='coast')return urbanLot('lake',waterIndex);
+ return urbanLot(urbanFamily(a),index);
 }
 function autoDevelopCity(day=localDate(new Date()),{force=false}={}){
- if(state.settings.autoCity===false&&!force)return {opened:0,moved:0};
- const before=getStats(),opening=state.assets.filter(a=>a.stored);
- for(const a of opening){a.stored=false;delete a.pos;a.manualPosition=false;}
- // Automaticamente riconfigura solo gli elementi non bloccati manualmente.
- const ordered=state.assets.filter(a=>!a.stored).sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||''))||String(a.id).localeCompare(String(b.id)));
- let rd=0,rl=0,rv=0,build=0,moved=0;
- for(const a of ordered){
-  const family=isSegmentType(a)?segmentFamily(a):'';
-  const pos=cityAutoSlot(a,build,rl,rd,rv);
-  if(family==='road'||family==='bike')rd++;
-  else if(family==='rail')rl++;
-  else if(family==='river')rv++;
-  else build++;
-  if(!a.manualPosition){
-   if(!a.pos||Math.abs(a.pos.x-pos.x)>1||Math.abs(a.pos.y-pos.y)>1){a.pos=pos;moved++;}
-   // Segmenti allineati, senza rotazioni casuali (ferrovie separate dal traffico stradale).
-   if(isLineSegment(a))a.rotation=0;
-  }
+ if(state.settings.autoCity===false&&!force)return {opened:0,moved:0,converted:0,roads:0};
+ const replanned=replanEarnedRewards(day);
+ const opening=state.assets.filter(a=>a.stored);
+ for(const a of opening){
+  const beforeOpening=getStats();
+  a.stored=false;delete a.pos;a.manualPosition=false;
+  cityPressRecord('opening',a,beforeOpening,day);
  }
- // Notizie soltanto per aperture effettivamente visibili dopo la chiusura.
- // Per statistiche demografiche contiamo l'effetto dell'intero lotto, una volta.
- for(const [i,a] of opening.entries())cityPressRecord('opening',a,i===0?before:getStats(),day);
+ // Gli indici sono indipendenti per famiglia: un albero non sposta una farmacia,
+ // una nuova farmacia non fa traslocare tutte le case.
+ const ordered=state.assets.filter(a=>!a.stored)
+   .sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||''))||String(a.id).localeCompare(String(b.id)));
+ const counters={civic:0,productive:0,green:0,landscape:0,transit:0,lake:0,road:0,bike:0,rail:0,river:0};
+ let moved=0;
+ for(const a of ordered){
+  const segment=isSegmentType(a)?segmentFamily(a):null;
+  const family=segment||urbanFamily(a);
+  const n=counters[family]||0;counters[family]=n+1;
+  // Le posizioni già modificate a mano restano protette, salvo «Rigenera».
+  if(a.manualPosition)continue;
+  let pos;
+  if(family==='road')pos={x:660+n*100,y:730};
+  else if(family==='bike')pos={x:660+n*100,y:1030};
+  else if(family==='rail')pos={x:660+n*100,y:1170};
+  else if(family==='river')pos={x:270,y:620+n*100};
+  else pos=urbanLot(family,n);
+  if(!a.pos||Math.abs(a.pos.x-pos.x)>1||Math.abs(a.pos.y-pos.y)>1){a.pos=pos;moved++;}
+  // I tratti conquistati dello stesso percorso si toccano esattamente.
+  // I fiumi scorrono verticalmente a ovest, lontano dalle vie centrali.
+  if(isLineSegment(a))a.rotation=family==='river'?90:0;
+ }
+ // Gli alloggi sono disposti in lotti residenziali, MAI fuori dal quartiere.
+ // Nessuna casa viene generata qui: il loro numero è determinato da getHousingPlan().
  cityInited=false;
- return {opened:opening.length,moved};
+ return {opened:opening.length,moved,...replanned};
 }
 
 function floorCount(){
@@ -1518,7 +1706,7 @@ function floorCount(){
  const roads=placed.filter(a=>segmentFamily(a)==='road'||segmentFamily(a)==='bike').length;
  const rails=placed.filter(a=>segmentFamily(a)==='rail').length;
  const rivers=placed.filter(a=>segmentFamily(a)==='river').length;
- const required=Math.max(1,Math.ceil(nonroad/12),Math.ceil((roads?710+(roads-1)*100+225:0)/MAPW),Math.ceil(rails/10),Math.ceil(rivers/9),Math.ceil(getHousingPlan().length/HOMES_PER_TILE));
+ const required=Math.max(1,Math.ceil(nonroad/24),Math.ceil((roads?660+(roads-1)*100+230:0)/MAPW),Math.ceil((rails?660+(rails-1)*100+230:0)/MAPW),Math.ceil((rivers?620+(rivers-1)*100+150:0)/FLOORH),Math.ceil(getHousingPlan().length/36));
  const allPos=[...placed.map(a=>a.pos),...Object.values(state.homePositions||{})].filter(x=>x&&Number.isFinite(+x.x)&&Number.isFinite(+x.y));
  const far=allPos.length?Math.max(...allPos.map(p=>Math.max(Math.floor(p.x/MAPW),Math.floor(p.y/FLOORH))+1)):1;
  return Math.max(required,far);
@@ -1531,9 +1719,11 @@ function tileXY(index){if(index<=0)return{x:0,y:0};const layer=Math.ceil(Math.sq
 function autoPlotPosition(a){const z=ZONES[a.cat]||ZONES.work,size=z.cols*z.rows,slot=Math.max(0,a.slot||0),idx=slot%size,fl=Math.floor(slot/size),tile=tileXY(fl);const col=idx%z.cols,row=Math.floor(idx/z.cols);return{x:z.x+tile.x*MAPW+col*z.dx+(row%2)*4,y:z.y+tile.y*FLOORH+row*z.dy};}
 function plotPosition(a){return a.pos&&Number.isFinite(+a.pos.x)&&Number.isFinite(+a.pos.y)?{x:+a.pos.x,y:+a.pos.y}:autoPlotPosition(a);}
 function autoHomePos(i){
- const tile=tileXY(Math.floor(i/HOMES_PER_TILE)),cell=i%HOMES_PER_TILE;
- const col=cell%6,row=Math.floor(cell/6),cols=[730,550,910,370,1090,1270];
- return {x:tile.x*MAPW+cols[col],y:tile.y*FLOORH+765+row*148};
+ // Piccolo nucleo di case al di sotto dei tratti stradali realmente conquistati.
+ // A differenza della vecchia disposizione, i primi abitanti non nascono
+ // in una fila isolata e distante dalle strutture commerciali.
+ const col=i%5,row=Math.floor(i/5);
+ return {x:540+col*112,y:850+row*118};
 }
 function homePos(i){const p=state.homePositions?.[i];return p&&Number.isFinite(+p.x)&&Number.isFinite(+p.y)?{x:+p.x,y:+p.y}:autoHomePos(i);}
 // Terreno neutro: NON è un prato, un bosco o un campo già conquistato.
@@ -2068,7 +2258,7 @@ function rotationControls(id,degrees,home=false){const v=normalizeRotation(degre
 function applyRotation(kind,id,value){const deg=normalizeRotation(value);
  if(kind==='asset'){
   const a=state.assets.find(a=>a.id===id);if(!a)return;
-  a.rotation=deg;
+  a.rotation=deg;a.manualRotation=true;
   const g=[...document.querySelectorAll('#cityMap [data-asset-id]')].find(el=>el.dataset.assetId===id)?.querySelector('.asset-rotatable');
   if(g){const {x,y}=plotPosition(a);if(architecturalAsset(a)){g.innerHTML=isoBuilding(a,x,y,deg);g.setAttribute('transform',rotationTransform(x,y,0,assetScale(a)));}
   else g.setAttribute('transform',rotationTransform(x,y,deg,isSegmentType(a)?1:assetScale(a)));}
@@ -2590,7 +2780,7 @@ function renderCity(){const s=getStats(),naturalCount=state.assets.filter(a=>!a.
  for(const item of upright)content+=item.a?svgAsset(item.a):svgSingleHome(item.home);
  return header('La mia città','Prato iniziale gratuito; ogni struttura e ogni altro elemento naturale si conquista. Muovi con un dito, zooma con due.')+
  `<div class="city-hero"><div><small>CITTÀ A CRESCITA AUTOMATICA</small><h2>${esc(state.settings.cityName)}</h2><p>${state.assets.filter(a=>!a.stored).length} elementi in città · ${state.assets.filter(a=>a.stored).length} in magazzino · ${naturalCount} elementi naturali · ${s.jobs} posti di lavoro · ${s.pop} abitanti</p><p class="catalog-total">${Object.values(CATALOG).reduce((n,a)=>n+a.length,0)} tipologie sbloccabili nei tuoi sei fronti</p></div><span style="font-size:40px">♛</span></div>`+
- `<div class="actions" style="margin-bottom:12px"><button class="btn mint" data-action="auto-city-now">🏙️ Integra le conquiste</button><button class="btn" data-action="auto-city-regenerate">🧭 Rigenera tutta la disposizione</button><span class="muted small" style="align-self:center">La costa è sempre a est · modifica manuale ancora disponibile</span><button class="btn" data-action="show-coast">🌊 Guarda il mare →</button></div>${placingAssetId?`<div class="hint" style="margin-bottom:12px"><strong>📍 Tocca un punto del prato per collocare la ricompensa selezionata.</strong> <button class="btn tiny" data-action="cancel-place">Annulla</button></div>`:''}<div class="city-shell ${cityFullScreen?'city-immersive':''}"><svg id="cityMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${cityW()} ${cityH()}" role="img" aria-label="Città interattiva con costruzioni pseudo-isometriche, spostamento e rotazione 360 gradi" preserveAspectRatio="xMidYMid meet"><defs><filter id="soilShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#2b513d" flood-opacity=".27"/></filter><style>.map-asset>g{filter:url(#soilShadow)}.map-asset,.home-asset{cursor:pointer;outline:none}.map-asset:hover,.map-asset:focus{filter:brightness(1.12) drop-shadow(0 0 5px #fff6ca)}.home-asset:hover{filter:brightness(1.12)}</style></defs>${content}<g id="snapGuide" pointer-events="none"></g></svg><div class="city-tools"><button data-zoom="in" title="Ingrandisci">＋</button><button data-zoom="out" title="Rimpicciolisci">－</button><button data-zoom="reset" title="Panoramica">⌖</button><button data-zoom="expand" title="Espandi il territorio">⊞</button><button data-zoom="move" class="${moveMode?'move-active':''}" title="Sposta edifici, natura e abitazioni">✥</button><button data-zoom="rotate" title="Ruota l’elemento selezionato di 15°; scegli un elemento per aprire il controllo rotazione" aria-label="Ruota elemento selezionato">↻</button><button data-zoom="magnet" class="${state.settings.snapSegments!==false?'move-active':''}" title="Magnete: aggancia automaticamente le estremità e i bordi dei pezzi mentre li sposti" aria-label="Attiva o disattiva il magnete">🧲</button><button data-zoom="fullscreen" title="Mappa a schermo intero">${cityFullScreen?'✕':'⛶'}</button></div><div id="cityRotateDock" class="city-rotate-dock" role="group" aria-label="Ruota l’elemento selezionato"></div><div class="city-legend">${moveMode?"✥ MODIFICA: un dito sugli edifici li sposta · due dita zoomano · 🧲 "+(state.settings.snapSegments!==false?"attivi":"disattivi"):"☝️ Trascina per esplorare · 🤏 Zoom con due dita · ✥ sposta elementi"}</div></div>`+
+ `<div class="actions" style="margin-bottom:12px"><button class="btn mint" data-action="auto-city-now">🏙️ Integra le conquiste</button><button class="btn" data-action="auto-city-regenerate">🧭 Ricomponi il quartiere</button><span class="muted small" style="align-self:center">La costa è sempre a est · modifica manuale ancora disponibile</span><button class="btn" data-action="show-coast">🌊 Guarda il mare →</button></div>${placingAssetId?`<div class="hint" style="margin-bottom:12px"><strong>📍 Tocca un punto del prato per collocare la ricompensa selezionata.</strong> <button class="btn tiny" data-action="cancel-place">Annulla</button></div>`:''}<div class="city-shell ${cityFullScreen?'city-immersive':''}"><svg id="cityMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${cityW()} ${cityH()}" role="img" aria-label="Città interattiva con costruzioni pseudo-isometriche, spostamento e rotazione 360 gradi" preserveAspectRatio="xMidYMid meet"><defs><filter id="soilShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#2b513d" flood-opacity=".27"/></filter><style>.map-asset>g{filter:url(#soilShadow)}.map-asset,.home-asset{cursor:pointer;outline:none}.map-asset:hover,.map-asset:focus{filter:brightness(1.12) drop-shadow(0 0 5px #fff6ca)}.home-asset:hover{filter:brightness(1.12)}</style></defs>${content}<g id="snapGuide" pointer-events="none"></g></svg><div class="city-tools"><button data-zoom="in" title="Ingrandisci">＋</button><button data-zoom="out" title="Rimpicciolisci">－</button><button data-zoom="reset" title="Panoramica">⌖</button><button data-zoom="expand" title="Espandi il territorio">⊞</button><button data-zoom="move" class="${moveMode?'move-active':''}" title="Sposta edifici, natura e abitazioni">✥</button><button data-zoom="rotate" title="Ruota l’elemento selezionato di 15°; scegli un elemento per aprire il controllo rotazione" aria-label="Ruota elemento selezionato">↻</button><button data-zoom="magnet" class="${state.settings.snapSegments!==false?'move-active':''}" title="Magnete: aggancia automaticamente le estremità e i bordi dei pezzi mentre li sposti" aria-label="Attiva o disattiva il magnete">🧲</button><button data-zoom="fullscreen" title="Mappa a schermo intero">${cityFullScreen?'✕':'⛶'}</button></div><div id="cityRotateDock" class="city-rotate-dock" role="group" aria-label="Ruota l’elemento selezionato"></div><div class="city-legend">${moveMode?"✥ MODIFICA: un dito sugli edifici li sposta · due dita zoomano · 🧲 "+(state.settings.snapSegments!==false?"attivi":"disattivi"):"☝️ Trascina per esplorare · 🤏 Zoom con due dita · ✥ sposta elementi"}</div></div>`+
  `<div id="cityInspector" class="city-inspector"><span style="font-size:27px">🏡</span><div><strong>${state.assets.some(a=>!a.stored)?'Esplora le conquiste':'Territorio vuoto da conquistare'}</strong><p>${state.assets.some(a=>!a.stored)?'Gli elementi conquistati sono posizionati automaticamente; la costa a est è parte del paesaggio. Tutti si possono personalizzare. Tocca un elemento per selezionarlo e ruotarlo.':'Il prato e il mare a est sono parte del paesaggio. Alberi, strade, colline e palazzi si conquistano. Completa gli obiettivi per creare il paesaggio.'}</p></div></div>`+
  `<div class="city-pop-card"><div><span>👥 RESIDENTI</span><strong>${s.pop.toLocaleString('it-IT')}</strong></div><div><span>💼 LAVORI</span><strong>${s.jobs.toLocaleString('it-IT')}</strong></div><div><span>🏘️ EDIFICI RESIDENZIALI</span><strong>${getHousingPlan().length}</strong></div></div>`+cityNewspaperHtml()+`<div class="city-kinds">${cats}</div>`+
  `<div class="hint" style="margin-bottom:15px"><strong>🌱 Tutto si conquista.</strong> Alberi, giardini, boschi, montagne, fiumi, laghi e spiagge compaiono <strong>soltanto</strong> dopo il completamento di un’attività o di un fronte che li assegna come premio, nella quantità stabilita. Il prato e il mare sul bordo orientale sono parte della geografia iniziale, ma non vengono regalati alberi, cespugli, fiori, montagne, spiagge o strade. <strong>Unica eccezione:</strong> le abitazioni nascono come conseguenza dei posti di lavoro e dei servizi conquistati.</div><div class="section"><h2>🏗️ Architettura e paesaggio più ricchi</h2><p class="muted small">REGINA propone <strong>molte nuove tipologie di strutture</strong> e alterna i modelli edilizi automaticamente: edifici a L, con cortile, padiglioni, volumi a gradoni, torri e costruzioni allungate. <strong>Seleziona un edificio</strong> per cambiare liberamente sia la forma sia lo stile (storico, mediterraneo, mattoni, moderno, vetro o sostenibile), senza spendere ricompense. Le strutture speciali hanno dettagli riconoscibili e gli edifici residenziali crescono in altezza quando lavoro e servizi lo consentono. Le etichette restano nascoste finché non selezioni un elemento.</p></div><div class="section"><h2>🏡 Come nascono le abitazioni?</h2><p class="muted small">Si parte davvero da <strong>zero persone e zero case</strong>. All’inizio, con pochi servizi, arrivano pochi residenti anche se esistono posti di lavoro. Quando la città diventa davvero abitabile, arrivano anche le famiglie e la popolazione può superare il numero dei posti di lavoro. Non puoi guadagnare case direttamente: emergono solo quando la città offre <strong>posti di lavoro</strong> e almeno <strong>due diversi tipi di servizi e opportunità di vita</strong> tra natura/sport, collegamenti, cultura, servizi pubblici e negozi. Più fronti sviluppi insieme, più abitanti possono trasferirsi. Quando la popolazione è piccola, compaiono case indipendenti; dopo lo sviluppo dei servizi arrivano palazzine, condomini, palazzi e torri residenziali. Le strutture più grandi ospitano più famiglie. Se perdi obiettivi e servizi, la popolazione può diminuire.</p><p class="muted small" style="margin-bottom:0"><strong>Situazione attuale:</strong> ${s.jobs} lavori, ${s.diversity} tipi di opportunità, capacità residenziale ${s.housingCapacity} persone; popolazione effettiva <strong>${s.pop}</strong>, ospitata in <strong>${getHousingPlan().length} edifici residenziali</strong>. Puoi espandere il terreno con ⊞ e trascinare gli elementi con ✥. Solo i segmenti di strada guadagnati vengono disegnati: non esiste più un’asfaltatura automatica di tutta la città.</p></div>`;
@@ -2607,7 +2797,7 @@ function cityNewspaperHtml(){
  const oldHead=stories.length?(stories[0].headline||'Vita cittadina'):'La città in una giornata';
  const oldParagraphs=stories.length?stories.map(x=>x.body).filter(Boolean).slice(0,5):['Nessuna variazione urbanistica registrata.'];
  const edit=issue?.editorial||{headline:oldHead,paragraphs:oldParagraphs};
- const paper=issue?`<div class="press-paper press-editorial" aria-label="Editoriale del ${esc(dayLabel)}"><div class="press-topline">CRONACHE DELLA CITTÀ <span>EDIZIONE DEFINITIVA</span></div><div class="press-masthead">La Gazzetta <em>di ${esc(issue.cityName||state.settings.cityName)}</em></div><div class="press-editionline"><span>${esc(dayLabel)}</span><span>EDITORIALE · N. ${String(days.indexOf(issue.day)+1).padStart(3,'0')}</span></div><div class="press-lead"><div class="press-kicker">LO SGUARDO DELLA REDAZIONE</div><h3>${esc(edit.headline)}</h3>${(edit.paragraphs||[]).map(p=>`<p>${esc(p)}</p>`).join('')}</div><div class="press-footer">Una città raccontata attraverso ciò che vi accade · Edizione archiviata</div></div>`:`<div class="press-unpublished"><strong>🗞️ Il prossimo editoriale esce alla chiusura della giornata</strong><p>Alla mezzanotte, oppure premendo «Chiudi la giornata», la redazione racconta come si vive nella città. Non conosce obiettivi, voti o programmi personali.</p></div>`;
+ const paper=issue?`<div class="press-paper press-editorial" aria-label="Editoriale del ${esc(dayLabel)}"><div class="press-topline">CRONACHE DELLA CITTÀ <span>EDIZIONE DEFINITIVA</span></div><div class="press-masthead">La Gazzetta <em>di ${esc(issue.cityName||state.settings.cityName)}</em></div><div class="press-editionline"><span>${esc(dayLabel)}</span><span>EDITORIALE · N. ${String(days.indexOf(issue.day)+1).padStart(3,'0')}</span></div><div class="press-lead"><div class="press-kicker">${edit.spotlight?'IL FATTO DECISIVO DELLA GIORNATA':'LA VITA QUOTIDIANA'} · EDITORIALE</div><h3>${esc(edit.headline)}</h3>${(edit.paragraphs||[]).map(p=>`<p>${esc(p)}</p>`).join('')}</div><div class="press-footer">Una città raccontata attraverso ciò che vi accade · Edizione archiviata</div></div>`:`<div class="press-unpublished"><strong>🗞️ Il prossimo editoriale esce alla chiusura della giornata</strong><p>Alla mezzanotte, oppure premendo «Chiudi la giornata», la redazione racconta come si vive nella città. Non conosce obiettivi, voti o programmi personali.</p></div>`;
  const d=new Date(cityPressMonth+'-01T12:00:00'),offset=(d.getDay()+6)%7,last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();let cells='';
  for(let i=0;i<offset;i++)cells+='<span class="press-day-blank" aria-hidden="true"></span>';
  for(let i=1;i<=last;i++){
@@ -2625,8 +2815,8 @@ function fitCityMap(){
  if(!places.length){cityView={x:0,y:0,w:cityW(),h:cityH()};cityInited=true;return;}
  const xs=places.map(p=>p.x),ys=places.map(p=>p.y);
  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
- const w=Math.min(cityW(),Math.max(740,maxX-minX+230));
- const h=Math.min(cityH(),Math.max(630,maxY-minY+260));
+ const w=Math.min(cityW(),Math.max(700,maxX-minX+210));
+ const h=Math.min(cityH(),Math.max(590,maxY-minY+200));
  cityView={x:(minX+maxX-w)/2,y:(minY+maxY-h)/2,w,h};cityInited=true;
 }
 function updateCityView(){const svg=$('cityMap');if(!svg)return;if(!cityInited)fitCityMap();clampCity();svg.setAttribute('viewBox',`${cityView.x} ${cityView.y} ${cityView.w} ${cityView.h}`);}
@@ -2654,7 +2844,7 @@ function showRotationDock(kind,id,name,degrees){
 function cityInspect(id){
  const a=state.assets.find(a=>a.id===id);if(!a)return;
  selectedAsset=id;showRotationDock('asset',id,a.name,a.rotation);const front=getFront(a.sourceFront),task=state.tasks.find(t=>t.id===a.sourceTask),segment=isSegmentType(a),linear=isLineSegment(a);
- $('cityInspector').innerHTML=`<span style="font-size:34px">${esc(a.icon)}</span><div><strong>${esc(a.name)}${segment?' · 1 pezzo':''}</strong><p>${esc(getCat(a.cat).name)} · ${Math.round(a.jobs*assetEfficiency(a))} posti di lavoro ${a.condition==='ruined'?'· 🧱 DISTRUTTO':a.damageLevel?'· ⚠️ Deteriorato ('+Math.round(assetEfficiency(a)*100)+'%)':''} · ${task?'Tappa: '+esc(task.title):'Premio finale: '+esc(front?.title||'')}</p>${a.damageLevel?`<div class="hint warning" style="margin:8px 0"><strong>${a.condition==='ruined'?'Edificio distrutto':'Edificio danneggiato'}</strong> · lavoro e servizi ridotti. <button class="btn tiny" data-action="create-repair" data-id="${esc(a.id)}">🛠️ Crea attività di riparazione</button></div>`:''}${rotationControls(a.id,a.rotation)}${architecturalAsset(a)?archStyleSelect('asset',a.id,a.archStyle||'auto')+archFormSelect('asset',a.id,a):''}<div class="actions" style="margin-top:8px">${segment?`<button class="btn tiny" data-action="snap-asset" data-id="${esc(a.id)}" title="Allinea questo pezzo a una strada, un fiume o una tessera compatibile vicina">🧲 Aggancia al vicino</button>`:''}${linear?`<button class="btn tiny" data-action="shape-asset" data-id="${esc(a.id)}">⌁ Forma: ${esc(({straight:'Retto',bend:'Curva',junction:'Bivio',cross:'Incrocio a 4'})[a.segmentVariant||'straight'])}</button>`:''}<button class="btn tiny" data-action="layer-up" data-id="${esc(a.id)}">↑ In primo piano</button><button class="btn tiny" data-action="layer-down" data-id="${esc(a.id)}">↓ Sullo sfondo</button><button class="btn tiny" data-action="store-asset" data-id="${esc(a.id)}">🎁 Riponi</button>${a.pos?`<button class="btn tiny" data-action="reset-asset" data-id="${esc(a.id)}">↶ Posizione originale</button>`:''}</div></div>`;
+ $('cityInspector').innerHTML=`<span style="font-size:34px">${esc(a.icon)}</span><div><strong>${esc(a.name)}${segment?' · 1 pezzo':''}</strong><p>${esc(getCat(a.cat).name)} · ${Math.round(a.jobs*assetEfficiency(a))} posti di lavoro ${a.condition==='ruined'?'· 🧱 DISTRUTTO':a.damageLevel?'· ⚠️ Deteriorato ('+Math.round(assetEfficiency(a)*100)+'%)':''} · ${task?'Tappa: '+esc(task.title):'Premio finale: '+esc(front?.title||'')}</p>${a.damageLevel?`<div class="hint warning" style="margin:8px 0"><strong>${a.condition==='ruined'?'Edificio distrutto':'Edificio danneggiato'}</strong> · lavoro e servizi ridotti. <button class="btn tiny" data-action="create-repair" data-id="${esc(a.id)}">🛠️ Crea attività di riparazione</button></div>`:''}${rotationControls(a.id,a.rotation)}${architecturalAsset(a)?archStyleSelect('asset',a.id,a.archStyle||'auto')+archFormSelect('asset',a.id,a):''}<div class="actions" style="margin-top:8px">${segment?`<button class="btn tiny" data-action="snap-asset" data-id="${esc(a.id)}" title="Allinea questo pezzo a una strada, un fiume o una tessera compatibile vicina">🧲 Aggancia al vicino</button>`:''}${linear?`<button class="btn tiny" data-action="shape-asset" data-id="${esc(a.id)}">⌁ Forma: ${esc(({straight:'Retto',bend:'Curva',junction:'Bivio',cross:'Incrocio a 4'})[a.segmentVariant||'straight'])}</button>`:''}<button class="btn tiny" data-action="layer-up" data-id="${esc(a.id)}">↑ In primo piano</button><button class="btn tiny" data-action="layer-down" data-id="${esc(a.id)}">↓ Sullo sfondo</button><button class="btn tiny" data-action="store-asset" data-id="${esc(a.id)}">🎁 Riponi</button>${a.pos?`<button class="btn tiny" data-action="reset-asset" data-id="${esc(a.id)}">↶ Posizione originale</button>`:''}${a.autoManaged===true?`<button class="btn tiny" data-action="lock-reward" data-id="${esc(a.id)}">${a.manualCatalog?'🔓 Torna alla scelta automatica':'🔒 Conserva questa struttura'}</button>`:''}</div>${a.autoManaged===true?'<p class="form-help">Le scelte manuali e gli edifici danneggiati non vengono trasformati automaticamente.</p>':''}</div>`;
 }
 function cityInspectHome(i){const index=Number(i),home=getHousingPlan()[index];if(!home)return;
  selectedAsset='home_'+index;showRotationDock('home',index,home.label+' '+(index+1),state.homeRotations?.[index]||0);
@@ -2784,11 +2974,11 @@ document.addEventListener('click',e=>{
  if(action.dataset.action==='rotation-reset'){applyRotation(action.dataset.kind,id,0);return;}
  switch(action.dataset.action){
  case'rewards-all':{const prefix=action.dataset.prefix,cat=prefix==='front'?($('frontCategory')?.value||'health'):(getFront($('taskFront')?.value)?.cat||'work');const sel=$(prefix==='front'?'frontRewardSelect':'rewardSelect');if(sel){const v=sel.value,term=$(prefix==='front'?'find-front':'find-task')?.value||'';sel.innerHTML=rewardSelect(cat,v,v==='auto',term,true);sel.value=v;notify('Catalogo completo: '+CATALOG[cat].length+' opzioni.');}break;}
- case'evaluate-task':{const t=materializeVirtual(id);if(t)evaluateTask(t.id);break;}case'bonus-add':$('extraRewardRows')?.insertAdjacentHTML('beforeend',extraRewardRow());break;case'bonus-remove':action.closest('.bonus-row')?.remove();break;case'place-auto':placeGroup(id);break;case'place-group':placeGroup(id,true);break;case'place-all':{const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ '+n.opened+' ricompense integrate nel piano urbano.');break;}case'place-manual':placingAssetId=id;view='city';cityInited=false;render();notify('Tocca un punto del terreno per collocare la struttura.');break;case'cancel-place':placingAssetId=null;render();break;case'store-asset':{const a=state.assets.find(x=>x.id===id);if(a){a.stored=true;delete a.pos;selectedAsset=null;save();cityInited=false;render();notify('Riposto nel magazzino.');}break;}case'layer-up':case'layer-down':{const a=state.assets.find(x=>x.id===id);if(a){const n=Number(a.layer);a.layer=Math.max(-50,Math.min(50,(Number.isFinite(n)?n:0)+(action.dataset.action==='layer-up'?10:-10)));save();render();cityInspect(id);}break;}
+ case'evaluate-task':{const t=materializeVirtual(id);if(t)evaluateTask(t.id);break;}case'bonus-add':$('extraRewardRows')?.insertAdjacentHTML('beforeend',extraRewardRow());break;case'bonus-remove':action.closest('.bonus-row')?.remove();break;case'place-auto':placeGroup(id);break;case'place-group':placeGroup(id,true);break;case'place-all':{const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ '+n.opened+' elementi inseriti · '+n.converted+' riconvertiti secondo i bisogni.');break;}case'place-manual':placingAssetId=id;view='city';cityInited=false;render();notify('Tocca un punto del terreno per collocare la struttura.');break;case'cancel-place':placingAssetId=null;render();break;case'store-asset':{const a=state.assets.find(x=>x.id===id);if(a){a.stored=true;delete a.pos;selectedAsset=null;save();cityInited=false;render();notify('Riposto nel magazzino.');}break;}case'layer-up':case'layer-down':{const a=state.assets.find(x=>x.id===id);if(a){const n=Number(a.layer);a.layer=Math.max(-50,Math.min(50,(Number.isFinite(n)?n:0)+(action.dataset.action==='layer-up'?10:-10)));a.manualCatalog=true;save();render();cityInspect(id);}break;}
  case'task-toggle-details':{taskDetailsOpen.has(id)?taskDetailsOpen.delete(id):taskDetailsOpen.add(id);render();break;}
- case'create-repair':createRepairTask(id);break;case'new-front':frontModal();break;case'edit-front':frontModal(id);break;case'new-task':taskModal();break;case'add-for-front':taskModal(null,id);break;case'plan-task':planTaskModal(id);break;case'plan-next-recurring':planNextRecurring(action.dataset.group);break;case'edit-task':{const t=materializeVirtual(id);if(t)taskModal(t.id);break;}
+ case'create-repair':createRepairTask(id);break;case'lock-reward':{const a=state.assets.find(x=>x.id===id);if(a&&a.autoManaged===true){a.manualCatalog=!a.manualCatalog;save();render();cityInspect(id);notify(a.manualCatalog?'🔒 Questa struttura non sarà sostituita automaticamente.':'🔓 Struttura riassegnabile in base alle necessità cittadine.');}break;}case'new-front':frontModal();break;case'edit-front':frontModal(id);break;case'new-task':taskModal();break;case'add-for-front':taskModal(null,id);break;case'plan-task':planTaskModal(id);break;case'plan-next-recurring':planNextRecurring(action.dataset.group);break;case'edit-task':{const t=materializeVirtual(id);if(t)taskModal(t.id);break;}
  case'close-modal':closeModal();break;case'fail-front':if(confirm('Segnare come fallito questo fronte? Potresti perdere fino a 3 costruzioni di questo fronte.'))markFrontFailed(id);break;case'retry-front':retryFront(id);break;case'delete-task':deleteTask(id);break;case'delete-front':deleteFront(id);break;
- case'today-reset':focusDate=localDate(new Date());render();break;case'close-day-now':closeDayNow();break;case'show-coast':{const w=Math.min(cityView.w,cityW()),h=Math.min(cityView.h,cityH());cityInited=true;cityView.x=cityW()-w;cityView.y=Math.max(0,(cityH()-h)/2);updateCityView();notify('🌊 Mare sulla costa orientale.');break;}case'auto-city-regenerate':{if(!confirm('Rigenerare l’intera disposizione della città? Le costruzioni e i premi resteranno, ma le posizioni manuali saranno sostituite da un piano compatto automatico.'))break;for(const a of state.assets){a.manualPosition=false;delete a.pos;}state.homePositions={};const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ Disposizione rigenerata senza perdere costruzioni.');break;}case'auto-city-now':{const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ Città riorganizzata: '+n.opened+' nuovi elementi, '+n.moved+' posizionamenti.');break;}case'auto-city-switch':{state.settings.autoCity=state.settings.autoCity===false;save();render();notify('Sviluppo automatico '+(state.settings.autoCity?'attivo':'disattivato')+'.');break;}
+ case'today-reset':focusDate=localDate(new Date());render();break;case'close-day-now':closeDayNow();break;case'show-coast':{const w=Math.min(cityView.w,cityW()),h=Math.min(cityView.h,cityH());cityInited=true;cityView.x=cityW()-w;cityView.y=Math.max(0,(cityH()-h)/2);updateCityView();notify('🌊 Mare sulla costa orientale.');break;}case'auto-city-regenerate':{if(!confirm('Ricomporre il quartiere? Le costruzioni già conquistate resteranno, ma le posizioni manuali saranno sostituite. I tratti di strada realmente vinti si uniranno; non nasceranno strade gratuite.'))break;for(const a of state.assets){a.manualPosition=false;delete a.pos;}state.homePositions={};const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ Quartiere ricomposto: abitazioni vicine ai servizi e tratti stradali contigui. Nessun elemento aggiunto gratuitamente.');break;}case'auto-city-now':{const n=autoDevelopCity(localDate(new Date()),{force:true});save();cityInited=false;render();notify('🏙️ '+n.opened+' inserimenti, '+n.converted+' riconversioni ('+n.roads+' nuovi tratti stradali), '+n.moved+' posizioni.');break;}case'auto-city-switch':{state.settings.autoCity=state.settings.autoCity===false;save();render();notify('Sviluppo automatico '+(state.settings.autoCity?'attivo':'disattivato')+'.');break;}
  case'save-now':{save();notify('✓ Progressi salvati sul dispositivo.');break;}
  case'checkpoint-save':saveCheckpoint();break;
  case'checkpoint-restore':restoreCheckpoint();break;
@@ -2798,7 +2988,7 @@ document.addEventListener('click',e=>{
  case'wipe-cancel':{const box=$('resetConfirm');if(box){box.hidden=true;const field=$('wipePhrase');if(field)field.value='';}break;}
  case'wipe-final':resetAll();break;
  case'google-save-config':{const value=$('googleClientId')?.value?.trim()||'';if(value&&!/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(value)){notify('Client ID non valido: deve terminare con .apps.googleusercontent.com');break;}state.settings.googleClientId=value;googleAccessToken=null;googleCalendarLabelsCache=null;save();render();notify('Configurazione Google salvata.');break;}case'google-connect':{const value=$('googleClientId')?.value?.trim()||'';if(value!==googleClientId()){state.settings.googleClientId=value;save();}authorizeGoogleCalendar().then(()=>{if(view==='settings')render();});break;}case'google-disconnect':{if(googleAccessToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(googleAccessToken,()=>{});googleAccessToken=null;googleAuthClient=null;googleCalendarLabelsCache=null;render();notify('Account scollegato da REGINA.');break;}case'google-publish-one':{const t=state.tasks.find(x=>x.id===id)||(id?.startsWith('virtual:')?scheduledTasksForDay(id.slice(-10)).find(x=>x.id===id):null);if(t)publishGoogleTask(t);break;}case'google-sync':publishGoogleMonth();break;case'save-settings':{const name=$('cityName')?.value?.trim();if(name)state.settings.cityName=name;state.settings.penaltyIntensity=$('penaltyIntensity')?.value==='severe'?'severe':'gradual';state.settings.failureMode=$('failureMode')?.value==='none'?'none':'one';save();render();notify('Preferenze salvate.');break;}
- case'snap-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isSegmentType(a)){const snap=findSegmentSnap(a,plotPosition(a),{radius:200});if(snap){a.pos=snap.pos;save();render();cityInspect(id);notify('🧲 Pezzi raccordati.');}else notify('Nessun bordo compatibile abbastanza vicino: sposta o ruota i pezzi.');}break;}case'shape-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isLineSegment(a)){const v=['straight','bend','junction','cross'],i=v.indexOf(a.segmentVariant||'straight');a.segmentVariant=v[(i+1)%v.length];save();render();cityInspect(id);}break;}case'reset-asset':{const a=state.assets.find(a=>a.id===id);if(a){delete a.pos;a.manualPosition=false;autoDevelopCity(localDate(new Date()),{force:true});}save();render();break;}case'reset-home':delete state.homePositions[id];save();render();break;case'backup':exportBackup();break;case'ics':exportIcs();break;case'import':{const input=$('importFile');if(input){input.scrollIntoView({block:'center',behavior:'smooth'});input.focus();notify('Usa il pulsante «Scegli file» per importare il backup.');}break;}
+ case'snap-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isSegmentType(a)){const snap=findSegmentSnap(a,plotPosition(a),{radius:200});if(snap){a.pos=snap.pos;save();render();cityInspect(id);notify('🧲 Pezzi raccordati.');}else notify('Nessun bordo compatibile abbastanza vicino: sposta o ruota i pezzi.');}break;}case'shape-asset':{const a=state.assets.find(a=>a.id===id);if(a&&isLineSegment(a)){const v=['straight','bend','junction','cross'],i=v.indexOf(a.segmentVariant||'straight');a.segmentVariant=v[(i+1)%v.length];a.manualCatalog=true;save();render();cityInspect(id);}break;}case'reset-asset':{const a=state.assets.find(a=>a.id===id);if(a){delete a.pos;a.manualPosition=false;autoDevelopCity(localDate(new Date()),{force:true});}save();render();break;}case'reset-home':delete state.homePositions[id];save();render();break;case'backup':exportBackup();break;case'ics':exportIcs();break;case'import':{const input=$('importFile');if(input){input.scrollIntoView({block:'center',behavior:'smooth'});input.focus();notify('Usa il pulsante «Scegli file» per importare il backup.');}break;}
 
  }});
 document.addEventListener('submit',e=>{if(e.target.id==='frontForm'){e.preventDefault();saveFront(e.target);}if(e.target.id==='taskForm'){e.preventDefault();saveTask(e.target);}if(e.target.id==='evaluateForm'){e.preventDefault();saveEvaluation(e.target);}if(e.target.id==='planTaskForm'){e.preventDefault();saveTaskPlan(e.target);}});
