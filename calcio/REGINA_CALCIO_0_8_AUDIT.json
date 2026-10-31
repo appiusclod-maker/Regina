@@ -1,0 +1,215 @@
+{
+  "data": "2026-10-31",
+  "versione": "0.8 UEFA 66/66 squadre (roster da gioco)",
+  "squadre_estere": 66,
+  "rose_estere_compilate_con_25_nominativi": 66,
+  "calciatori_estero": 1650,
+  "rose_nuove_oggi": 47,
+  "nuovi_calciatori_oggi": 1175,
+  "fonti_primarie": "Pagine rose UEFA Champions League / Europa League 2026-27 e fonti nazionali per tre club con meno di 25 nomi nella pagina europea",
+  "verifica_individuale_tesseramenti_ufficiali_di_ogni_nominativo": false,
+  "limite": "Selezione di 25 calciatori da liste UEFA A/B e, per 3 casi, da rose nazionali. Non rappresenta necessariamente la lista ufficiale UEFA di 25 tesserati.",
+  "ruoli_validi": [
+    "P",
+    "D",
+    "C",
+    "A"
+  ],
+  "fonti_squadre_47": {
+    "AEK Atene": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/50129--aek-athens/squad/",
+      "additionalSources": [
+        "https://www.uefa.com/nationalassociations/teams/50129--/squad/"
+      ]
+    },
+    "Bodø/Glimt": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/59333--bodo-glimt/squad/",
+      "additionalSources": []
+    },
+    "Club Brugge": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/50043/squad/",
+      "additionalSources": []
+    },
+    "Feyenoord": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52749--feyenoord/squad/",
+      "additionalSources": []
+    },
+    "LASK": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/63405--lask/squad/",
+      "additionalSources": []
+    },
+    "RB Lipsia": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/2603790--leipzig/squad/",
+      "additionalSources": [
+        "https://it.uefa.com/uefachampionsleague/clubs/2603790--leipzig/squad/"
+      ]
+    },
+    "Lens": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52277--lens/squad/",
+      "additionalSources": []
+    },
+    "Lilla": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/75797/squad/",
+      "additionalSources": []
+    },
+    "PSV Eindhoven": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/50062/squad/",
+      "additionalSources": []
+    },
+    "Betis Siviglia": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52265--real-betis/squad/",
+      "additionalSources": []
+    },
+    "Sabah": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/2609356--sabah/squad/",
+      "additionalSources": []
+    },
+    "Shakhtar Donetsk": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52707/squad/",
+      "additionalSources": []
+    },
+    "Slovan Bratislava": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52797--s-bratislava/squad/",
+      "additionalSources": []
+    },
+    "Stoccarda": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/50107--stuttgart/squad/",
+      "additionalSources": []
+    },
+    "Viking": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52319/squad/",
+      "additionalSources": []
+    },
+    "Villarreal": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/70691/squad/",
+      "additionalSources": []
+    },
+    "Slavia Praga": {
+      "source": "https://www.uefa.com/uefachampionsleague/clubs/52498--slavia-praha/squad/",
+      "additionalSources": []
+    },
+    "Anderlecht": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50074--anderlecht/squad/",
+      "additionalSources": []
+    },
+    "Ararat-Armenia": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/2610304/squad/",
+      "additionalSources": []
+    },
+    "AZ Alkmaar": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52327--az-alkmaar/squad/",
+      "additionalSources": []
+    },
+    "Beşiktaş": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50157/squad/",
+      "additionalSources": []
+    },
+    "Celje": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/59030/squad/",
+      "additionalSources": [
+        "https://www.uefa.com/uefachampionsleague/clubs/59030--celje/squad/"
+      ]
+    },
+    "Celta Vigo": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/53043--celta/squad/",
+      "additionalSources": []
+    },
+    "Celtic": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50050/squad/",
+      "additionalSources": []
+    },
+    "Dinamo Zagabria": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50164/squad/",
+      "additionalSources": []
+    },
+    "Hapoel Be’er Sheva": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/59340/squad/",
+      "additionalSources": []
+    },
+    "Hoffenheim": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/2600431--hoffenheim/squad/",
+      "additionalSources": []
+    },
+    "Ferencváros": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52298/squad/",
+      "additionalSources": []
+    },
+    "Jagiellonia": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/2600277--jagiellonia/squad/",
+      "additionalSources": []
+    },
+    "Bayer Leverkusen": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50109--leverkusen/squad/",
+      "additionalSources": []
+    },
+    "Lech Poznań": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/64227--lech-poznan/squad/",
+      "additionalSources": []
+    },
+    "Levski Sofia": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50044--levski-sofia/squad/",
+      "additionalSources": []
+    },
+    "Lillestrøm": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52314/squad/",
+      "additionalSources": []
+    },
+    "Olympique Lione": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/5312/squad/",
+      "additionalSources": []
+    },
+    "Olympique Marsiglia": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52748--marseille/squad/",
+      "additionalSources": []
+    },
+    "N.E.C. Nijmegen": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52330--nec/squad/",
+      "additionalSources": []
+    },
+    "OFI Creta": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/52953--ofi/squad/",
+      "additionalSources": []
+    },
+    "Olympiacos": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/2610--olympiacos/squad/",
+      "additionalSources": []
+    },
+    "Omonia Nicosia": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50077/squad/",
+      "additionalSources": []
+    },
+    "Real Sociedad": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50123/squad/",
+      "additionalSources": []
+    },
+    "Rennes": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/55031--rennes/squad/",
+      "additionalSources": []
+    },
+    "RB Salisburgo": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50030--salzburg/squad/",
+      "additionalSources": []
+    },
+    "Sparta Praga": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50033--sparta-praha/squad/",
+      "additionalSources": []
+    },
+    "Sturm Graz": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/50111/squad/",
+      "additionalSources": []
+    },
+    "Torreense": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/2603107/squad/",
+      "additionalSources": []
+    },
+    "Union Saint-Gilloise": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/64125--union-sg/squad/",
+      "additionalSources": []
+    },
+    "Viktoria Plzeň": {
+      "source": "https://www.uefa.com/uefaeuropaleague/clubs/64388--plzen/squad/",
+      "additionalSources": []
+    }
+  },
+  "notes": "Il motore di gioco utilizza i nomi reali per tabellini e marcatori. I punteggi tecnici dei giocatori esteri restano stimati dalla forza del club, non quotazioni individuali Transfermarkt."
+}

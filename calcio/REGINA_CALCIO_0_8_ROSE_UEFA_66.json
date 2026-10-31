@@ -1,0 +1,7067 @@
+{
+  "Manchester City": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52919/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Gianluigi Donnarumma",
+        "P"
+      ],
+      [
+        "Marcus Bettinelli",
+        "P"
+      ],
+      [
+        "Gerónimo Rulli",
+        "P"
+      ],
+      [
+        "Rúben Dias",
+        "D"
+      ],
+      [
+        "Marc Guéhi",
+        "D"
+      ],
+      [
+        "Rayan Aït-Nouri",
+        "D"
+      ],
+      [
+        "Vitor Reis",
+        "D"
+      ],
+      [
+        "Joško Gvardiol",
+        "D"
+      ],
+      [
+        "Abdukodir Khusanov",
+        "D"
+      ],
+      [
+        "Rico Lewis",
+        "D"
+      ],
+      [
+        "Kaden Braithwaite",
+        "D"
+      ],
+      [
+        "Elliot Anderson",
+        "C"
+      ],
+      [
+        "Mateo Kovačić",
+        "C"
+      ],
+      [
+        "Enzo Fernández",
+        "C"
+      ],
+      [
+        "Rayan Cherki",
+        "C"
+      ],
+      [
+        "Matheus Nunes",
+        "C"
+      ],
+      [
+        "Ayyoub Bouaddi",
+        "C"
+      ],
+      [
+        "Nico O’Reilly",
+        "C"
+      ],
+      [
+        "Phil Foden",
+        "C"
+      ],
+      [
+        "Iliman Ndiaye",
+        "A"
+      ],
+      [
+        "Erling Haaland",
+        "A"
+      ],
+      [
+        "Jérémy Doku",
+        "A"
+      ],
+      [
+        "Antoine Semenyo",
+        "A"
+      ],
+      [
+        "Allan Elias",
+        "A"
+      ],
+      [
+        "Ryan McAidoo",
+        "A"
+      ]
+    ]
+  },
+  "Real Madrid": {
+    "source": "https://www.realmadrid.com/en-US/news/football/first-team/latest-news/dorsales-del-real-madrid-para-la-temporada-2026-27-10-08-2026",
+    "asOf": "2026-10-08",
+    "players": [
+      [
+        "Thibaut Courtois",
+        "P"
+      ],
+      [
+        "Andriy Lunin",
+        "P"
+      ],
+      [
+        "Raúl Asencio",
+        "D"
+      ],
+      [
+        "Éder Militão",
+        "D"
+      ],
+      [
+        "Dean Huijsen",
+        "D"
+      ],
+      [
+        "Trent Alexander-Arnold",
+        "D"
+      ],
+      [
+        "Ibrahima Konaté",
+        "D"
+      ],
+      [
+        "Marc Cucurella",
+        "D"
+      ],
+      [
+        "Álvaro Carreras",
+        "D"
+      ],
+      [
+        "Antonio Rüdiger",
+        "D"
+      ],
+      [
+        "Ferland Mendy",
+        "D"
+      ],
+      [
+        "Denzel Dumfries",
+        "D"
+      ],
+      [
+        "Jude Bellingham",
+        "C"
+      ],
+      [
+        "Eduardo Camavinga",
+        "C"
+      ],
+      [
+        "Federico Valverde",
+        "C"
+      ],
+      [
+        "Aurélien Tchouaméni",
+        "C"
+      ],
+      [
+        "Arda Güler",
+        "C"
+      ],
+      [
+        "Bernardo Silva",
+        "C"
+      ],
+      [
+        "Thiago Pitarch",
+        "C"
+      ],
+      [
+        "Vinícius Júnior",
+        "A"
+      ],
+      [
+        "Endrick",
+        "A"
+      ],
+      [
+        "Kylian Mbappé",
+        "A"
+      ],
+      [
+        "Rodrygo",
+        "A"
+      ],
+      [
+        "Brahim Díaz",
+        "A"
+      ],
+      [
+        "Yan Diomande",
+        "A"
+      ]
+    ]
+  },
+  "Arsenal": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52280/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "David Raya",
+        "P"
+      ],
+      [
+        "Kepa Arrizabalaga",
+        "P"
+      ],
+      [
+        "Illan Meslier",
+        "P"
+      ],
+      [
+        "William Saliba",
+        "D"
+      ],
+      [
+        "Cristhian Mosquera",
+        "D"
+      ],
+      [
+        "Ben White",
+        "D"
+      ],
+      [
+        "Piero Hincapié",
+        "D"
+      ],
+      [
+        "Gabriel Magalhães",
+        "D"
+      ],
+      [
+        "Jurriën Timber",
+        "D"
+      ],
+      [
+        "Ezri Konsa",
+        "D"
+      ],
+      [
+        "Riccardo Calafiori",
+        "D"
+      ],
+      [
+        "Martin Ødegaard",
+        "C"
+      ],
+      [
+        "Eberechi Eze",
+        "C"
+      ],
+      [
+        "Noni Madueke",
+        "C"
+      ],
+      [
+        "Mikel Merino",
+        "C"
+      ],
+      [
+        "Kai Havertz",
+        "C"
+      ],
+      [
+        "Martín Zubimendi",
+        "C"
+      ],
+      [
+        "Bruno Guimarães",
+        "C"
+      ],
+      [
+        "Declan Rice",
+        "C"
+      ],
+      [
+        "Myles Lewis-Skelly",
+        "C"
+      ],
+      [
+        "Max Dowman",
+        "C"
+      ],
+      [
+        "Bukayo Saka",
+        "A"
+      ],
+      [
+        "Viktor Gyökeres",
+        "A"
+      ],
+      [
+        "Christos Tzolis",
+        "A"
+      ],
+      [
+        "Ceadach O'Neill",
+        "A"
+      ]
+    ]
+  },
+  "Bayern Monaco": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50037/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Manuel Neuer",
+        "P"
+      ],
+      [
+        "Sven Ulreich",
+        "P"
+      ],
+      [
+        "Jonas Urbig",
+        "P"
+      ],
+      [
+        "Dayot Upamecano",
+        "D"
+      ],
+      [
+        "Minjae Kim",
+        "D"
+      ],
+      [
+        "Jonathan Tah",
+        "D"
+      ],
+      [
+        "Nathaniel Brown",
+        "D"
+      ],
+      [
+        "Hiroki Ito",
+        "D"
+      ],
+      [
+        "Sacha Boey",
+        "D"
+      ],
+      [
+        "Josip Stanišić",
+        "D"
+      ],
+      [
+        "Cassiano Kiala",
+        "D"
+      ],
+      [
+        "Joshua Kimmich",
+        "C"
+      ],
+      [
+        "Tom Bischof",
+        "C"
+      ],
+      [
+        "Jamal Musiala",
+        "C"
+      ],
+      [
+        "Michael Olise",
+        "C"
+      ],
+      [
+        "Alphonso Davies",
+        "C"
+      ],
+      [
+        "Konrad Laimer",
+        "C"
+      ],
+      [
+        "Ismael Saibari",
+        "C"
+      ],
+      [
+        "Aleksandar Pavlović",
+        "C"
+      ],
+      [
+        "Lennart Karl",
+        "C"
+      ],
+      [
+        "Serge Gnabry",
+        "A"
+      ],
+      [
+        "Harry Kane",
+        "A"
+      ],
+      [
+        "Luis Díaz",
+        "A"
+      ],
+      [
+        "Bastian Assomo",
+        "A"
+      ],
+      [
+        "Maycon Cardozo",
+        "A"
+      ]
+    ]
+  },
+  "Liverpool": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/7889/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Alisson Becker",
+        "P"
+      ],
+      [
+        "Giorgi Mamardashvili",
+        "P"
+      ],
+      [
+        "Freddie Woodman",
+        "P"
+      ],
+      [
+        "Joe Gomez",
+        "D"
+      ],
+      [
+        "Virgil van Dijk",
+        "D"
+      ],
+      [
+        "Jérémy Jacquet",
+        "D"
+      ],
+      [
+        "Milos Kerkez",
+        "D"
+      ],
+      [
+        "Conor Bradley",
+        "D"
+      ],
+      [
+        "Giovanni Leoni",
+        "D"
+      ],
+      [
+        "Kostas Tsimikas",
+        "D"
+      ],
+      [
+        "Jeremie Frimpong",
+        "D"
+      ],
+      [
+        "Ronald Araújo",
+        "D"
+      ],
+      [
+        "Luke Chambers",
+        "D"
+      ],
+      [
+        "Florian Wirtz",
+        "C"
+      ],
+      [
+        "Dominik Szoboszlai",
+        "C"
+      ],
+      [
+        "Alexis Mac Allister",
+        "C"
+      ],
+      [
+        "Víctor Muñoz",
+        "C"
+      ],
+      [
+        "Ryan Gravenberch",
+        "C"
+      ],
+      [
+        "Trey Nyoni",
+        "C"
+      ],
+      [
+        "James McConnell",
+        "C"
+      ],
+      [
+        "Alexander Isak",
+        "A"
+      ],
+      [
+        "Cody Gakpo",
+        "A"
+      ],
+      [
+        "Hugo Ekitiké",
+        "A"
+      ],
+      [
+        "Bradley Barcola",
+        "A"
+      ],
+      [
+        "Rio Ngumoha",
+        "A"
+      ]
+    ]
+  },
+  "Barcellona": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50080/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Joan García",
+        "P"
+      ],
+      [
+        "Wojciech Szczęsny",
+        "P"
+      ],
+      [
+        "Dominik Livaković",
+        "P"
+      ],
+      [
+        "João Cancelo",
+        "D"
+      ],
+      [
+        "Alejandro Balde",
+        "D"
+      ],
+      [
+        "Pau Cubarsí",
+        "D"
+      ],
+      [
+        "Xavi Espart",
+        "D"
+      ],
+      [
+        "Andreas Christensen",
+        "D"
+      ],
+      [
+        "Gerard Martín",
+        "D"
+      ],
+      [
+        "Jules Koundé",
+        "D"
+      ],
+      [
+        "Eric García",
+        "D"
+      ],
+      [
+        "Gavi",
+        "C"
+      ],
+      [
+        "Pedri",
+        "C"
+      ],
+      [
+        "Rodri",
+        "C"
+      ],
+      [
+        "Frenkie de Jong",
+        "C"
+      ],
+      [
+        "Marc Bernal",
+        "C"
+      ],
+      [
+        "Brian Fariñas",
+        "C"
+      ],
+      [
+        "Fermín López",
+        "A"
+      ],
+      [
+        "Gabriel Jesus",
+        "A"
+      ],
+      [
+        "Lamine Yamal",
+        "A"
+      ],
+      [
+        "Raphinha",
+        "A"
+      ],
+      [
+        "Karim Adeyemi",
+        "A"
+      ],
+      [
+        "Anthony Gordon",
+        "A"
+      ],
+      [
+        "Dani Olmo",
+        "A"
+      ],
+      [
+        "Jesse Bisiwu",
+        "A"
+      ]
+    ]
+  },
+  "Manchester United": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52682--man-utd/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Senne Lammens",
+        "P"
+      ],
+      [
+        "Karl Darlow",
+        "P"
+      ],
+      [
+        "Tom Heaton",
+        "P"
+      ],
+      [
+        "Diogo Dalot",
+        "D"
+      ],
+      [
+        "Noussair Mazraoui",
+        "D"
+      ],
+      [
+        "Matthijs de Ligt",
+        "D"
+      ],
+      [
+        "Harry Maguire",
+        "D"
+      ],
+      [
+        "Lisandro Martínez",
+        "D"
+      ],
+      [
+        "Patrick Dorgu",
+        "D"
+      ],
+      [
+        "Leny Yoro",
+        "D"
+      ],
+      [
+        "Luke Shaw",
+        "D"
+      ],
+      [
+        "Mason Mount",
+        "C"
+      ],
+      [
+        "Bruno Fernandes",
+        "C"
+      ],
+      [
+        "Andrey Santos",
+        "C"
+      ],
+      [
+        "Youri Tielemans",
+        "C"
+      ],
+      [
+        "Carlos Baleba",
+        "C"
+      ],
+      [
+        "Manuel Ugarte",
+        "C"
+      ],
+      [
+        "Kobbie Mainoo",
+        "C"
+      ],
+      [
+        "Jack Fletcher",
+        "C"
+      ],
+      [
+        "Marcus Rashford",
+        "A"
+      ],
+      [
+        "Matheus Cunha",
+        "A"
+      ],
+      [
+        "Joshua Zirkzee",
+        "A"
+      ],
+      [
+        "Amad Diallo",
+        "A"
+      ],
+      [
+        "Bryan Mbeumo",
+        "A"
+      ],
+      [
+        "Benjamin Šeško",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Aston Villa": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52683--aston-villa/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Zion Suzuki",
+        "P"
+      ],
+      [
+        "Marco Bizot",
+        "P"
+      ],
+      [
+        "James Wright",
+        "P"
+      ],
+      [
+        "Matty Cash",
+        "D"
+      ],
+      [
+        "Victor Lindelöf",
+        "D"
+      ],
+      [
+        "Taylor Harwood-Bellis",
+        "D"
+      ],
+      [
+        "Tyrone Mings",
+        "D"
+      ],
+      [
+        "Pau Torres",
+        "D"
+      ],
+      [
+        "Ian Maatsen",
+        "D"
+      ],
+      [
+        "Lamare Bogarde",
+        "D"
+      ],
+      [
+        "Aaron Wan-Bissaka",
+        "D"
+      ],
+      [
+        "Ross Barkley",
+        "C"
+      ],
+      [
+        "John McGinn",
+        "C"
+      ],
+      [
+        "Boubacar Kamara",
+        "C"
+      ],
+      [
+        "Leon Goretzka",
+        "C"
+      ],
+      [
+        "João Gomes",
+        "C"
+      ],
+      [
+        "Johan Manzambi",
+        "C"
+      ],
+      [
+        "George Hemmings",
+        "C"
+      ],
+      [
+        "Emiliano Buendía",
+        "A"
+      ],
+      [
+        "Nicolas Jackson",
+        "A"
+      ],
+      [
+        "Alejandro Garnacho",
+        "A"
+      ],
+      [
+        "Tammy Abraham",
+        "A"
+      ],
+      [
+        "Ibrahim Mbaye",
+        "A"
+      ],
+      [
+        "Alysson",
+        "A"
+      ],
+      [
+        "Brian Madjo",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Borussia Dortmund": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52758/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Gregor Kobel",
+        "P"
+      ],
+      [
+        "Patrick Drewes",
+        "P"
+      ],
+      [
+        "Alexander Meyer",
+        "P"
+      ],
+      [
+        "Waldemar Anton",
+        "D"
+      ],
+      [
+        "Nico Schlotterbeck",
+        "D"
+      ],
+      [
+        "Ramy Bensebaini",
+        "D"
+      ],
+      [
+        "Joane Gadou",
+        "D"
+      ],
+      [
+        "Daniel Svensson",
+        "D"
+      ],
+      [
+        "Julian Ryerson",
+        "D"
+      ],
+      [
+        "Kauã Prates",
+        "D"
+      ],
+      [
+        "Filippo Mane",
+        "D"
+      ],
+      [
+        "Jobe Bellingham",
+        "C"
+      ],
+      [
+        "Felix Nmecha",
+        "C"
+      ],
+      [
+        "Carney Chukwuemeka",
+        "C"
+      ],
+      [
+        "Ethan Nwaneri",
+        "C"
+      ],
+      [
+        "Marcel Sabitzer",
+        "C"
+      ],
+      [
+        "Joey Veerman",
+        "C"
+      ],
+      [
+        "Enzo Dos Santos",
+        "C"
+      ],
+      [
+        "Mussa Kaba",
+        "C"
+      ],
+      [
+        "Serhou Guirassy",
+        "A"
+      ],
+      [
+        "Maximilian Beier",
+        "A"
+      ],
+      [
+        "Konstantinos Karetsas",
+        "A"
+      ],
+      [
+        "Fábio Silva",
+        "A"
+      ],
+      [
+        "Samuele Inácio",
+        "A"
+      ],
+      [
+        "Mathis Albert",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Paris Saint-Germain": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52747--paris-sg/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Alessandro Longoni",
+        "P"
+      ],
+      [
+        "Lucas Chevalier",
+        "P"
+      ],
+      [
+        "Matvei Safonov",
+        "P"
+      ],
+      [
+        "Arthur Vignaud",
+        "P"
+      ],
+      [
+        "Achraf Hakimi",
+        "D"
+      ],
+      [
+        "Lucas Beraldo",
+        "D"
+      ],
+      [
+        "Marquinhos",
+        "D"
+      ],
+      [
+        "Illia Zabarnyi",
+        "D"
+      ],
+      [
+        "Lucas Digne",
+        "D"
+      ],
+      [
+        "Lucas Hernández",
+        "D"
+      ],
+      [
+        "Nuno Mendes",
+        "D"
+      ],
+      [
+        "Willian Pacho",
+        "D"
+      ],
+      [
+        "Fabián Ruiz",
+        "C"
+      ],
+      [
+        "Maghnes Akliouche",
+        "C"
+      ],
+      [
+        "Vitinha",
+        "C"
+      ],
+      [
+        "Senny Mayulu",
+        "C"
+      ],
+      [
+        "Dro Fernández",
+        "C"
+      ],
+      [
+        "Warren Zaïre-Emery",
+        "C"
+      ],
+      [
+        "João Neves",
+        "C"
+      ],
+      [
+        "Khvicha Kvaratskhelia",
+        "A"
+      ],
+      [
+        "Ferran Torres",
+        "A"
+      ],
+      [
+        "Ousmane Dembélé",
+        "A"
+      ],
+      [
+        "Désiré Doué",
+        "A"
+      ],
+      [
+        "Mika Godts",
+        "A"
+      ],
+      [
+        "Quentin Ndjantou",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Galatasaray": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50067/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Uğurcan Çakır",
+        "P"
+      ],
+      [
+        "Günay Güvenç",
+        "P"
+      ],
+      [
+        "Jankat Yılmaz",
+        "P"
+      ],
+      [
+        "El Chadaille Bitshiabu",
+        "D"
+      ],
+      [
+        "Ismail Jakobs",
+        "D"
+      ],
+      [
+        "Davinson Sánchez",
+        "D"
+      ],
+      [
+        "Roland Sallai",
+        "D"
+      ],
+      [
+        "Eren Elmalı",
+        "D"
+      ],
+      [
+        "Abdülkerim Bardakcı",
+        "D"
+      ],
+      [
+        "Wilfried Singo",
+        "D"
+      ],
+      [
+        "Yusuf Kahraman",
+        "D"
+      ],
+      [
+        "Gabriel Sara",
+        "C"
+      ],
+      [
+        "Lesley Ugochukwu",
+        "C"
+      ],
+      [
+        "İlkay Gündoğan",
+        "C"
+      ],
+      [
+        "Lucas Torreira",
+        "C"
+      ],
+      [
+        "Renato Nhaga",
+        "C"
+      ],
+      [
+        "Aleksei Batrakov",
+        "C"
+      ],
+      [
+        "Mario Lemina",
+        "C"
+      ],
+      [
+        "Berat Luş",
+        "C"
+      ],
+      [
+        "Leroy Sané",
+        "A"
+      ],
+      [
+        "Yunus Akgün",
+        "A"
+      ],
+      [
+        "Deniz Gül",
+        "A"
+      ],
+      [
+        "Rafael Leão",
+        "A"
+      ],
+      [
+        "Victor Osimhen",
+        "A"
+      ],
+      [
+        "Barış Alper Yılmaz",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Porto": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50064--fc-porto/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Cláudio Ramos",
+        "P"
+      ],
+      [
+        "João Costa",
+        "P"
+      ],
+      [
+        "Diogo Costa",
+        "P"
+      ],
+      [
+        "Jakub Kiwior",
+        "D"
+      ],
+      [
+        "Jan Bednarek",
+        "D"
+      ],
+      [
+        "Zaidu Sanusi",
+        "D"
+      ],
+      [
+        "Nehuén Pérez",
+        "D"
+      ],
+      [
+        "Alberto Costa",
+        "D"
+      ],
+      [
+        "Souza",
+        "D"
+      ],
+      [
+        "Martim Fernandes",
+        "D"
+      ],
+      [
+        "Francisco Moura",
+        "D"
+      ],
+      [
+        "Victor Froholdt",
+        "C"
+      ],
+      [
+        "Pablo Rosario",
+        "C"
+      ],
+      [
+        "Inbeom Hwang",
+        "C"
+      ],
+      [
+        "Alan Varela",
+        "C"
+      ],
+      [
+        "Seko Fofana",
+        "C"
+      ],
+      [
+        "Tiago Silva",
+        "C"
+      ],
+      [
+        "Bernardo Lima",
+        "C"
+      ],
+      [
+        "William Gomes",
+        "A"
+      ],
+      [
+        "Samu",
+        "A"
+      ],
+      [
+        "Gabriel Veiga",
+        "A"
+      ],
+      [
+        "Pepê",
+        "A"
+      ],
+      [
+        "Borja Sainz",
+        "A"
+      ],
+      [
+        "André Silva",
+        "A"
+      ],
+      [
+        "Santiago Giménez",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Benfica": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50147--benfica/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Anatoliy Trubin",
+        "P"
+      ],
+      [
+        "Samuel Soares",
+        "P"
+      ],
+      [
+        "Diogo Ferreira",
+        "P"
+      ],
+      [
+        "Clément Lenglet",
+        "D"
+      ],
+      [
+        "Alessandro Circati",
+        "D"
+      ],
+      [
+        "Alexander Bah",
+        "D"
+      ],
+      [
+        "Samuel Dahl",
+        "D"
+      ],
+      [
+        "Souffian El Karouani",
+        "D"
+      ],
+      [
+        "Tomás Araújo",
+        "D"
+      ],
+      [
+        "Daniel Banjaqui",
+        "D"
+      ],
+      [
+        "Gabriel Índio",
+        "D"
+      ],
+      [
+        "Enzo Barrenechea",
+        "C"
+      ],
+      [
+        "Fredrik Aursnes",
+        "C"
+      ],
+      [
+        "Georgiy Sudakov",
+        "C"
+      ],
+      [
+        "Manu Silva",
+        "C"
+      ],
+      [
+        "Leandro Barreiro",
+        "C"
+      ],
+      [
+        "João Palhinha",
+        "C"
+      ],
+      [
+        "Gonçalo Moreira",
+        "C"
+      ],
+      [
+        "Dodi Lukébakio",
+        "A"
+      ],
+      [
+        "Jakub Kamiński",
+        "A"
+      ],
+      [
+        "Vangelis Pavlidis",
+        "A"
+      ],
+      [
+        "Andreas Schjelderup",
+        "A"
+      ],
+      [
+        "Jhon Durán",
+        "A"
+      ],
+      [
+        "Gianluca Prestianni",
+        "A"
+      ],
+      [
+        "Rafa Silva",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Sporting CP": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50149/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Rui Silva",
+        "P"
+      ],
+      [
+        "Kaique Pereira",
+        "P"
+      ],
+      [
+        "Diego Callai",
+        "P"
+      ],
+      [
+        "Sergi Altimira",
+        "D"
+      ],
+      [
+        "Zeno Debast",
+        "D"
+      ],
+      [
+        "Giorgos Vagiannidis",
+        "D"
+      ],
+      [
+        "Moncef Zekri",
+        "D"
+      ],
+      [
+        "Iván Fresneda",
+        "D"
+      ],
+      [
+        "Gonçalo Inácio",
+        "D"
+      ],
+      [
+        "Eduardo Quaresma",
+        "D"
+      ],
+      [
+        "Ibrahima Ba",
+        "D"
+      ],
+      [
+        "Silas Andersen",
+        "C"
+      ],
+      [
+        "João Simões",
+        "C"
+      ],
+      [
+        "Rodrigo Zalazar",
+        "C"
+      ],
+      [
+        "Maximiliano Araújo",
+        "C"
+      ],
+      [
+        "Pedro Lima",
+        "C"
+      ],
+      [
+        "Flávio Gonçalves",
+        "C"
+      ],
+      [
+        "Issa Doumbia",
+        "C"
+      ],
+      [
+        "Fotis Ioannidis",
+        "A"
+      ],
+      [
+        "Rafael Nel",
+        "A"
+      ],
+      [
+        "Geny Catamo",
+        "A"
+      ],
+      [
+        "Nuno Santos",
+        "A"
+      ],
+      [
+        "Nestory Irankunda",
+        "A"
+      ],
+      [
+        "Jesse Derry",
+        "A"
+      ],
+      [
+        "Luis Guilherme",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Atlético Madrid": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50124--atletico/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Juan Musso",
+        "P"
+      ],
+      [
+        "Jan Oblak",
+        "P"
+      ],
+      [
+        "Salvador Esquivel",
+        "P"
+      ],
+      [
+        "Dávid Hancko",
+        "D"
+      ],
+      [
+        "Marc Pubill",
+        "D"
+      ],
+      [
+        "Cristian Romero",
+        "D"
+      ],
+      [
+        "Alejandro Grimaldo",
+        "D"
+      ],
+      [
+        "Robin Le Normand",
+        "D"
+      ],
+      [
+        "Dani Martínez",
+        "D"
+      ],
+      [
+        "Arnau Solà",
+        "D"
+      ],
+      [
+        "Obed Vargas",
+        "C"
+      ],
+      [
+        "Rodrigo Mendoza",
+        "C"
+      ],
+      [
+        "Johnny Cardoso",
+        "C"
+      ],
+      [
+        "Koke",
+        "C"
+      ],
+      [
+        "Kang-in Lee",
+        "C"
+      ],
+      [
+        "Pablo Barrios",
+        "C"
+      ],
+      [
+        "Álex Baena",
+        "C"
+      ],
+      [
+        "Marcos Llorente",
+        "C"
+      ],
+      [
+        "Morten Hjulmand",
+        "C"
+      ],
+      [
+        "Alexander Sørloth",
+        "A"
+      ],
+      [
+        "Ademola Lookman",
+        "A"
+      ],
+      [
+        "Jonathan David",
+        "A"
+      ],
+      [
+        "Arnau Ortiz",
+        "A"
+      ],
+      [
+        "Julián Álvarez",
+        "A"
+      ],
+      [
+        "Giuliano Simeone",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Fenerbahçe": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52692--fenerbahce/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Tarık Çetin",
+        "P"
+      ],
+      [
+        "Ederson",
+        "P"
+      ],
+      [
+        "Mert Günok",
+        "P"
+      ],
+      [
+        "Yiğit Efe Demir",
+        "D"
+      ],
+      [
+        "Nathan Aké",
+        "D"
+      ],
+      [
+        "Mert Müldür",
+        "D"
+      ],
+      [
+        "Kojo Peprah Oppong",
+        "D"
+      ],
+      [
+        "Nélson Semedo",
+        "D"
+      ],
+      [
+        "Milan Škriniar",
+        "D"
+      ],
+      [
+        "Ognjen Mimović",
+        "D"
+      ],
+      [
+        "Archie Brown",
+        "C"
+      ],
+      [
+        "İsmail Yüksek",
+        "C"
+      ],
+      [
+        "Mattéo Guendouzi",
+        "C"
+      ],
+      [
+        "İrfan Can Kahveci",
+        "C"
+      ],
+      [
+        "Levent Mercan",
+        "C"
+      ],
+      [
+        "Bartuğ Elmaz",
+        "C"
+      ],
+      [
+        "Oğuz Aydın",
+        "C"
+      ],
+      [
+        "N’Golo Kanté",
+        "C"
+      ],
+      [
+        "Kerem Aktürkoğlu",
+        "A"
+      ],
+      [
+        "Romelu Lukaku",
+        "A"
+      ],
+      [
+        "Marco Asensio",
+        "A"
+      ],
+      [
+        "Mason Greenwood",
+        "A"
+      ],
+      [
+        "Vedat Muriqi",
+        "A"
+      ],
+      [
+        "Dorgeles Nene",
+        "A"
+      ],
+      [
+        "Alaettin Ekici",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Bournemouth": {
+    "source": "https://www.premierleague.com/en/clubs/91/bournemouth/squad",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Djordje Petrović",
+        "P"
+      ],
+      [
+        "Fraser Forster",
+        "P"
+      ],
+      [
+        "Michele Di Gregorio",
+        "P"
+      ],
+      [
+        "Julián Araujo",
+        "D"
+      ],
+      [
+        "Adrien Truffert",
+        "D"
+      ],
+      [
+        "James Hill",
+        "D"
+      ],
+      [
+        "Julio Soler",
+        "D"
+      ],
+      [
+        "António Silva",
+        "D"
+      ],
+      [
+        "Adam Smith",
+        "D"
+      ],
+      [
+        "Bafodé Diakité",
+        "D"
+      ],
+      [
+        "Max Aarons",
+        "D"
+      ],
+      [
+        "Veljko Milosavljević",
+        "D"
+      ],
+      [
+        "Lewis Cook",
+        "C"
+      ],
+      [
+        "David Brooks",
+        "C"
+      ],
+      [
+        "Alex Scott",
+        "C"
+      ],
+      [
+        "Ryan Christie",
+        "C"
+      ],
+      [
+        "Tyler Adams",
+        "C"
+      ],
+      [
+        "Marcus Tavernier",
+        "C"
+      ],
+      [
+        "Juanlu Sánchez",
+        "C"
+      ],
+      [
+        "Alex Tóth",
+        "C"
+      ],
+      [
+        "Evanilson",
+        "A"
+      ],
+      [
+        "Ben Gannon-Doak",
+        "A"
+      ],
+      [
+        "Justin Kluivert",
+        "A"
+      ],
+      [
+        "Junior Kroupi",
+        "A"
+      ],
+      [
+        "Amine Adli",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Sunderland": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/53360/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Simon Moore",
+        "P"
+      ],
+      [
+        "Robin Roefs",
+        "P"
+      ],
+      [
+        "Benjamin Metcalf",
+        "P"
+      ],
+      [
+        "Kevin Danso",
+        "D"
+      ],
+      [
+        "Daniel Ballard",
+        "D"
+      ],
+      [
+        "Dayann Methalie",
+        "D"
+      ],
+      [
+        "Thomas Meunier",
+        "D"
+      ],
+      [
+        "Luke O’Nien",
+        "D"
+      ],
+      [
+        "Omar Alderete",
+        "D"
+      ],
+      [
+        "Reinildo",
+        "D"
+      ],
+      [
+        "Nordi Mukiele",
+        "D"
+      ],
+      [
+        "Trai Hume",
+        "D"
+      ],
+      [
+        "Chris Rigg",
+        "C"
+      ],
+      [
+        "Habib Diarra",
+        "C"
+      ],
+      [
+        "Noah Sadiki",
+        "C"
+      ],
+      [
+        "Enzo Le Fée",
+        "C"
+      ],
+      [
+        "Jules Ahoka",
+        "C"
+      ],
+      [
+        "Granit Xhaka",
+        "C"
+      ],
+      [
+        "Brian Brobbey",
+        "A"
+      ],
+      [
+        "Nilson Angulo",
+        "A"
+      ],
+      [
+        "Romaine Mundle",
+        "A"
+      ],
+      [
+        "Wilson Isidor",
+        "A"
+      ],
+      [
+        "Malick Fofana",
+        "A"
+      ],
+      [
+        "Trey Ogunsuyi",
+        "A"
+      ],
+      [
+        "Timur Tutierov",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "Crystal Palace": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52916--crystal-palace/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Remi Matthews",
+        "P"
+      ],
+      [
+        "Walter Benítez",
+        "P"
+      ],
+      [
+        "Marcus Hill",
+        "P"
+      ],
+      [
+        "Tyrick Mitchell",
+        "D"
+      ],
+      [
+        "Axel Disasi",
+        "D"
+      ],
+      [
+        "Takehiro Tomiyasu",
+        "D"
+      ],
+      [
+        "Honest Ahanor",
+        "D"
+      ],
+      [
+        "Chris Richards",
+        "D"
+      ],
+      [
+        "Oscar Mingueza",
+        "D"
+      ],
+      [
+        "Ben Chilwell",
+        "D"
+      ],
+      [
+        "Caleb Kporha",
+        "D"
+      ],
+      [
+        "Jaydee Canvot",
+        "C"
+      ],
+      [
+        "Daichi Kamada",
+        "C"
+      ],
+      [
+        "Will Hughes",
+        "C"
+      ],
+      [
+        "Adam Wharton",
+        "C"
+      ],
+      [
+        "Quinten Timber",
+        "C"
+      ],
+      [
+        "Darío Osorio",
+        "C"
+      ],
+      [
+        "Joseph Gibbard",
+        "C"
+      ],
+      [
+        "Ismaïla Sarr",
+        "A"
+      ],
+      [
+        "Eddie Nketiah",
+        "A"
+      ],
+      [
+        "Yeremy Pino",
+        "A"
+      ],
+      [
+        "Dwight McNeil",
+        "A"
+      ],
+      [
+        "Jean-Philippe Mateta",
+        "A"
+      ],
+      [
+        "Jørgen Strand Larsen",
+        "A"
+      ],
+      [
+        "Anan Khalaili",
+        "A"
+      ]
+    ],
+    "review": "identificati in elenchi UEFA 2026/27; 25 selezionati; controllare cambi dopo questa data"
+  },
+  "AEK Atene": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50129--aek-athens/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Thomas Strakosha",
+        "P"
+      ],
+      [
+        "Marios Balamotis",
+        "P"
+      ],
+      [
+        "Alberto Brignoli",
+        "P"
+      ],
+      [
+        "Harold Moukoudi",
+        "D"
+      ],
+      [
+        "Stavros Pilios",
+        "D"
+      ],
+      [
+        "Lazaros Rota",
+        "D"
+      ],
+      [
+        "Domagoj Vida",
+        "D"
+      ],
+      [
+        "Charalampos Lykogiannis",
+        "D"
+      ],
+      [
+        "Filipe Relvas",
+        "D"
+      ],
+      [
+        "Christos Alexiou",
+        "D"
+      ],
+      [
+        "Martin Georgiev",
+        "D"
+      ],
+      [
+        "Kaan Kairinen",
+        "C"
+      ],
+      [
+        "Mijat Gaćinović",
+        "C"
+      ],
+      [
+        "Lovro Majer",
+        "C"
+      ],
+      [
+        "Kervin Arriaga",
+        "C"
+      ],
+      [
+        "Răzvan Marin",
+        "C"
+      ],
+      [
+        "Petros Mantalos",
+        "C"
+      ],
+      [
+        "Milán Vitális",
+        "C"
+      ],
+      [
+        "Dimitrios Kaloskamis",
+        "C"
+      ],
+      [
+        "Luka Jović",
+        "A"
+      ],
+      [
+        "Oleksandr Zubkov",
+        "A"
+      ],
+      [
+        "Aboubakary Koita",
+        "A"
+      ],
+      [
+        "Barnabás Varga",
+        "A"
+      ],
+      [
+        "João Mário",
+        "A"
+      ],
+      [
+        "Zini",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale.",
+    "additionalSources": [
+      "https://www.uefa.com/nationalassociations/teams/50129--/squad/"
+    ]
+  },
+  "Bodø/Glimt": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/59333--bodo-glimt/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Julian Faye Lund",
+        "P"
+      ],
+      [
+        "Nikita Haikin",
+        "P"
+      ],
+      [
+        "Martin Lund Andersen",
+        "P"
+      ],
+      [
+        "Villads Nielsen",
+        "D"
+      ],
+      [
+        "Odin Bjørtuft",
+        "D"
+      ],
+      [
+        "Haitam Aleesami",
+        "D"
+      ],
+      [
+        "Jostein Gundersen",
+        "D"
+      ],
+      [
+        "Fredrik Bjørkan",
+        "D"
+      ],
+      [
+        "Matias Jaiteh",
+        "D"
+      ],
+      [
+        "Mathias Blix Olsen",
+        "D"
+      ],
+      [
+        "Patrick Berg",
+        "C"
+      ],
+      [
+        "Sondre Auklend",
+        "C"
+      ],
+      [
+        "Ulrik Saltnes",
+        "C"
+      ],
+      [
+        "Joshua Kitolano",
+        "C"
+      ],
+      [
+        "Sondre Brunstad Fet",
+        "C"
+      ],
+      [
+        "Fredrik Sjøvold",
+        "C"
+      ],
+      [
+        "Magnus Riisnæs",
+        "C"
+      ],
+      [
+        "Håkon Evjen",
+        "C"
+      ],
+      [
+        "Andreas Helmersen",
+        "A"
+      ],
+      [
+        "Jens Petter Hauge",
+        "A"
+      ],
+      [
+        "Ole Didrik Blomberg",
+        "A"
+      ],
+      [
+        "Ola Brynhildsen",
+        "A"
+      ],
+      [
+        "Joel Mvuka",
+        "A"
+      ],
+      [
+        "Isak Määttä",
+        "A"
+      ],
+      [
+        "Assan Sanyang",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Club Brugge": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50043/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Yann Sommer",
+        "P"
+      ],
+      [
+        "Nordin Jackers",
+        "P"
+      ],
+      [
+        "Axl De Corte",
+        "P"
+      ],
+      [
+        "Han-beom Lee",
+        "D"
+      ],
+      [
+        "Joel Ordóñez",
+        "D"
+      ],
+      [
+        "Matteo Dams",
+        "D"
+      ],
+      [
+        "Hugo Siquet",
+        "D"
+      ],
+      [
+        "Brandon Mechele",
+        "D"
+      ],
+      [
+        "Samba Coulibaly",
+        "D"
+      ],
+      [
+        "Jorne Spileers",
+        "D"
+      ],
+      [
+        "Kyriani Sabbe",
+        "D"
+      ],
+      [
+        "Freddie Potts",
+        "C"
+      ],
+      [
+        "Hugo Vetlesen",
+        "C"
+      ],
+      [
+        "Cheveyo Tsawa",
+        "C"
+      ],
+      [
+        "Hans Vanaken",
+        "C"
+      ],
+      [
+        "Lynnt Audoor",
+        "C"
+      ],
+      [
+        "Joaquin Seys",
+        "C"
+      ],
+      [
+        "Lucas Delorge",
+        "C"
+      ],
+      [
+        "Nicolò Tresoldi",
+        "A"
+      ],
+      [
+        "Carlos Forbs",
+        "A"
+      ],
+      [
+        "Jan Virgili",
+        "A"
+      ],
+      [
+        "Romeo Vermant",
+        "A"
+      ],
+      [
+        "Mamadou Diakhon",
+        "A"
+      ],
+      [
+        "Milan Robberechts",
+        "A"
+      ],
+      [
+        "Samuel Van Hoogen",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Feyenoord": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52749--feyenoord/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Tjark Ernst",
+        "P"
+      ],
+      [
+        "Florian Kastenmeier",
+        "P"
+      ],
+      [
+        "Mannou Berger",
+        "P"
+      ],
+      [
+        "Bart Nieuwkoop",
+        "D"
+      ],
+      [
+        "Tsuyoshi Watanabe",
+        "D"
+      ],
+      [
+        "Gijs Smal",
+        "D"
+      ],
+      [
+        "Jerry St. Juste",
+        "D"
+      ],
+      [
+        "Jordan Bos",
+        "D"
+      ],
+      [
+        "Javi López",
+        "D"
+      ],
+      [
+        "Mats Deijl",
+        "D"
+      ],
+      [
+        "Givairo Read",
+        "D"
+      ],
+      [
+        "Jakub Moder",
+        "C"
+      ],
+      [
+        "Gjivai Zechiël",
+        "C"
+      ],
+      [
+        "Luciano Valente",
+        "C"
+      ],
+      [
+        "Sem Steijn",
+        "C"
+      ],
+      [
+        "Tobias van den Elshout",
+        "C"
+      ],
+      [
+        "Oussama Targhalline",
+        "C"
+      ],
+      [
+        "Charles Vanhoutte",
+        "C"
+      ],
+      [
+        "Gonçalo Borges",
+        "A"
+      ],
+      [
+        "Reiss Nelson",
+        "A"
+      ],
+      [
+        "Nacho Ferri",
+        "A"
+      ],
+      [
+        "Anis Hadj Moussa",
+        "A"
+      ],
+      [
+        "Gaoussou Diarra",
+        "A"
+      ],
+      [
+        "Shaqueel van Persie",
+        "A"
+      ],
+      [
+        "Mika Mármol",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "LASK": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/63405--lask/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Lukas Jungwirth",
+        "P"
+      ],
+      [
+        "Tobias Schützenauer",
+        "P"
+      ],
+      [
+        "Christof Katzmayr",
+        "P"
+      ],
+      [
+        "George Bello",
+        "D"
+      ],
+      [
+        "Miguel Freckleton",
+        "D"
+      ],
+      [
+        "Xavier Mbuyamba",
+        "D"
+      ],
+      [
+        "Andrés Andrade",
+        "D"
+      ],
+      [
+        "Kasper Jørgensen",
+        "D"
+      ],
+      [
+        "Manoël Verhaeghe",
+        "D"
+      ],
+      [
+        "Daniel Elfadli",
+        "D"
+      ],
+      [
+        "Yvan Dibango",
+        "D"
+      ],
+      [
+        "Melayro Bogarde",
+        "C"
+      ],
+      [
+        "Kryštof Daněk",
+        "C"
+      ],
+      [
+        "Robert Ljubičić",
+        "C"
+      ],
+      [
+        "Alessandro Schöpf",
+        "C"
+      ],
+      [
+        "Christoph Lang",
+        "C"
+      ],
+      [
+        "Florian Flecker",
+        "C"
+      ],
+      [
+        "Sascha Horvath",
+        "C"
+      ],
+      [
+        "Samuel Adeniran",
+        "A"
+      ],
+      [
+        "Moses Usor",
+        "A"
+      ],
+      [
+        "Sasa Kalajdzic",
+        "A"
+      ],
+      [
+        "Matthias Hartl",
+        "A"
+      ],
+      [
+        "Paul Krapf",
+        "A"
+      ],
+      [
+        "Nael Kane",
+        "A"
+      ],
+      [
+        "Fabian Schillinger",
+        "P"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "RB Lipsia": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/2603790--leipzig/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Ørjan Nyland",
+        "P"
+      ],
+      [
+        "Maarten Vandevoordt",
+        "P"
+      ],
+      [
+        "Franz Hantschmann",
+        "P"
+      ],
+      [
+        "Abdoul Kone",
+        "D"
+      ],
+      [
+        "Willi Orbán",
+        "D"
+      ],
+      [
+        "Lukas Klostermann",
+        "D"
+      ],
+      [
+        "David Raum",
+        "D"
+      ],
+      [
+        "Castello Lukeba",
+        "D"
+      ],
+      [
+        "Max Finkgräfe",
+        "D"
+      ],
+      [
+        "Benjamin Henrichs",
+        "D"
+      ],
+      [
+        "Maxime Estève",
+        "C"
+      ],
+      [
+        "Ezechiel Banzuzi",
+        "C"
+      ],
+      [
+        "Antonio Nusa",
+        "C"
+      ],
+      [
+        "Assan Ouédraogo",
+        "C"
+      ],
+      [
+        "Nicolas Seiwald",
+        "C"
+      ],
+      [
+        "Christoph Baumgartner",
+        "C"
+      ],
+      [
+        "Ridle Baku",
+        "C"
+      ],
+      [
+        "Rocco Reitz",
+        "C"
+      ],
+      [
+        "Brajan Gruda",
+        "A"
+      ],
+      [
+        "Johan Bakayoko",
+        "A"
+      ],
+      [
+        "Tidiam Gomis",
+        "A"
+      ],
+      [
+        "Rômulo Cardoso",
+        "A"
+      ],
+      [
+        "Neil El Aynaoui",
+        "C"
+      ],
+      [
+        "Benno Kaltefleiter",
+        "C"
+      ],
+      [
+        "Viggo Gebel",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale.",
+    "additionalSources": [
+      "https://it.uefa.com/uefachampionsleague/clubs/2603790--leipzig/squad/"
+    ]
+  },
+  "Lens": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52277--lens/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Régis Gurtner",
+        "P"
+      ],
+      [
+        "Mathieu Gorgelin",
+        "P"
+      ],
+      [
+        "Robin Risser",
+        "P"
+      ],
+      [
+        "Ruben Aguilar",
+        "D"
+      ],
+      [
+        "Nidal Čelik",
+        "D"
+      ],
+      [
+        "Samson Baidoo",
+        "D"
+      ],
+      [
+        "Matthieu Udol",
+        "D"
+      ],
+      [
+        "Jean-Clair Todibo",
+        "D"
+      ],
+      [
+        "Michał Skóraś",
+        "D"
+      ],
+      [
+        "Saud Abdulhamid",
+        "D"
+      ],
+      [
+        "Jonathan Gradit",
+        "D"
+      ],
+      [
+        "Andrija Bulatović",
+        "C"
+      ],
+      [
+        "Yacine Titraoui",
+        "C"
+      ],
+      [
+        "Amadou Haidara",
+        "C"
+      ],
+      [
+        "Mickaël Cuisance",
+        "C"
+      ],
+      [
+        "Léopold Joursky",
+        "C"
+      ],
+      [
+        "Florian Sotoca",
+        "A"
+      ],
+      [
+        "Thorgan Hazard",
+        "A"
+      ],
+      [
+        "Florian Thauvin",
+        "A"
+      ],
+      [
+        "Odsonne Édouard",
+        "A"
+      ],
+      [
+        "Abdallah Sima",
+        "A"
+      ],
+      [
+        "Junior Kadile",
+        "A"
+      ],
+      [
+        "Ismaëlo Ganiou",
+        "D"
+      ],
+      [
+        "Franjo Ivanović",
+        "A"
+      ],
+      [
+        "Daivy Lefranc-Yeboah",
+        "P"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Lilla": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/75797/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Berke Özer",
+        "P"
+      ],
+      [
+        "Orlando Gill",
+        "P"
+      ],
+      [
+        "Zadig Lanssade",
+        "P"
+      ],
+      [
+        "Loun Srdanović",
+        "D"
+      ],
+      [
+        "Nathan Ngoy",
+        "D"
+      ],
+      [
+        "Alexsandro",
+        "D"
+      ],
+      [
+        "Romain Perraud",
+        "D"
+      ],
+      [
+        "Tiago Santos",
+        "D"
+      ],
+      [
+        "Tanguy Nianzou",
+        "D"
+      ],
+      [
+        "Calvin Verdonk",
+        "D"
+      ],
+      [
+        "Isaac Cossier",
+        "D"
+      ],
+      [
+        "Nabil Bentaleb",
+        "C"
+      ],
+      [
+        "Ethan Mbappé",
+        "C"
+      ],
+      [
+        "Hákon Haraldsson",
+        "C"
+      ],
+      [
+        "Osame Sahraoui",
+        "C"
+      ],
+      [
+        "Maurits Kjærgaard",
+        "C"
+      ],
+      [
+        "Ngal'Ayel Mukau",
+        "C"
+      ],
+      [
+        "Başar Önal",
+        "C"
+      ],
+      [
+        "Benjamin André",
+        "C"
+      ],
+      [
+        "Dilane Bakwa",
+        "A"
+      ],
+      [
+        "Olivier Giroud",
+        "A"
+      ],
+      [
+        "Ayase Ueda",
+        "A"
+      ],
+      [
+        "Gaëtan Perrin",
+        "A"
+      ],
+      [
+        "Soriba Diaoune",
+        "A"
+      ],
+      [
+        "Maxima Goffi",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "PSV Eindhoven": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50062/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Nick Olij",
+        "P"
+      ],
+      [
+        "Matěj Kovář",
+        "P"
+      ],
+      [
+        "Tijn Smolenaars",
+        "P"
+      ],
+      [
+        "Lutsharel Geertruida",
+        "D"
+      ],
+      [
+        "Yarek Gasiorowski",
+        "D"
+      ],
+      [
+        "Armando Obispo",
+        "D"
+      ],
+      [
+        "Ryan Flamingo",
+        "D"
+      ],
+      [
+        "Sergiño Dest",
+        "D"
+      ],
+      [
+        "Mauro Júnior",
+        "D"
+      ],
+      [
+        "Filip Kostić",
+        "D"
+      ],
+      [
+        "Kiliann Sildillia",
+        "D"
+      ],
+      [
+        "Paul Wanner",
+        "C"
+      ],
+      [
+        "Guus Til",
+        "C"
+      ],
+      [
+        "Sven Mijnans",
+        "C"
+      ],
+      [
+        "Kodai Sano",
+        "C"
+      ],
+      [
+        "Noah Fernandez",
+        "C"
+      ],
+      [
+        "Ayoni Santos",
+        "C"
+      ],
+      [
+        "Amir Bouhamdi",
+        "C"
+      ],
+      [
+        "Ivan Perišić",
+        "A"
+      ],
+      [
+        "Ruben van Bommel",
+        "A"
+      ],
+      [
+        "Ricardo Pepi",
+        "A"
+      ],
+      [
+        "Sami Ouaissa",
+        "A"
+      ],
+      [
+        "Esmir Bajraktarević",
+        "A"
+      ],
+      [
+        "Dennis Man",
+        "A"
+      ],
+      [
+        "Sam Lammers",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Betis Siviglia": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52265--real-betis/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Álvaro Vallés",
+        "P"
+      ],
+      [
+        "Diego Conde",
+        "P"
+      ],
+      [
+        "Manu González",
+        "P"
+      ],
+      [
+        "Héctor Bellerín",
+        "D"
+      ],
+      [
+        "Diego Llorente",
+        "D"
+      ],
+      [
+        "Natan",
+        "D"
+      ],
+      [
+        "Marc Bartra",
+        "D"
+      ],
+      [
+        "Fran García",
+        "D"
+      ],
+      [
+        "Ángel Ortiz",
+        "D"
+      ],
+      [
+        "Valentín Gómez",
+        "D"
+      ],
+      [
+        "Junior Firpo",
+        "D"
+      ],
+      [
+        "Facundo Bernal",
+        "C"
+      ],
+      [
+        "Pablo Fornals",
+        "C"
+      ],
+      [
+        "Iker Losada",
+        "C"
+      ],
+      [
+        "Álvaro Fidalgo",
+        "C"
+      ],
+      [
+        "Rodrigo Riquelme",
+        "C"
+      ],
+      [
+        "Nelson Deossa",
+        "C"
+      ],
+      [
+        "Giovani Lo Celso",
+        "C"
+      ],
+      [
+        "Marc Roca",
+        "C"
+      ],
+      [
+        "Antony",
+        "A"
+      ],
+      [
+        "Cucho Hernández",
+        "A"
+      ],
+      [
+        "Abde Ezzalzouli",
+        "A"
+      ],
+      [
+        "Troy Parrott",
+        "A"
+      ],
+      [
+        "Aitor Ruibal",
+        "A"
+      ],
+      [
+        "Isco",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Sabah": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/2609356--sabah/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Amin Ramazanov",
+        "P"
+      ],
+      [
+        "Rauf Ayyubov",
+        "P"
+      ],
+      [
+        "Stas Pokatilov",
+        "P"
+      ],
+      [
+        "Steve Solvet",
+        "D"
+      ],
+      [
+        "Aden McCarthy",
+        "D"
+      ],
+      [
+        "Rahman Dashdamirov",
+        "D"
+      ],
+      [
+        "Tellur Mutallimov",
+        "D"
+      ],
+      [
+        "Tymoteusz Puchacz",
+        "D"
+      ],
+      [
+        "Erivaldo Almeida",
+        "D"
+      ],
+      [
+        "Akim Zedadka",
+        "D"
+      ],
+      [
+        "Abdulakh Khaibulaev",
+        "C"
+      ],
+      [
+        "Umarali Rakhmonaliev",
+        "C"
+      ],
+      [
+        "Khayal Aliyev",
+        "C"
+      ],
+      [
+        "Aleksey Isaev",
+        "C"
+      ],
+      [
+        "Kaheem Parris",
+        "C"
+      ],
+      [
+        "Ivan Lepinjica",
+        "C"
+      ],
+      [
+        "Rauf Rustamli",
+        "C"
+      ],
+      [
+        "Du Queiroz",
+        "C"
+      ],
+      [
+        "Christian Nwachukwu",
+        "A"
+      ],
+      [
+        "Joy-Lance Mickels",
+        "A"
+      ],
+      [
+        "Veljko Simić",
+        "A"
+      ],
+      [
+        "Xander Severina",
+        "A"
+      ],
+      [
+        "Orphé Mbina",
+        "A"
+      ],
+      [
+        "Rodrigo Fernandes",
+        "C"
+      ],
+      [
+        "Jafar Mukhtarov",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Shakhtar Donetsk": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52707/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Kiril Fesiun",
+        "P"
+      ],
+      [
+        "Dmytro Riznyk",
+        "P"
+      ],
+      [
+        "Rostyslav Bahlai",
+        "P"
+      ],
+      [
+        "Marlon Santos",
+        "D"
+      ],
+      [
+        "Valeriy Bondar",
+        "D"
+      ],
+      [
+        "Pedro Henrique",
+        "D"
+      ],
+      [
+        "Irakli Azarov",
+        "D"
+      ],
+      [
+        "Vinícius Tobías",
+        "D"
+      ],
+      [
+        "Alaa Ghram",
+        "D"
+      ],
+      [
+        "Oleksandr Karavaiev",
+        "D"
+      ],
+      [
+        "Mykola Matviyenko",
+        "D"
+      ],
+      [
+        "Marlon Gomes",
+        "C"
+      ],
+      [
+        "Dmytro Kryskiv",
+        "C"
+      ],
+      [
+        "Pedrinho",
+        "C"
+      ],
+      [
+        "Newertton",
+        "C"
+      ],
+      [
+        "Isaque",
+        "C"
+      ],
+      [
+        "Viktor Tsukanov",
+        "C"
+      ],
+      [
+        "Gabriel Carvalho",
+        "C"
+      ],
+      [
+        "Oleh Ocheretko",
+        "C"
+      ],
+      [
+        "Lassina Traoré",
+        "A"
+      ],
+      [
+        "Kauã Elias",
+        "A"
+      ],
+      [
+        "Luca Meirelles",
+        "A"
+      ],
+      [
+        "Yehor Nazaryna",
+        "C"
+      ],
+      [
+        "Alisson Santana",
+        "C"
+      ],
+      [
+        "Lucas Ferreira",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Slovan Bratislava": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52797--s-bratislava/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Aleksandar Popović",
+        "P"
+      ],
+      [
+        "Daniel Gramblička",
+        "P"
+      ],
+      [
+        "Dávid Balog",
+        "P"
+      ],
+      [
+        "Samuel Kozlovský",
+        "D"
+      ],
+      [
+        "Kevin Wimmer",
+        "D"
+      ],
+      [
+        "Kenan Bajrić",
+        "D"
+      ],
+      [
+        "Svetozar Marković",
+        "D"
+      ],
+      [
+        "Matúš Tomáško",
+        "D"
+      ],
+      [
+        "Robert Tománek",
+        "D"
+      ],
+      [
+        "César Blackman",
+        "D"
+      ],
+      [
+        "Sahmkou Camara",
+        "D"
+      ],
+      [
+        "Peter Pokorný",
+        "C"
+      ],
+      [
+        "Rahim Ibrahim",
+        "C"
+      ],
+      [
+        "Leo Hofstädter",
+        "C"
+      ],
+      [
+        "Artur Gajdoš",
+        "C"
+      ],
+      [
+        "Tigran Barseghyan",
+        "C"
+      ],
+      [
+        "Alen Mustafić",
+        "C"
+      ],
+      [
+        "Cristian Martínez",
+        "C"
+      ],
+      [
+        "Danylo Ihnatenko",
+        "C"
+      ],
+      [
+        "Nino Marcelli",
+        "A"
+      ],
+      [
+        "Roman Čerepkai",
+        "A"
+      ],
+      [
+        "Alasana Yirajang",
+        "A"
+      ],
+      [
+        "Suleiman Camara",
+        "A"
+      ],
+      [
+        "Alexej Maroš",
+        "A"
+      ],
+      [
+        "Andraž Šporar",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Stoccarda": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/50107--stuttgart/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Fabian Bredlow",
+        "P"
+      ],
+      [
+        "Marius Funk",
+        "P"
+      ],
+      [
+        "Dennis Seimen",
+        "P"
+      ],
+      [
+        "Ameen Al-Dakhil",
+        "D"
+      ],
+      [
+        "Ramon Hendriks",
+        "D"
+      ],
+      [
+        "Josha Vagnoman",
+        "D"
+      ],
+      [
+        "Maximilian Mittelstädt",
+        "D"
+      ],
+      [
+        "Luca Jaquez",
+        "D"
+      ],
+      [
+        "Lorenz Assignon",
+        "D"
+      ],
+      [
+        "Jeff Chabot",
+        "D"
+      ],
+      [
+        "Maximilian Herwerth",
+        "D"
+      ],
+      [
+        "Angelo Stiller",
+        "C"
+      ],
+      [
+        "Ermedin Demirović",
+        "C"
+      ],
+      [
+        "Chris Führich",
+        "C"
+      ],
+      [
+        "Bilal El Khannouss",
+        "C"
+      ],
+      [
+        "Atakan Karazor",
+        "C"
+      ],
+      [
+        "Grischa Prömel",
+        "C"
+      ],
+      [
+        "Nikolas Nartey",
+        "C"
+      ],
+      [
+        "Finn Jeltsch",
+        "C"
+      ],
+      [
+        "Tiago Tomás",
+        "A"
+      ],
+      [
+        "Dženan Pejčinović",
+        "A"
+      ],
+      [
+        "Jamie Leweling",
+        "A"
+      ],
+      [
+        "Deniz Undav",
+        "A"
+      ],
+      [
+        "Jarzinho Malanga",
+        "A"
+      ],
+      [
+        "Yanik Spalt",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Viking": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52319/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Arild Østbø",
+        "P"
+      ],
+      [
+        "Erlend Jacobsen",
+        "P"
+      ],
+      [
+        "Ľubomír Belko",
+        "P"
+      ],
+      [
+        "Herman Haugen",
+        "D"
+      ],
+      [
+        "Viljar Vevatne",
+        "D"
+      ],
+      [
+        "Martin Ove Roseth",
+        "D"
+      ],
+      [
+        "Henrik Heggheim",
+        "D"
+      ],
+      [
+        "Gianni Stensness",
+        "D"
+      ],
+      [
+        "Essiën Bassey",
+        "D"
+      ],
+      [
+        "Sondre Bjørshol",
+        "D"
+      ],
+      [
+        "Anders Baertelsen",
+        "D"
+      ],
+      [
+        "Kristoffer Askildsen",
+        "C"
+      ],
+      [
+        "Joe Bell",
+        "C"
+      ],
+      [
+        "Zlatko Tripić",
+        "C"
+      ],
+      [
+        "Ola Visted",
+        "C"
+      ],
+      [
+        "Henrik Bjørdal",
+        "C"
+      ],
+      [
+        "Amin Cosic",
+        "C"
+      ],
+      [
+        "Tobias Moi",
+        "C"
+      ],
+      [
+        "Nick D'Agostino",
+        "A"
+      ],
+      [
+        "Romano Postema",
+        "A"
+      ],
+      [
+        "Veton Berisha",
+        "A"
+      ],
+      [
+        "Peter Christiansen",
+        "A"
+      ],
+      [
+        "Erik Botheim",
+        "A"
+      ],
+      [
+        "Niklas Fuglestad",
+        "A"
+      ],
+      [
+        "Vetle Auklend",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Villarreal": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/70691/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Luiz Júnior",
+        "P"
+      ],
+      [
+        "Rubén Gómez",
+        "P"
+      ],
+      [
+        "Péter Gulácsi",
+        "P"
+      ],
+      [
+        "Logan Costa",
+        "D"
+      ],
+      [
+        "Alex Freeman",
+        "D"
+      ],
+      [
+        "Pau Navarro",
+        "D"
+      ],
+      [
+        "Juan Foyth",
+        "D"
+      ],
+      [
+        "Renato Veiga",
+        "D"
+      ],
+      [
+        "Santiago Mouriño",
+        "D"
+      ],
+      [
+        "Carlos Romero",
+        "D"
+      ],
+      [
+        "Sergi Cardona",
+        "D"
+      ],
+      [
+        "Diatta Alassane",
+        "C"
+      ],
+      [
+        "Alberto Moleiro",
+        "C"
+      ],
+      [
+        "Santi Comesaña",
+        "C"
+      ],
+      [
+        "Carlos Macià",
+        "C"
+      ],
+      [
+        "Pape Gueye",
+        "C"
+      ],
+      [
+        "Tani Oluwaseyi",
+        "C"
+      ],
+      [
+        "Nathan Saliba",
+        "C"
+      ],
+      [
+        "Nizar El Jmili",
+        "C"
+      ],
+      [
+        "Gerard Moreno",
+        "A"
+      ],
+      [
+        "Georges Mikautadze",
+        "A"
+      ],
+      [
+        "Ilias Akhomach",
+        "A"
+      ],
+      [
+        "Tajon Buchanan",
+        "A"
+      ],
+      [
+        "Nicolas Pépé",
+        "A"
+      ],
+      [
+        "Ayoze Pérez",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Slavia Praga": {
+    "source": "https://www.uefa.com/uefachampionsleague/clubs/52498--slavia-praha/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Nazar Domchak",
+        "P"
+      ],
+      [
+        "Jakub Markovič",
+        "P"
+      ],
+      [
+        "Adam Rezek",
+        "P"
+      ],
+      [
+        "Štěpán Chaloupek",
+        "D"
+      ],
+      [
+        "Tomáš Holeš",
+        "D"
+      ],
+      [
+        "David Zima",
+        "D"
+      ],
+      [
+        "Ange N'Guessan",
+        "D"
+      ],
+      [
+        "Tomáš Vlček",
+        "D"
+      ],
+      [
+        "Mikuláš Konečný",
+        "D"
+      ],
+      [
+        "Jakub Kolísek",
+        "D"
+      ],
+      [
+        "David Barčot",
+        "D"
+      ],
+      [
+        "Oskar Kubiak",
+        "C"
+      ],
+      [
+        "Danijel Šturm",
+        "C"
+      ],
+      [
+        "Samuel Isife",
+        "C"
+      ],
+      [
+        "Mubarak Suleiman",
+        "C"
+      ],
+      [
+        "David Moses",
+        "C"
+      ],
+      [
+        "Lukáš Provod",
+        "C"
+      ],
+      [
+        "Emmanuel Ayaosi",
+        "C"
+      ],
+      [
+        "Toumani Diakité",
+        "C"
+      ],
+      [
+        "Mojmír Chytil",
+        "A"
+      ],
+      [
+        "Adonija Ouanda",
+        "A"
+      ],
+      [
+        "Tomáš Chorý",
+        "A"
+      ],
+      [
+        "Dan Kohout",
+        "A"
+      ],
+      [
+        "Michal Sadílek",
+        "C"
+      ],
+      [
+        "Wiktor Nowak",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Anderlecht": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50074--anderlecht/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Colin Coosemans",
+        "P"
+      ],
+      [
+        "Justin Heekeren",
+        "P"
+      ],
+      [
+        "Mattis Seghers",
+        "P"
+      ],
+      [
+        "Zoumana Keita",
+        "D"
+      ],
+      [
+        "Lucas Hey",
+        "D"
+      ],
+      [
+        "Giulian Biancone",
+        "D"
+      ],
+      [
+        "Oleg Reabciuk",
+        "D"
+      ],
+      [
+        "Ludwig Augustinsson",
+        "D"
+      ],
+      [
+        "Andrew Omobamidele",
+        "D"
+      ],
+      [
+        "Leo Petrot",
+        "D"
+      ],
+      [
+        "Kaïs Barry",
+        "D"
+      ],
+      [
+        "Ilay Camara",
+        "C"
+      ],
+      [
+        "Romeo Amane",
+        "C"
+      ],
+      [
+        "Marten Winkler",
+        "C"
+      ],
+      [
+        "Lukáš Ambros",
+        "C"
+      ],
+      [
+        "Thelo Aasgaard",
+        "C"
+      ],
+      [
+        "Enric Llansana",
+        "C"
+      ],
+      [
+        "Mario Stroeykens",
+        "C"
+      ],
+      [
+        "Marco Kana",
+        "C"
+      ],
+      [
+        "Mihajlo Cvetković",
+        "A"
+      ],
+      [
+        "Oliver Antman",
+        "A"
+      ],
+      [
+        "Danylo Sikan",
+        "A"
+      ],
+      [
+        "Tawfik Bentayeb",
+        "A"
+      ],
+      [
+        "Adriano Bertaccini",
+        "A"
+      ],
+      [
+        "Killian Sardella",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Ararat-Armenia": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/2610304/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Arman Nersesyan",
+        "P"
+      ],
+      [
+        "Suren Grigoryan",
+        "P"
+      ],
+      [
+        "João Bravim",
+        "P"
+      ],
+      [
+        "Hugo Oliveira",
+        "D"
+      ],
+      [
+        "Junior Bueno",
+        "D"
+      ],
+      [
+        "Luis Felipe",
+        "D"
+      ],
+      [
+        "Kamo Hovhannisyan",
+        "D"
+      ],
+      [
+        "Bruno Pereira",
+        "D"
+      ],
+      [
+        "Edgar Grigoryan",
+        "D"
+      ],
+      [
+        "Bruno Wilson",
+        "D"
+      ],
+      [
+        "Alexandros Malis",
+        "D"
+      ],
+      [
+        "Juan Balanta",
+        "C"
+      ],
+      [
+        "Armen Ambartsumyan",
+        "C"
+      ],
+      [
+        "Zidane Banjaqui",
+        "C"
+      ],
+      [
+        "Maxence Carlier",
+        "C"
+      ],
+      [
+        "Karen Muradyan",
+        "C"
+      ],
+      [
+        "Alwyn Tera",
+        "C"
+      ],
+      [
+        "Mikayel Khudaverdyan",
+        "C"
+      ],
+      [
+        "Vahe Petrosyan",
+        "C"
+      ],
+      [
+        "Zhirayr Shaghoyan",
+        "A"
+      ],
+      [
+        "Arayik Eloyan",
+        "A"
+      ],
+      [
+        "Alioune Ndour",
+        "A"
+      ],
+      [
+        "Sandro Lima",
+        "A"
+      ],
+      [
+        "Bernardo Dias",
+        "C"
+      ],
+      [
+        "Artur Serobyan",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "AZ Alkmaar": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52327--az-alkmaar/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Rome-Jayden Owusu-Oduro",
+        "P"
+      ],
+      [
+        "Hobie Verhulst",
+        "P"
+      ],
+      [
+        "Jari De Busser",
+        "P"
+      ],
+      [
+        "Seiya Maikuma",
+        "D"
+      ],
+      [
+        "Wouter Goes",
+        "D"
+      ],
+      [
+        "Mateo Chávez",
+        "D"
+      ],
+      [
+        "Andrea Natali",
+        "D"
+      ],
+      [
+        "Wesley Hoedt",
+        "D"
+      ],
+      [
+        "Denso Kasius",
+        "D"
+      ],
+      [
+        "Rion Ichihara",
+        "D"
+      ],
+      [
+        "Mees de Wit",
+        "D"
+      ],
+      [
+        "Lewis Schouten",
+        "C"
+      ],
+      [
+        "Peer Koopmeiners",
+        "C"
+      ],
+      [
+        "Jordy Clasie",
+        "C"
+      ],
+      [
+        "Kees Smit",
+        "C"
+      ],
+      [
+        "Stije Resink",
+        "C"
+      ],
+      [
+        "Valdemar Byskov",
+        "C"
+      ],
+      [
+        "Dave Kwakman",
+        "C"
+      ],
+      [
+        "Weslley Patati",
+        "A"
+      ],
+      [
+        "Mexx Meerdink",
+        "A"
+      ],
+      [
+        "Ro-Zangelo Daal",
+        "A"
+      ],
+      [
+        "Calvin Stengs",
+        "A"
+      ],
+      [
+        "Bendegúz Kovács",
+        "A"
+      ],
+      [
+        "Jizz Hornkamp",
+        "A"
+      ],
+      [
+        "Ayoub Oufkir",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Beşiktaş": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50157/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Alexander Nübel",
+        "P"
+      ],
+      [
+        "Tuğra Yeşilyurt",
+        "P"
+      ],
+      [
+        "Doğan Alemdar",
+        "P"
+      ],
+      [
+        "Kassoum Ouattara",
+        "D"
+      ],
+      [
+        "Emmanuel Agbadou",
+        "D"
+      ],
+      [
+        "Taylan Bulut",
+        "D"
+      ],
+      [
+        "Rıdvan Yılmaz",
+        "D"
+      ],
+      [
+        "Tiago Djaló",
+        "D"
+      ],
+      [
+        "Ümit Akdağ",
+        "D"
+      ],
+      [
+        "Emirhan Topçu",
+        "D"
+      ],
+      [
+        "Yasin Özcan",
+        "D"
+      ],
+      [
+        "Wilfred Ndidi",
+        "C"
+      ],
+      [
+        "Salih Özcan",
+        "C"
+      ],
+      [
+        "Kartal Yılmaz",
+        "C"
+      ],
+      [
+        "Orkun Kökçü",
+        "C"
+      ],
+      [
+        "Junior Olaitan",
+        "C"
+      ],
+      [
+        "Václav Černý",
+        "C"
+      ],
+      [
+        "Leandro Trossard",
+        "C"
+      ],
+      [
+        "Fabio Miretti",
+        "C"
+      ],
+      [
+        "Hyeongyu Oh",
+        "A"
+      ],
+      [
+        "Ernest Poku",
+        "A"
+      ],
+      [
+        "Mustafa Hekimoğlu",
+        "A"
+      ],
+      [
+        "Dušan Vlahović",
+        "A"
+      ],
+      [
+        "Semih Kılıçsoy",
+        "A"
+      ],
+      [
+        "Michael Murillo",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Celje": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/59030/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Žan-Luk Leban",
+        "P"
+      ],
+      [
+        "Luka Kolar",
+        "P"
+      ],
+      [
+        "Žiga Frelih",
+        "P"
+      ],
+      [
+        "Pijus Širvys",
+        "D"
+      ],
+      [
+        "Artemijus Tutyškinas",
+        "D"
+      ],
+      [
+        "Žan Žužek",
+        "D"
+      ],
+      [
+        "Alpha Diounkou",
+        "D"
+      ],
+      [
+        "Leonardo Koutris",
+        "D"
+      ],
+      [
+        "Lukasz Bejger",
+        "D"
+      ],
+      [
+        "Matic Ivanšek",
+        "D"
+      ],
+      [
+        "Darko Hrka",
+        "C"
+      ],
+      [
+        "Benjamin Verbič",
+        "C"
+      ],
+      [
+        "Mario Kvesić",
+        "C"
+      ],
+      [
+        "Svit Sešlar",
+        "C"
+      ],
+      [
+        "Milot Avdyli",
+        "C"
+      ],
+      [
+        "Papa Daniel",
+        "C"
+      ],
+      [
+        "Luka Vešner Tičić",
+        "C"
+      ],
+      [
+        "Andrej Kotnik",
+        "C"
+      ],
+      [
+        "Blaž Kramer",
+        "A"
+      ],
+      [
+        "Dejan Suhovršnik",
+        "A"
+      ],
+      [
+        "Armandas Kučys",
+        "A"
+      ],
+      [
+        "Yaya Dukuly",
+        "A"
+      ],
+      [
+        "Mark Zabukovnik",
+        "C"
+      ],
+      [
+        "Veton Tusha",
+        "C"
+      ],
+      [
+        "Ivan Ćalušić",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale.",
+    "additionalSources": [
+      "https://www.uefa.com/uefachampionsleague/clubs/59030--celje/squad/"
+    ]
+  },
+  "Celta Vigo": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/53043--celta/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Altay Bayındır",
+        "P"
+      ],
+      [
+        "Ionuț Radu",
+        "P"
+      ],
+      [
+        "Ivan Villar",
+        "P"
+      ],
+      [
+        "Carl Starfelt",
+        "D"
+      ],
+      [
+        "Marcos Alonso",
+        "D"
+      ],
+      [
+        "Abdoulaye Faye",
+        "D"
+      ],
+      [
+        "Sergio Carreira",
+        "D"
+      ],
+      [
+        "Álvaro Núñez",
+        "D"
+      ],
+      [
+        "Javi Rueda",
+        "D"
+      ],
+      [
+        "Yoel Lago",
+        "D"
+      ],
+      [
+        "Javi Rodríguez",
+        "D"
+      ],
+      [
+        "Ilaix Moriba",
+        "C"
+      ],
+      [
+        "Miguel Román",
+        "C"
+      ],
+      [
+        "Aleix Febas",
+        "C"
+      ],
+      [
+        "Hugo Álvarez",
+        "C"
+      ],
+      [
+        "Andrés Antañón",
+        "C"
+      ],
+      [
+        "Hugo Burcio",
+        "C"
+      ],
+      [
+        "Borja Iglesias",
+        "A"
+      ],
+      [
+        "Ferran Jutglà",
+        "A"
+      ],
+      [
+        "Iago Aspas",
+        "A"
+      ],
+      [
+        "Pablo Durán",
+        "A"
+      ],
+      [
+        "Hugo González",
+        "A"
+      ],
+      [
+        "Williot Swedberg",
+        "A"
+      ],
+      [
+        "Sebastián Cáceres",
+        "D"
+      ],
+      [
+        "Javi Galán",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Celtic": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50050/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Viljami Sinisalo",
+        "P"
+      ],
+      [
+        "Sam Johnstone",
+        "P"
+      ],
+      [
+        "Ross Doohan",
+        "P"
+      ],
+      [
+        "Alistair Johnston",
+        "D"
+      ],
+      [
+        "Jordan Lotomba",
+        "D"
+      ],
+      [
+        "Liam Scales",
+        "D"
+      ],
+      [
+        "Auston Trusty",
+        "D"
+      ],
+      [
+        "Cameron Carter-Vickers",
+        "D"
+      ],
+      [
+        "Samuel Isiguzo",
+        "D"
+      ],
+      [
+        "Hayden Borland",
+        "D"
+      ],
+      [
+        "Dane Murray",
+        "D"
+      ],
+      [
+        "Hyunjun Yang",
+        "C"
+      ],
+      [
+        "Luke McCowan",
+        "C"
+      ],
+      [
+        "Oliver Sørensen",
+        "C"
+      ],
+      [
+        "Alex Oxlade-Chamberlain",
+        "C"
+      ],
+      [
+        "Mika Baur",
+        "C"
+      ],
+      [
+        "Callum McGregor",
+        "C"
+      ],
+      [
+        "James Forrest",
+        "C"
+      ],
+      [
+        "Benjamin Nygren",
+        "A"
+      ],
+      [
+        "Kasper Høgh",
+        "A"
+      ],
+      [
+        "Camilo Durán",
+        "A"
+      ],
+      [
+        "Sebastian Tounekti",
+        "A"
+      ],
+      [
+        "Callum Osmand",
+        "A"
+      ],
+      [
+        "Haissem Hassan",
+        "A"
+      ],
+      [
+        "Colby Donovan",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Dinamo Zagabria": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50164/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Danijel Zagorac",
+        "P"
+      ],
+      [
+        "Dominik Kotarski",
+        "P"
+      ],
+      [
+        "Ivan Filipović",
+        "P"
+      ],
+      [
+        "Bruno Goda",
+        "D"
+      ],
+      [
+        "Stjepan Radeljić",
+        "D"
+      ],
+      [
+        "Niko Galešić",
+        "D"
+      ],
+      [
+        "Matteo Perez Vinlöf",
+        "D"
+      ],
+      [
+        "Moris Valinčić",
+        "D"
+      ],
+      [
+        "Scott McKenna",
+        "D"
+      ],
+      [
+        "Noa Mikić",
+        "D"
+      ],
+      [
+        "Sergi Domínguez",
+        "D"
+      ],
+      [
+        "Kirill Kravtsov",
+        "C"
+      ],
+      [
+        "Dani Rodríguez",
+        "C"
+      ],
+      [
+        "Miha Zajc",
+        "C"
+      ],
+      [
+        "Luka Stojković",
+        "C"
+      ],
+      [
+        "Luka Ivanušec",
+        "C"
+      ],
+      [
+        "Iker Almena",
+        "C"
+      ],
+      [
+        "Josip Mišić",
+        "C"
+      ],
+      [
+        "Jona Benkotić",
+        "C"
+      ],
+      [
+        "Dion Beljo",
+        "A"
+      ],
+      [
+        "Arbër Hoxha",
+        "A"
+      ],
+      [
+        "Smail Prevljak",
+        "A"
+      ],
+      [
+        "Mateo Lisica",
+        "A"
+      ],
+      [
+        "Karlo Zulfić",
+        "A"
+      ],
+      [
+        "Mislav Oršić",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Hapoel Be’er Sheva": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/59340/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Ofir Marciano",
+        "P"
+      ],
+      [
+        "Marco Wolff",
+        "P"
+      ],
+      [
+        "Jonathan Shani",
+        "P"
+      ],
+      [
+        "Guy Mizrahi",
+        "D"
+      ],
+      [
+        "Matan Baltaxa",
+        "D"
+      ],
+      [
+        "Miguel Vítor",
+        "D"
+      ],
+      [
+        "Pedro Amador",
+        "D"
+      ],
+      [
+        "Itay Rotman",
+        "D"
+      ],
+      [
+        "Ofir Davidzada",
+        "D"
+      ],
+      [
+        "Idan Nachmias",
+        "D"
+      ],
+      [
+        "Djibril Diop",
+        "D"
+      ],
+      [
+        "Eliel Peretz",
+        "C"
+      ],
+      [
+        "Mohammad Kanaan",
+        "C"
+      ],
+      [
+        "Dan Biton",
+        "C"
+      ],
+      [
+        "Amir Ganah",
+        "C"
+      ],
+      [
+        "Amankwah Forson",
+        "C"
+      ],
+      [
+        "Lucas Ventura",
+        "C"
+      ],
+      [
+        "Niv Yehoshuha",
+        "C"
+      ],
+      [
+        "Yonatan Gilboa",
+        "C"
+      ],
+      [
+        "Zahi Ahmad",
+        "A"
+      ],
+      [
+        "Yonas Malede",
+        "A"
+      ],
+      [
+        "Javon East",
+        "A"
+      ],
+      [
+        "Mohammad Abu Rumi",
+        "A"
+      ],
+      [
+        "Igor Zlatanović",
+        "A"
+      ],
+      [
+        "João Victor",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Hoffenheim": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/2600431--hoffenheim/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Oliver Baumann",
+        "P"
+      ],
+      [
+        "Lúkas Petersson",
+        "P"
+      ],
+      [
+        "Luca Philipp",
+        "P"
+      ],
+      [
+        "Robin Hranáč",
+        "D"
+      ],
+      [
+        "Sean Dulic",
+        "D"
+      ],
+      [
+        "Ozan Kabak",
+        "D"
+      ],
+      [
+        "Bernardo",
+        "D"
+      ],
+      [
+        "Valentin Gendrey",
+        "D"
+      ],
+      [
+        "Koki Machida",
+        "D"
+      ],
+      [
+        "Natnael Abraha",
+        "D"
+      ],
+      [
+        "Vladimír Coufal",
+        "D"
+      ],
+      [
+        "Leon Avdullahu",
+        "C"
+      ],
+      [
+        "Patrick Wimmer",
+        "C"
+      ],
+      [
+        "Nathan De Cat",
+        "C"
+      ],
+      [
+        "Wouter Burger",
+        "C"
+      ],
+      [
+        "Tim Lemperle",
+        "C"
+      ],
+      [
+        "Bambasé Conté",
+        "C"
+      ],
+      [
+        "Alexander Prass",
+        "C"
+      ],
+      [
+        "Cajetan Lenz",
+        "C"
+      ],
+      [
+        "Max Moerstedt",
+        "A"
+      ],
+      [
+        "Adam Hložek",
+        "A"
+      ],
+      [
+        "Fisnik Asllani",
+        "A"
+      ],
+      [
+        "Adam Daghim",
+        "A"
+      ],
+      [
+        "Andrej Kramarić",
+        "A"
+      ],
+      [
+        "Mats Rots",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Ferencváros": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52298/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Ádám Varga",
+        "P"
+      ],
+      [
+        "Levente Őri",
+        "P"
+      ],
+      [
+        "Dániel Radnóti",
+        "P"
+      ],
+      [
+        "Mariano Gómez",
+        "D"
+      ],
+      [
+        "Nathan Zohoré",
+        "D"
+      ],
+      [
+        "Attila Osváth",
+        "D"
+      ],
+      [
+        "Cadu",
+        "D"
+      ],
+      [
+        "Endre Botka",
+        "D"
+      ],
+      [
+        "Toon Raemaekers",
+        "D"
+      ],
+      [
+        "Olivér Nagy",
+        "D"
+      ],
+      [
+        "Csongor Lakatos",
+        "D"
+      ],
+      [
+        "Ádám Nagy",
+        "C"
+      ],
+      [
+        "Veljko Birmančević",
+        "C"
+      ],
+      [
+        "Naby Keïta",
+        "C"
+      ],
+      [
+        "Jonathan Levi",
+        "C"
+      ],
+      [
+        "Daniel Arzani",
+        "C"
+      ],
+      [
+        "Kristoffer Zachariassen",
+        "C"
+      ],
+      [
+        "Marius Corbu",
+        "C"
+      ],
+      [
+        "Matúš Bero",
+        "C"
+      ],
+      [
+        "Bamidele Yusuf",
+        "A"
+      ],
+      [
+        "Franko Kovačević",
+        "A"
+      ],
+      [
+        "Zétény Varga",
+        "A"
+      ],
+      [
+        "Lenny Joseph",
+        "A"
+      ],
+      [
+        "Callum O'Dowda",
+        "C"
+      ],
+      [
+        "Dénes Dibusz",
+        "P"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Jagiellonia": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/2600277--jagiellonia/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Michał Perchel",
+        "P"
+      ],
+      [
+        "Sławomir Abramowicz",
+        "P"
+      ],
+      [
+        "Krzysztof Lewczuk",
+        "P"
+      ],
+      [
+        "Dušan Stojinović",
+        "D"
+      ],
+      [
+        "Yuki Kobayashi",
+        "D"
+      ],
+      [
+        "Bernardo Vital",
+        "D"
+      ],
+      [
+        "Bartłomiej Wdowik",
+        "D"
+      ],
+      [
+        "Guilherme Montóia",
+        "D"
+      ],
+      [
+        "Rodrigo Conceição",
+        "D"
+      ],
+      [
+        "Apostolos Konstantopoulos",
+        "D"
+      ],
+      [
+        "Bartłomiej Krasiewicz",
+        "D"
+      ],
+      [
+        "Taras Romanczuk",
+        "C"
+      ],
+      [
+        "Kajetan Szmyt",
+        "C"
+      ],
+      [
+        "Hampus Finndell",
+        "C"
+      ],
+      [
+        "Norbert Wojtuszek",
+        "C"
+      ],
+      [
+        "Anders Klynge",
+        "C"
+      ],
+      [
+        "Sergio Lozano",
+        "C"
+      ],
+      [
+        "Ousmane Sow",
+        "C"
+      ],
+      [
+        "Aleksandar Ćirković",
+        "C"
+      ],
+      [
+        "Jeremy Agbonifo",
+        "A"
+      ],
+      [
+        "Jesús Imaz",
+        "A"
+      ],
+      [
+        "Youssuf Sylla",
+        "A"
+      ],
+      [
+        "Nik Prelec",
+        "A"
+      ],
+      [
+        "Szymon Pankiewicz",
+        "D"
+      ],
+      [
+        "Kamil Jóźwiak",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Bayer Leverkusen": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50109--leverkusen/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Mark Flekken",
+        "P"
+      ],
+      [
+        "Janis Blaswich",
+        "P"
+      ],
+      [
+        "Niklas Lomb",
+        "P"
+      ],
+      [
+        "Facundo Medina",
+        "D"
+      ],
+      [
+        "Miguel Gutiérrez",
+        "D"
+      ],
+      [
+        "Jarell Quansah",
+        "D"
+      ],
+      [
+        "Loïc Badé",
+        "D"
+      ],
+      [
+        "Edmond Tapsoba",
+        "D"
+      ],
+      [
+        "Lucas Vázquez",
+        "D"
+      ],
+      [
+        "Guéla Doué",
+        "D"
+      ],
+      [
+        "Ben Hawighorst",
+        "D"
+      ],
+      [
+        "Equi Fernández",
+        "C"
+      ],
+      [
+        "Jonas Hofmann",
+        "C"
+      ],
+      [
+        "Robert Andrich",
+        "C"
+      ],
+      [
+        "Malik Tillman",
+        "C"
+      ],
+      [
+        "Aleix García",
+        "C"
+      ],
+      [
+        "Eliesse Ben Seghir",
+        "C"
+      ],
+      [
+        "Ibrahim Maza",
+        "C"
+      ],
+      [
+        "Montrell Culbreath",
+        "C"
+      ],
+      [
+        "Afonso Moreira",
+        "A"
+      ],
+      [
+        "Patrik Schick",
+        "A"
+      ],
+      [
+        "Moussa Diaby",
+        "A"
+      ],
+      [
+        "Nathan Tella",
+        "A"
+      ],
+      [
+        "Christian Kofane",
+        "A"
+      ],
+      [
+        "Gabriel Minutillo",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Lech Poznań": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/64227--lech-poznan/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Mateusz Lis",
+        "P"
+      ],
+      [
+        "Wiktor Obremski",
+        "P"
+      ],
+      [
+        "Mateusz Pruchniewski",
+        "P"
+      ],
+      [
+        "Joel Pereira",
+        "D"
+      ],
+      [
+        "Alex Douglas",
+        "D"
+      ],
+      [
+        "João Moutinho",
+        "D"
+      ],
+      [
+        "Michał Gurgul",
+        "D"
+      ],
+      [
+        "Robert Gumny",
+        "D"
+      ],
+      [
+        "Wojciech Mońka",
+        "D"
+      ],
+      [
+        "Piotr Bartczak",
+        "D"
+      ],
+      [
+        "Terry Yegbe",
+        "D"
+      ],
+      [
+        "Gustav Berggren",
+        "C"
+      ],
+      [
+        "Ali Gholizadeh",
+        "C"
+      ],
+      [
+        "Leo Bengtsson",
+        "C"
+      ],
+      [
+        "Pablo Rodríguez",
+        "C"
+      ],
+      [
+        "Radosław Murawski",
+        "C"
+      ],
+      [
+        "Filip Jagiełło",
+        "C"
+      ],
+      [
+        "Antoni Kozubal",
+        "C"
+      ],
+      [
+        "Luis Palma",
+        "C"
+      ],
+      [
+        "Yannick Agnero",
+        "A"
+      ],
+      [
+        "Mikael Ishak",
+        "A"
+      ],
+      [
+        "Patrik Wålemark",
+        "A"
+      ],
+      [
+        "Daniel Håkans",
+        "A"
+      ],
+      [
+        "Allahyar Sayyadmanesh",
+        "A"
+      ],
+      [
+        "Mateusz Skrzypczak",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Levski Sofia": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50044--levski-sofia/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Ognian Vladimirov",
+        "P"
+      ],
+      [
+        "Martin Lukov",
+        "P"
+      ],
+      [
+        "Svetoslav Vutsov",
+        "P"
+      ],
+      [
+        "Hevertton Santos",
+        "D"
+      ],
+      [
+        "Maicon",
+        "D"
+      ],
+      [
+        "Christian Makoun",
+        "D"
+      ],
+      [
+        "Álex Centelles",
+        "D"
+      ],
+      [
+        "Aldair Neves",
+        "D"
+      ],
+      [
+        "Nikola Serafimov",
+        "D"
+      ],
+      [
+        "Stoyan Dobrev",
+        "D"
+      ],
+      [
+        "Anton Manov",
+        "D"
+      ],
+      [
+        "Marko Grujić",
+        "C"
+      ],
+      [
+        "Asen Mitkov",
+        "C"
+      ],
+      [
+        "Gašper Trdin",
+        "C"
+      ],
+      [
+        "Mehdi Moubarik",
+        "C"
+      ],
+      [
+        "Mazire Soula",
+        "C"
+      ],
+      [
+        "Ivo Motev",
+        "C"
+      ],
+      [
+        "Serginho",
+        "C"
+      ],
+      [
+        "Akram Bouras",
+        "C"
+      ],
+      [
+        "Reinaldo",
+        "A"
+      ],
+      [
+        "Juan Perea",
+        "A"
+      ],
+      [
+        "Armstrong Oko-Flex",
+        "A"
+      ],
+      [
+        "Everton Bala",
+        "A"
+      ],
+      [
+        "David Kusso",
+        "A"
+      ],
+      [
+        "Stivan Stoyanchov",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Lillestrøm": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52314/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Stefan Hagerup",
+        "P"
+      ],
+      [
+        "Pontus Dahlberg",
+        "P"
+      ],
+      [
+        "Lazar Babic",
+        "P"
+      ],
+      [
+        "Lars Ranger",
+        "D"
+      ],
+      [
+        "Sturla Ottesen",
+        "D"
+      ],
+      [
+        "Espen Garnås",
+        "D"
+      ],
+      [
+        "Sander Moen Foss",
+        "D"
+      ],
+      [
+        "Frederik Elkær",
+        "D"
+      ],
+      [
+        "Ruben Gabrielsen",
+        "D"
+      ],
+      [
+        "Filip Reshane",
+        "D"
+      ],
+      [
+        "Isa Jallow",
+        "D"
+      ],
+      [
+        "Harald Woxen",
+        "C"
+      ],
+      [
+        "Gustav Nyheim",
+        "C"
+      ],
+      [
+        "Henrik Melland",
+        "C"
+      ],
+      [
+        "Eric Kitolano",
+        "C"
+      ],
+      [
+        "Kevin Krygård",
+        "C"
+      ],
+      [
+        "Camil Jebara",
+        "C"
+      ],
+      [
+        "Filip Ottosson",
+        "C"
+      ],
+      [
+        "Ylldren Ibrahimaj",
+        "C"
+      ],
+      [
+        "Linus Alperud",
+        "A"
+      ],
+      [
+        "Fredrik Gulbrandsen",
+        "A"
+      ],
+      [
+        "Thomas Olsen",
+        "A"
+      ],
+      [
+        "Gustav Nordh",
+        "A"
+      ],
+      [
+        "Felix Vá",
+        "A"
+      ],
+      [
+        "Daniel Bassi",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Olympique Lione": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/5312/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Dominik Greif",
+        "P"
+      ],
+      [
+        "Justin Bengui",
+        "P"
+      ],
+      [
+        "Rémy Descamps",
+        "P"
+      ],
+      [
+        "Nicolás Tagliafico",
+        "D"
+      ],
+      [
+        "Zachary Athekame",
+        "D"
+      ],
+      [
+        "Abner Vinicius",
+        "D"
+      ],
+      [
+        "Moussa Niakhaté",
+        "D"
+      ],
+      [
+        "Felix Bacher",
+        "D"
+      ],
+      [
+        "Ruben Kluivert",
+        "D"
+      ],
+      [
+        "Clinton Mata",
+        "D"
+      ],
+      [
+        "Steeve Kango",
+        "D"
+      ],
+      [
+        "Mads Bidstrup",
+        "C"
+      ],
+      [
+        "Tanner Tessmann",
+        "C"
+      ],
+      [
+        "Corentin Tolisso",
+        "C"
+      ],
+      [
+        "Pavel Šulc",
+        "C"
+      ],
+      [
+        "Khalis Merah",
+        "C"
+      ],
+      [
+        "Tyler Morton",
+        "C"
+      ],
+      [
+        "Julien Duranville",
+        "C"
+      ],
+      [
+        "Noah Nartey",
+        "C"
+      ],
+      [
+        "Ernest Nuamah",
+        "A"
+      ],
+      [
+        "Keito Nakamura",
+        "A"
+      ],
+      [
+        "Loïs Openda",
+        "A"
+      ],
+      [
+        "Kail Boudache",
+        "A"
+      ],
+      [
+        "Rémi Himbert",
+        "A"
+      ],
+      [
+        "Mohamed Ouédraogo",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Olympique Marsiglia": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52748--marseille/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Jeffrey de Lange",
+        "P"
+      ],
+      [
+        "Jelle van Neck",
+        "P"
+      ],
+      [
+        "Ibrahim Gomis",
+        "P"
+      ],
+      [
+        "CJ Egan-Riley",
+        "D"
+      ],
+      [
+        "Derek Cornelius",
+        "D"
+      ],
+      [
+        "Bamo Meite",
+        "D"
+      ],
+      [
+        "Nayef Aguerd",
+        "D"
+      ],
+      [
+        "Ulisses Garcia",
+        "D"
+      ],
+      [
+        "Emerson",
+        "D"
+      ],
+      [
+        "Alexi Koum",
+        "D"
+      ],
+      [
+        "Rayan Ouro Bang Na",
+        "D"
+      ],
+      [
+        "Tochukwu Nnadi",
+        "C"
+      ],
+      [
+        "Angel Gomes",
+        "C"
+      ],
+      [
+        "Himad Abdelli",
+        "C"
+      ],
+      [
+        "Geoffrey Kondogbia",
+        "C"
+      ],
+      [
+        "Timothy Weah",
+        "C"
+      ],
+      [
+        "Pierre-Emile Højbjerg",
+        "C"
+      ],
+      [
+        "Nouhoum Kamissoko",
+        "C"
+      ],
+      [
+        "Amine Harit",
+        "C"
+      ],
+      [
+        "Amine Gouiri",
+        "A"
+      ],
+      [
+        "Neal Maupay",
+        "A"
+      ],
+      [
+        "Igor Paixão",
+        "A"
+      ],
+      [
+        "Faris Moumbagna",
+        "A"
+      ],
+      [
+        "Keyliane Abdallah",
+        "A"
+      ],
+      [
+        "Theo Vermot",
+        "P"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "N.E.C. Nijmegen": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52330--nec/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Gonzalo Crettaz",
+        "P"
+      ],
+      [
+        "Nikolas Polster",
+        "P"
+      ],
+      [
+        "Freek Entius",
+        "P"
+      ],
+      [
+        "Philippe Sandler",
+        "D"
+      ],
+      [
+        "Perr Schuurs",
+        "D"
+      ],
+      [
+        "Bram Nuytinck",
+        "D"
+      ],
+      [
+        "Tobias Storm",
+        "D"
+      ],
+      [
+        "Ahmetcan Kaplan",
+        "D"
+      ],
+      [
+        "Deveron Fonville",
+        "D"
+      ],
+      [
+        "Merijn Van De Wiel",
+        "D"
+      ],
+      [
+        "Yassin Moslih",
+        "D"
+      ],
+      [
+        "Darko Nejašmić",
+        "C"
+      ],
+      [
+        "Willum Thor Willumsson",
+        "C"
+      ],
+      [
+        "Dennis Geiger",
+        "C"
+      ],
+      [
+        "Noe Lebreton",
+        "C"
+      ],
+      [
+        "Sam De Laat",
+        "C"
+      ],
+      [
+        "Jamiro Monteiro",
+        "C"
+      ],
+      [
+        "Emre Mor",
+        "A"
+      ],
+      [
+        "Tjaronn Chery",
+        "A"
+      ],
+      [
+        "Dušan Tadić",
+        "A"
+      ],
+      [
+        "Kaj Sierhuis",
+        "A"
+      ],
+      [
+        "Bryan Linssen",
+        "A"
+      ],
+      [
+        "Kevin Kers",
+        "A"
+      ],
+      [
+        "Almugera Kabar",
+        "D"
+      ],
+      [
+        "Ayodele Thomas",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "OFI Creta": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/52953--ofi/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Klidman Lilo",
+        "P"
+      ],
+      [
+        "Panagiotis Katsikas",
+        "P"
+      ],
+      [
+        "Manuel Kalafatis",
+        "P"
+      ],
+      [
+        "Krešimir Krizmanić",
+        "D"
+      ],
+      [
+        "Nikolaos Athanasiou",
+        "D"
+      ],
+      [
+        "Konstantinos Kostoulas",
+        "D"
+      ],
+      [
+        "Achilleas Poungouras",
+        "D"
+      ],
+      [
+        "Christos Shelis",
+        "D"
+      ],
+      [
+        "Borja González",
+        "D"
+      ],
+      [
+        "Lorenzo Dickmann",
+        "D"
+      ],
+      [
+        "Dimitris Nikolaou",
+        "D"
+      ],
+      [
+        "Zisis Karachalios",
+        "C"
+      ],
+      [
+        "Georgios Kanellopoulos",
+        "C"
+      ],
+      [
+        "Thanasis Androutsos",
+        "C"
+      ],
+      [
+        "Ioannis Apostolakis",
+        "C"
+      ],
+      [
+        "Thiago Romano",
+        "C"
+      ],
+      [
+        "Andreas Bouchalakis",
+        "C"
+      ],
+      [
+        "Athanasios Sitmalidis",
+        "C"
+      ],
+      [
+        "Aaron Leya Iseka",
+        "A"
+      ],
+      [
+        "Aitor Cantalapiedra",
+        "A"
+      ],
+      [
+        "Taxiarchis Fountas",
+        "A"
+      ],
+      [
+        "Thiago Nuss",
+        "A"
+      ],
+      [
+        "Kenan Kodro",
+        "A"
+      ],
+      [
+        "Ioannis Theodosoulakis",
+        "A"
+      ],
+      [
+        "Eleftherios Kontekas",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Olympiacos": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/2610--olympiacos/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Stefan Ortega",
+        "P"
+      ],
+      [
+        "Georgios Kouraklis",
+        "P"
+      ],
+      [
+        "Dimitrios Stournaras",
+        "P"
+      ],
+      [
+        "Manolis Saliakas",
+        "D"
+      ],
+      [
+        "Zinedin Smajlović",
+        "D"
+      ],
+      [
+        "Lorenzo Pirola",
+        "D"
+      ],
+      [
+        "David Carmo",
+        "D"
+      ],
+      [
+        "Marcus Pedersen",
+        "D"
+      ],
+      [
+        "Panagiotis Retsos",
+        "D"
+      ],
+      [
+        "Konstantinos Tanoulis",
+        "D"
+      ],
+      [
+        "Nektarios Alafakis",
+        "D"
+      ],
+      [
+        "Kostas Fortounis",
+        "C"
+      ],
+      [
+        "Gustavo Sá",
+        "C"
+      ],
+      [
+        "Gustavo Puerta",
+        "C"
+      ],
+      [
+        "Remo Freuler",
+        "C"
+      ],
+      [
+        "Theofanis Bakoulas",
+        "C"
+      ],
+      [
+        "Chiquinho",
+        "C"
+      ],
+      [
+        "Santiago Hezze",
+        "C"
+      ],
+      [
+        "Nayair Tiknizyan",
+        "C"
+      ],
+      [
+        "Gelson Martins",
+        "A"
+      ],
+      [
+        "Roman Yaremchuk",
+        "A"
+      ],
+      [
+        "Leon Bailey",
+        "A"
+      ],
+      [
+        "João Silva",
+        "A"
+      ],
+      [
+        "Armando González",
+        "A"
+      ],
+      [
+        "Bruno Onyemaechi",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Omonia Nicosia": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50077/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Thomas Kaminski",
+        "P"
+      ],
+      [
+        "Fabiano",
+        "P"
+      ],
+      [
+        "Pantelis Michail",
+        "P"
+      ],
+      [
+        "Senou Coulibaly",
+        "D"
+      ],
+      [
+        "Stefan Simič",
+        "D"
+      ],
+      [
+        "Jure Balkovec",
+        "D"
+      ],
+      [
+        "Ľubomír Šatka",
+        "D"
+      ],
+      [
+        "Loïc Négo",
+        "D"
+      ],
+      [
+        "Michalis Antoniou",
+        "D"
+      ],
+      [
+        "Christos Konstantinidis",
+        "D"
+      ],
+      [
+        "Panagiotis Christoforou",
+        "D"
+      ],
+      [
+        "Ewandro",
+        "C"
+      ],
+      [
+        "Mateo Marić",
+        "C"
+      ],
+      [
+        "Luuk Brouwers",
+        "C"
+      ],
+      [
+        "Panagiotis Andreou",
+        "C"
+      ],
+      [
+        "Andreas Christou",
+        "C"
+      ],
+      [
+        "Ilias Stylianou",
+        "C"
+      ],
+      [
+        "Chrysis Evangelou",
+        "C"
+      ],
+      [
+        "Theos Kazakaios",
+        "C"
+      ],
+      [
+        "Jaden Montnor",
+        "A"
+      ],
+      [
+        "Andronikos Kakoullis",
+        "A"
+      ],
+      [
+        "Tasos Chatzigiovanis",
+        "A"
+      ],
+      [
+        "Florin Tănase",
+        "A"
+      ],
+      [
+        "Mihlali Mayambela",
+        "A"
+      ],
+      [
+        "Muamer Tankovic",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Real Sociedad": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50123/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Álex Remiro",
+        "P"
+      ],
+      [
+        "Unai Marrero",
+        "P"
+      ],
+      [
+        "Aitor Fraga",
+        "P"
+      ],
+      [
+        "Jon Aramburu",
+        "D"
+      ],
+      [
+        "Aihen Muñoz",
+        "D"
+      ],
+      [
+        "Jon Martín",
+        "D"
+      ],
+      [
+        "Jon Pacheco",
+        "D"
+      ],
+      [
+        "Sergio Gómez",
+        "D"
+      ],
+      [
+        "Mamadou Sarr",
+        "D"
+      ],
+      [
+        "Héctor Fort",
+        "D"
+      ],
+      [
+        "Ibai Aguirre",
+        "D"
+      ],
+      [
+        "Jon Gorrotxategi",
+        "C"
+      ],
+      [
+        "Igor Zubeldia",
+        "C"
+      ],
+      [
+        "Beñat Turrientes",
+        "C"
+      ],
+      [
+        "Mikel Oyarzabal",
+        "C"
+      ],
+      [
+        "Pablo Marín",
+        "C"
+      ],
+      [
+        "Carlos Soler",
+        "C"
+      ],
+      [
+        "Yangel Herrera",
+        "C"
+      ],
+      [
+        "Arsen Zakharyan",
+        "C"
+      ],
+      [
+        "Ander Barrenetxea",
+        "A"
+      ],
+      [
+        "Orri Óskarsson",
+        "A"
+      ],
+      [
+        "Gonçalo Guedes",
+        "A"
+      ],
+      [
+        "Job Ochieng",
+        "A"
+      ],
+      [
+        "Takefusa Kubo",
+        "A"
+      ],
+      [
+        "Gorka Carrera",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Rennes": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/55031--rennes/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Nicolas Lemaître",
+        "P"
+      ],
+      [
+        "Brice Samba",
+        "P"
+      ],
+      [
+        "Kilian Belazzoug",
+        "P"
+      ],
+      [
+        "Charlie Cresswell",
+        "D"
+      ],
+      [
+        "Gonçalo Oliveira",
+        "D"
+      ],
+      [
+        "Bryan Reynolds",
+        "D"
+      ],
+      [
+        "Anthony Rouault",
+        "D"
+      ],
+      [
+        "Quentin Merlin",
+        "D"
+      ],
+      [
+        "Alidu Seidu",
+        "D"
+      ],
+      [
+        "Abdelhamid Aït Boudlal",
+        "D"
+      ],
+      [
+        "Przemysław Frankowski",
+        "D"
+      ],
+      [
+        "Djaoui Cisse",
+        "C"
+      ],
+      [
+        "Ludovic Blas",
+        "C"
+      ],
+      [
+        "Sebastian Szymański",
+        "C"
+      ],
+      [
+        "Valentin Rongier",
+        "C"
+      ],
+      [
+        "Adrien Thomasson",
+        "C"
+      ],
+      [
+        "Mahdi Camara",
+        "C"
+      ],
+      [
+        "Henrick Do Marcolino",
+        "C"
+      ],
+      [
+        "Esteban Lepaul",
+        "A"
+      ],
+      [
+        "Musa Al-Taamari",
+        "A"
+      ],
+      [
+        "Eliezer Mayenda",
+        "A"
+      ],
+      [
+        "Boulaye Dia",
+        "A"
+      ],
+      [
+        "Alexander Legendre",
+        "A"
+      ],
+      [
+        "Arnaud Nordin",
+        "A"
+      ],
+      [
+        "Issa Soumaré",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "RB Salisburgo": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50030--salzburg/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Christian Früchtl",
+        "P"
+      ],
+      [
+        "Nikola Sarcevic",
+        "P"
+      ],
+      [
+        "Christian Zawieschitzky",
+        "P"
+      ],
+      [
+        "John Mellberg",
+        "D"
+      ],
+      [
+        "Frans Krätzig",
+        "D"
+      ],
+      [
+        "Tim Drexler",
+        "D"
+      ],
+      [
+        "Stefan Lainer",
+        "D"
+      ],
+      [
+        "Dominik Schmid",
+        "D"
+      ],
+      [
+        "Leandro Morgalla",
+        "D"
+      ],
+      [
+        "Kevin Boma",
+        "D"
+      ],
+      [
+        "Valentin Zabransky",
+        "D"
+      ],
+      [
+        "Soumaila Diabate",
+        "C"
+      ],
+      [
+        "Umut Tohumcu",
+        "C"
+      ],
+      [
+        "Bartosz Mazurek",
+        "C"
+      ],
+      [
+        "Nikolas Veratschnig",
+        "C"
+      ],
+      [
+        "Gaoussou Diakite",
+        "C"
+      ],
+      [
+        "Abubakr Barry",
+        "C"
+      ],
+      [
+        "Aboubacar Camara",
+        "C"
+      ],
+      [
+        "Jesper Lindstrøm",
+        "C"
+      ],
+      [
+        "Sota Kitano",
+        "A"
+      ],
+      [
+        "Haris Tabaković",
+        "A"
+      ],
+      [
+        "Yorbe Vertessen",
+        "A"
+      ],
+      [
+        "Karim Konaté",
+        "A"
+      ],
+      [
+        "Edmund Baidoo",
+        "A"
+      ],
+      [
+        "Damir Redzic",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Sparta Praga": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50033--sparta-praha/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Jakub Surovčík",
+        "P"
+      ],
+      [
+        "Krisztián Hegyi",
+        "P"
+      ],
+      [
+        "Martin Suchomel",
+        "D"
+      ],
+      [
+        "Pavel Kadeřábek",
+        "D"
+      ],
+      [
+        "Jakub Martinec",
+        "D"
+      ],
+      [
+        "Tobias Guddal",
+        "D"
+      ],
+      [
+        "Viktor Vitályos",
+        "D"
+      ],
+      [
+        "Adam Ševínský",
+        "D"
+      ],
+      [
+        "Loïc Mbe Soh",
+        "D"
+      ],
+      [
+        "Ki-Jana Hoever",
+        "D"
+      ],
+      [
+        "Santiago Eneme",
+        "C"
+      ],
+      [
+        "Josimar Alcócer",
+        "C"
+      ],
+      [
+        "Adam Karabec",
+        "C"
+      ],
+      [
+        "Matěj Ryneš",
+        "C"
+      ],
+      [
+        "John Mercado",
+        "C"
+      ],
+      [
+        "Andrew Irving",
+        "C"
+      ],
+      [
+        "Sivert Mannsverk",
+        "C"
+      ],
+      [
+        "Joao Grimaldo",
+        "C"
+      ],
+      [
+        "Jonatan Braut Brunes",
+        "A"
+      ],
+      [
+        "Ebrima Singhateh",
+        "A"
+      ],
+      [
+        "Matyáš Vojta",
+        "A"
+      ],
+      [
+        "Jaroslav Zelený",
+        "D"
+      ],
+      [
+        "Patrik Vydra",
+        "C"
+      ],
+      [
+        "Roman Macek",
+        "C"
+      ],
+      [
+        "Matěj Jurásek",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Sturm Graz": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/50111/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Adam Stejskal",
+        "P"
+      ],
+      [
+        "Ammar Helac",
+        "P"
+      ],
+      [
+        "Christoph Wiener-Pucher",
+        "P"
+      ],
+      [
+        "Joshua Quarshie",
+        "D"
+      ],
+      [
+        "Albert Vallci",
+        "D"
+      ],
+      [
+        "Emran Soglo",
+        "D"
+      ],
+      [
+        "Petar Petrović",
+        "D"
+      ],
+      [
+        "Luís Balbo",
+        "D"
+      ],
+      [
+        "Paul-Friedrich Koller",
+        "D"
+      ],
+      [
+        "Jon Gorenc Stanković",
+        "C"
+      ],
+      [
+        "Filip Rózga",
+        "C"
+      ],
+      [
+        "Otar Kiteishvili",
+        "C"
+      ],
+      [
+        "Gizo Mamageishvili",
+        "C"
+      ],
+      [
+        "Simon Seidl",
+        "C"
+      ],
+      [
+        "Arjan Malić",
+        "C"
+      ],
+      [
+        "Mate Grgic",
+        "C"
+      ],
+      [
+        "Jürgen Heil",
+        "C"
+      ],
+      [
+        "Leon Grgic",
+        "A"
+      ],
+      [
+        "Axel Kayombo",
+        "A"
+      ],
+      [
+        "Oumar Diakité",
+        "A"
+      ],
+      [
+        "Belmin Beganović",
+        "A"
+      ],
+      [
+        "Nelson Weiper",
+        "A"
+      ],
+      [
+        "Luca Weinhandl",
+        "C"
+      ],
+      [
+        "Julian Halwachs",
+        "C"
+      ],
+      [
+        "Jacob Hödl",
+        "C"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Torreense": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/2603107/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Lucas Paes",
+        "P"
+      ],
+      [
+        "Adriel",
+        "P"
+      ],
+      [
+        "Silas Bjerre",
+        "P"
+      ],
+      [
+        "Stopira",
+        "D"
+      ],
+      [
+        "Juan María",
+        "D"
+      ],
+      [
+        "Volnei Feltes",
+        "D"
+      ],
+      [
+        "Mohamed Ali Diadié",
+        "D"
+      ],
+      [
+        "David Carneiro",
+        "D"
+      ],
+      [
+        "Javi Vázquez",
+        "D"
+      ],
+      [
+        "Jonathan Mutombo",
+        "D"
+      ],
+      [
+        "Rodrigo Guerreiro",
+        "D"
+      ],
+      [
+        "Amine Oudrhiri",
+        "C"
+      ],
+      [
+        "Álex Alfaro",
+        "C"
+      ],
+      [
+        "Nuha Jatta",
+        "C"
+      ],
+      [
+        "André Simões",
+        "C"
+      ],
+      [
+        "Diogo Fonseca",
+        "C"
+      ],
+      [
+        "Rodrigo Esteves",
+        "C"
+      ],
+      [
+        "Gustavo Rijo",
+        "C"
+      ],
+      [
+        "David Morgado",
+        "C"
+      ],
+      [
+        "Dany Jean",
+        "A"
+      ],
+      [
+        "Manu Pozo",
+        "A"
+      ],
+      [
+        "Jorge Aguirre",
+        "A"
+      ],
+      [
+        "Musa Drammeh",
+        "A"
+      ],
+      [
+        "Karem Zoabi",
+        "A"
+      ],
+      [
+        "Malik Abubakari",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Union Saint-Gilloise": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/64125--union-sg/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Vic Chambaere",
+        "P"
+      ],
+      [
+        "Hervé Koffi",
+        "P"
+      ],
+      [
+        "Giorgi Kavlashvili",
+        "P"
+      ],
+      [
+        "Nohim Chibani",
+        "D"
+      ],
+      [
+        "Kamiel Van De Perre",
+        "D"
+      ],
+      [
+        "Denzel De Roeve",
+        "D"
+      ],
+      [
+        "Ross Sykes",
+        "D"
+      ],
+      [
+        "Louis Patris",
+        "D"
+      ],
+      [
+        "Massire Sylla",
+        "D"
+      ],
+      [
+        "Daniel Tshilanda",
+        "D"
+      ],
+      [
+        "Nikki Havenaar",
+        "D"
+      ],
+      [
+        "Adem Zorgane",
+        "C"
+      ],
+      [
+        "Rob Schoofs",
+        "C"
+      ],
+      [
+        "Besfort Zeneli",
+        "C"
+      ],
+      [
+        "Darius Olaru",
+        "C"
+      ],
+      [
+        "Rodrigo Rosado",
+        "C"
+      ],
+      [
+        "Relebohile Mofokeng",
+        "C"
+      ],
+      [
+        "Youssef Hamoutahar",
+        "C"
+      ],
+      [
+        "Mateo Biondic",
+        "A"
+      ],
+      [
+        "Guilherme Smith",
+        "A"
+      ],
+      [
+        "Kevin Rodriguez",
+        "A"
+      ],
+      [
+        "Dylan Aquino",
+        "A"
+      ],
+      [
+        "Ilan Hurtevent",
+        "A"
+      ],
+      [
+        "Raul Florucz",
+        "A"
+      ],
+      [
+        "Ondřej Kričfaluši",
+        "D"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  },
+  "Viktoria Plzeň": {
+    "source": "https://www.uefa.com/uefaeuropaleague/clubs/64388--plzen/squad/",
+    "asOf": "2026-10-31",
+    "players": [
+      [
+        "Dominik Ťapaj",
+        "P"
+      ],
+      [
+        "Matěj Hacaperka",
+        "P"
+      ],
+      [
+        "Viktor Baier",
+        "P"
+      ],
+      [
+        "Tobiáš Pališčák",
+        "D"
+      ],
+      [
+        "Denis Vavro",
+        "D"
+      ],
+      [
+        "Karel Spáčil",
+        "D"
+      ],
+      [
+        "Merchas Doski",
+        "D"
+      ],
+      [
+        "Jan Paluska",
+        "D"
+      ],
+      [
+        "Adam Gabriel",
+        "D"
+      ],
+      [
+        "Sampson Dweh",
+        "D"
+      ],
+      [
+        "Filip Prebsl",
+        "D"
+      ],
+      [
+        "Lukáš Červ",
+        "C"
+      ],
+      [
+        "Denis Višinský",
+        "C"
+      ],
+      [
+        "Alexandr Sojka",
+        "C"
+      ],
+      [
+        "Patrik Hrošovský",
+        "C"
+      ],
+      [
+        "Tomáš Ladra",
+        "C"
+      ],
+      [
+        "Cheick Souaré",
+        "C"
+      ],
+      [
+        "Jiří Panoš",
+        "C"
+      ],
+      [
+        "Stefan Pirgić",
+        "C"
+      ],
+      [
+        "Salim Fago Lawal",
+        "A"
+      ],
+      [
+        "Mohamed Touré",
+        "A"
+      ],
+      [
+        "Matěj Vydra",
+        "A"
+      ],
+      [
+        "Baboucarr Faal",
+        "A"
+      ],
+      [
+        "Christophe Kabongo",
+        "A"
+      ],
+      [
+        "Prince Adu",
+        "A"
+      ]
+    ],
+    "review": "Nominativi e ruoli letti da elenchi UEFA 2026/27; rosa di 25 selezionata per il gioco; non equivale alla Lista A ufficiale."
+  }
+}
