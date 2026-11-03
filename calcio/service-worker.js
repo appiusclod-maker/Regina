@@ -1,14 +1,18 @@
-/* REGINA CALCIO PWA 0.8 | scope /calcio/ solamente.
-   Non registra il worker sulla REGINA città (../index.html). */
+/* REGINA CALCIO PWA 0.9.2 — scope esclusivo /calcio/.
+   Le modifiche a REGINA Città e i dati locali non vengono toccati.
+   L'addon si aggiorna con rete disponibile e funziona anche offline. */
 'use strict';
-const VERSION='regina-calcio-pwa-08';
+const VERSION='regina-calcio-pwa-092';
 const SHELL=VERSION+'-core',CRESTS='regina-calcio-stemmi-2026-27-v1';
-const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg'];
+const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(STATIC)).then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',event=>{
- event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('regina-calcio-pwa-')&&!k.startsWith(VERSION)).map(k=>caches.delete(k)))),self.clients.claim()]));
+ event.waitUntil(Promise.all([
+  caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('regina-calcio-pwa-')&&!k.startsWith(VERSION)).map(k=>caches.delete(k)))),
+  self.clients.claim()
+ ]));
 });
 self.addEventListener('fetch',event=>{
  const req=event.request;
@@ -17,11 +21,19 @@ self.addEventListener('fetch',event=>{
  if(url.origin===origin&&url.pathname.startsWith(new URL('./',self.registration.scope).pathname)){
    if(req.mode==='navigate'||url.pathname.endsWith('/index.html')||url.pathname.endsWith('/')){
      event.respondWith(fetch(req).then(res=>{
-       if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put('./index.html',clone)).catch(()=>{});}return res;
+       if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put('./index.html',clone)).catch(()=>{});}
+       return res;
      }).catch(async()=>await caches.match('./index.html')||new Response('App non ancora memorizzata. Riapri online.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}})));
+   }else if(url.pathname.endsWith('/regina-upgrade.js')){
+     // Evita che la vecchia versione dello script resti bloccata nella cache.
+     event.respondWith(fetch(req).then(res=>{
+       if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put(req,clone)).catch(()=>{});}
+       return res;
+     }).catch(async()=>await caches.match(req)||new Response('Modulo non disponibile offline.',{status:503})));
    }else{
      event.respondWith(caches.match(req).then(c=>c||fetch(req).then(res=>{
-       if(res.ok)caches.open(SHELL).then(cache=>cache.put(req,res.clone())).catch(()=>{});return res;
+       if(res.ok)caches.open(SHELL).then(cache=>cache.put(req,res.clone())).catch(()=>{});
+       return res;
      })));
    }
    return;
@@ -29,7 +41,7 @@ self.addEventListener('fetch',event=>{
  if(url.hostname==='raw.githubusercontent.com'&&url.pathname.includes('/JoseArroyave/football-logos/')){
    event.respondWith(caches.open(CRESTS).then(async cache=>{
      const cached=await cache.match(req);if(cached)return cached;
-     try{const res=await fetch(req);if(res.ok||res.type==='opaque'){await cache.put(req,res.clone());}return res;}
+     try{const res=await fetch(req);if(res.ok||res.type==='opaque')await cache.put(req,res.clone());return res;}
      catch(e){return new Response('',{status:503});}
    }));
  }
