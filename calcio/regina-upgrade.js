@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.1 (include tutte le funzioni 1.0.0 e 1.1.0): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.2 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -1504,6 +1504,339 @@ calcMatch=function(a,b,ma=null,mb=null){
  r11MatchFix(m);normalizeMatchVotes(m);
  return m;
 };
+
+// ============================================================================
+// REGINA CALCIO 1.1.2 — affidabilita' salvataggi, recupero, flussi snelli.
+// Compatibile con la carriera 1.1.1: nessuna cancellazione dei dati esistenti.
+// ============================================================================
+const R112_DB='regina-calcio-sicurezza-v1',R112_STORE='backups';
+let r112Revision=0,r112SavedRevision=0,r112IdbPromise=Promise.resolve(),r112Edited=false,r112Blocked=false,r112AllowDowngrade=false;
+let r112Status='checking',r112StatusText='Controllo salvataggio…',r112LocalOK=false;
+const r112Escape=(x)=>E(String(x??''));
+function r112Notice(status,message){
+ r112Status=status;r112StatusText=message;
+ const el=document.getElementById('regina-save-status');if(el){el.textContent=message;el.dataset.status=status;}
+ const el2=document.getElementById('regina-save-status-settings');if(el2){el2.textContent=message;el2.dataset.status=status;}
+}
+function r112DB(){return new Promise((resolve,reject)=>{
+ if(!('indexedDB'in window))return reject(Error('Archivio sicuro non disponibile'));
+ let req=indexedDB.open(R112_DB,1);
+ req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(R112_STORE))db.createObjectStore(R112_STORE)};
+ req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error('Impossibile aprire archivio'));
+ })}
+async function r112ReadDB(){const db=await r112DB();return new Promise((resolve,reject)=>{
+ const tx=db.transaction(R112_STORE,'readonly'),req=tx.objectStore(R112_STORE).get('current');
+ req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
+ tx.oncomplete=()=>db.close();
+ })}
+async function r112WriteDB(capsule){const db=await r112DB();return new Promise((resolve,reject)=>{
+ const tx=db.transaction(R112_STORE,'readwrite');tx.objectStore(R112_STORE).put(capsule,'current');
+ tx.oncomplete=()=>{db.close();resolve(true)};
+ tx.onerror=()=>{const err=tx.error;db.close();reject(err||Error('Scrittura archivio fallita'))};
+ tx.onabort=()=>{const err=tx.error;db.close();reject(err||Error('Scrittura annullata'))};
+ })}
+function r112SlimRoundLog(){
+ // Durante la partita le 50 gare contengono migliaia di oggetti di appoggio.
+ // Per classifiche, ultima giornata e marcatori storici bastano questi dati.
+ if(!st||!Array.isArray(st.roundLog))return;
+ for(const r of st.roundLog){if(!Array.isArray(r.matches))continue;
+  r.matches=r.matches.map(m=>{
+   if(!m||typeof m!=='object')return m;
+   return {a:m.a,b:m.b,ga:m.ga,gb:m.gb,events:(m.events||[]).filter(e=>e.type==='gol').map(e=>({type:'gol',side:e.side,name:e.name,minute:e.minute}))};
+  });
+ }
+}
+function r112Stamp(){return Number(st?._reginaSavedAt)||0}
+function r112Capsule(){
+ let g=null;try{g=resolveOriginal()}catch(e){}
+ return {kind:'REGINA_CALCIO_BACKUP_V4',football:st,goals:(r112HasGoals(g)?g:(typeof rGoalStore==='function'?rGoalStore():null)),finance:load(),savedAt:Date.now(),origin:'regina-calcio'};
+}
+function r112PushSave(capsule,revision){
+ // Copia immutabile: ogni scrittura rappresenta davvero il proprio istante.
+ try{capsule=structuredClone(capsule)}catch(err){capsule=JSON.parse(JSON.stringify(capsule))}
+ // Operazioni serializzate: una scrittura lenta non puo' sovrascriverne una nuova.
+ r112IdbPromise=r112IdbPromise.catch(()=>{}).then(()=>r112WriteDB(capsule)).then(()=>{
+   r112SavedRevision=Math.max(r112SavedRevision,revision);
+   if(revision===r112Revision)r112Notice('ok','✅ Carriera salvata e verificata');
+ }).catch(err=>{
+   if(revision===r112Revision){
+    r112Notice(r112LocalOK?'warning':'error',r112LocalOK?'⚠️ Copia locale salvata; archivio di sicurezza non disponibile':'❌ Salvataggio non riuscito: esporta subito un backup');
+   }
+   console.warn('REGINA: scrittura di sicurezza fallita',err);
+ });
+ return r112IdbPromise;
+}
+function r112SaveCurrent(){
+ if(!st)return false;
+ if(r112Blocked&&!r112AllowDowngrade){r112Notice('error','⚠️ Carriera più recente in un’altra scheda: ricarica prima di continuare');return false;}
+ try{const old=JSON.parse(localStorage.getItem(APPKEY)||'null');
+  if(!r112AllowDowngrade&&r112HasNewer(old,st)){r112Blocked=true;r112Notice('error','⚠️ Una scheda contiene una carriera più recente: ricarica prima di giocare');return false;}
+ }catch(e){}
+ r112Edited=true;r112SlimRoundLog();st._reginaSavedAt=Date.now();
+ let packed='';try{packed=JSON.stringify(st)}catch(err){r112Notice('error','❌ Impossibile preparare il salvataggio: '+err.message);return false;}
+ let good=false;
+ try{localStorage.setItem(APPKEY,packed);good=localStorage.getItem(APPKEY)===packed}
+ catch(err){console.warn('REGINA: memoria locale piena o bloccata',err)}
+ r112LocalOK=good;
+ r112Notice('saving',good?'💾 Salvataggio locale verificato; copia di sicurezza in corso…':'💾 Memoria locale piena: salvataggio alternativo in corso…');
+ r112PushSave(r112Capsule(),++r112Revision);
+ return good;
+}
+// Sostituisce il vecchio safeSet che nascondeva gli errori di quota.
+persist=function(){return r112SaveCurrent()};
+async function r112DeleteSafeSave(){const db=await r112DB();return new Promise((resolve,reject)=>{
+ const tx=db.transaction(R112_STORE,'readwrite');tx.objectStore(R112_STORE).delete('current');
+ tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+ })}
+function r112HasNewer(backup,current){
+ if(!backup?.club||!backup?.squad)return false;
+ if(!current)return true;
+ const p=b=>(Number(b.season)||1)*100000+(Number(b.results?.length)||0)*100+(Number(b.game)||0);
+ const diff=p(backup)-p(current);
+ if(diff!==0)return diff>0;
+ return (Number(backup._reginaSavedAt)||0)>(Number(current._reginaSavedAt)||0)+300;
+}
+async function r112Recover(){
+ try{
+  const saved=await r112ReadDB();
+  if(r112Edited)return;
+  if(saved?.football&&r112HasNewer(saved.football,st)){
+   st=saved.football;
+   // Migrazione protetta: gli obiettivi caricati dall'archivio sicuro vengono
+   // ripristinati solo se la memoria locale non li contiene affatto.
+   try{
+    if(saved.goals?.fronts&&saved.goals?.tasks&&!localStorage.getItem(GK))window.goalSaveImportedArchive(saved.goals);
+    if(saved.finance?.accounts&&!localStorage.getItem(FK)){f=saved.finance;save()}
+   }catch(err){console.warn('REGINA: recupero dati accessori',err)}
+   r112SlimRoundLog();
+   // Evita di attribuire alla vecchia copia locale una data di salvataggio nuova
+   // prima che il recupero sia visibile.
+   render();r112Notice('ok','✅ Ultima carriera recuperata dal salvataggio di sicurezza');
+   persist();
+  }else if(st){r112Notice('ok','✅ Carriera caricata: '+(st.nextDay||'giornata disponibile'));}
+  else r112Notice('warning','Crea una nuova carriera o importa un backup');
+ }catch(err){
+  r112Notice('warning',st?'Carriera caricata. Archivio di sicurezza non disponibile.':'Nessun salvataggio trovato');
+  console.warn('REGINA: recupero automatico',err);
+ }
+}
+// Il primo caricamento conserva il vecchio archivio eventualmente importato.
+// L'archivio delle tappe e' gia' indipendente (chiave GK).
+// Non azzeriamo nulla: nascondiamo soltanto il vecchio collegamento con la Citta'.
+window.goalMergeFromCity=function(){alert('REGINA Calcio gestisce ora soltanto i propri obiettivi. Usa il backup completo per trasferire dati.')};
+function r112HasGoals(x){return x&&Array.isArray(x.fronts)&&Array.isArray(x.tasks)}
+function r112Export(){
+ if(!st)return alert('Non esiste ancora una carriera da esportare.');
+ r112SlimRoundLog();
+ jsonFile({...r112Capsule(),exportedAt:new Date().toISOString()},'REGINA_CALCIO_BACKUP_COMPLETO_'+TODAY()+'.json');
+}
+async function r112Import(ev){
+ const file=ev?.target?.files?.[0];if(!file)return;
+ try{
+  const raw=await file.text();const data=JSON.parse(raw);
+  const football=data?.football?.club?data.football:data?.club&&data?.squad?data:null;
+  if(!football?.club||!football?.squad||!Array.isArray(football.results||[]))throw Error('File non riconosciuto: seleziona un backup REGINA Calcio, non quello della Città.');
+  const goalData=r112HasGoals(data.goals)?data.goals:null;
+  const finData=data.finance?.accounts&&Array.isArray(data.finance.accounts)?data.finance:null;
+  const day=football.nextDay||'non indicata',n=football.results?.length||0;
+  if(!confirm('Ripristinare la carriera dal file «'+file.name+'»?\n\nGiornata successiva: '+day+'\nPartite archiviate: '+n+'\n\nI dati correnti verranno sostituiti.'))return;
+  // Prima assicuriamo che l'archivio di sicurezza contenga il pacchetto da importare.
+  const snapshot={kind:'REGINA_CALCIO_BACKUP_V4',football,goals:goalData||rGoalStore(),finance:finData||load(),savedAt:Date.now()};
+  await r112IdbPromise.catch(()=>{});
+  let idbReady=false;
+  try{await r112WriteDB(snapshot);idbReady=true}
+  catch(dbErr){
+   // Ripiego sul salvataggio compatto: l'importazione resta possibile quando
+   // IndexedDB non e' disponibile ma la memoria locale e' scrivibile.
+   const fresh=structuredClone(football),prev=st;st=fresh;r112SlimRoundLog();st=prev;
+   try{localStorage.setItem(APPKEY,JSON.stringify(fresh))}
+   catch(storageErr){throw Error('Spazio insufficiente sia nella memoria locale sia nell’archivio di sicurezza. Esporta il backup prima di riprovare.')}
+  }
+  // Solo dopo aver verificato almeno una forma di salvataggio procediamo.
+  if(goalData){window.goalSaveImportedArchive(goalData);const check=localStorage.getItem(GK);
+   if(!check||!r112HasGoals(JSON.parse(check)))console.warn('REGINA: obiettivi memorizzati almeno nell’archivio di sicurezza');}
+  if(finData){f=finData;r112OldFinSave()}
+  st=football;
+  r112Edited=true;r112Blocked=false;r112AllowDowngrade=true;r112SlimRoundLog();st._reginaSavedAt=Date.now();
+  try{localStorage.setItem(APPKEY,JSON.stringify(st));r112LocalOK=true}catch(err){r112LocalOK=false;console.warn('REGINA: import salvato nel backup alternativo',err)}
+  persist();await r112IdbPromise;r112AllowDowngrade=false;
+  if(idbReady){const verified=await r112ReadDB();
+   if(verified?.football?.club!==st.club||verified.football?.nextDay!==st.nextDay)throw Error('La verifica del backup importato non è riuscita');
+  }else{const local=JSON.parse(localStorage.getItem(APPKEY)||'null');
+   if(local?.club!==st.club||local?.nextDay!==st.nextDay)throw Error('Il salvataggio locale importato non è verificabile');
+  }
+  alert('✅ Carriera importata. Prossima giornata: '+st.nextDay+'.\n'+(idbReady?'La copia di sicurezza è stata verificata.':'Salvataggio locale verificato; ti consiglio di conservarne il backup JSON.'));
+  location.reload();
+ }catch(err){alert('❌ Importazione non riuscita: '+err.message);console.error('REGINA importazione',err)}
+ finally{r112AllowDowngrade=false;if(ev?.target)ev.target.value=''}
+}
+exportData=r112Export;
+restoreFootball=r112Import;
+const r112OldFinSave=save;
+save=function(){let ok=r112OldFinSave();if(ok&&st){r112PushSave(r112Capsule(),++r112Revision)}return ok};
+for(const fn of ['goalStatus','goalPartial','goalStepCheck','goalSaveTask','goalSaveFront','goalDeleteTask','goalSaveImportedArchive']){
+ const current=window[fn];if(typeof current!=='function')continue;
+ window[fn]=function(...args){const v=current.apply(this,args);if(st){
+  // Dopo la modifica reale della tappa, fotografa anche il salvataggio sicuro.
+  setTimeout(()=>r112PushSave(r112Capsule(),++r112Revision),0);
+ }return v};
+}
+function r112SaveCheck(){persist();return r112IdbPromise.then(async()=>{
+ const data=await r112ReadDB();const ok=data?.football?.club===st?.club&&data?.football?.nextDay===st?.nextDay&&data?.football?.results?.length===st?.results?.length;
+ if(ok)alert('✅ Salvataggio verificato.\nStagione: '+st.season+'\nProssima giornata: '+st.nextDay+'\nPartite archiviate: '+(st.results?.length||0));
+ else alert('⚠️ Il salvataggio non risulta verificato: esporta subito un backup.');
+ }).catch(err=>alert('⚠️ Archivio alternativo non disponibile: '+err.message+'\nEsporta un backup JSON.'))}
+window.reginaData={export:r112Export,import:r112Import,check:r112SaveCheck,demo(on){st.demoAdvance=Boolean(on);persist();render()},
+ names(){st.coachName=document.getElementById('regCoach')?.value.trim().slice(0,80)||'';st.presidentName=document.getElementById('regPresident')?.value.trim().slice(0,80)||'';persist();render()},
+ async clear(){if(!confirm('Eliminare DEFINITIVAMENTE la carriera calcistica? Gli obiettivi e le finanze non verranno cancellati. Esporta prima un backup.'))return;
+  try{await r112IdbPromise.catch(()=>{});await r112DeleteSafeSave()}catch(e){console.warn('REGINA: backup non cancellato',e)}
+  localStorage.removeItem(APPKEY);st=null;location.reload();}};
+// Impostazioni autonome, senza collegamenti a REGINA Città; le sezioni rare
+// stanno in accordion, mentre backup e stato salvataggio sono subito visibili.
+settingsView=function(){
+ const last=st.results?.[0],game=st.game||0;
+ return `<section class="card regina-settings-112"><h2>⚙️ Impostazioni · REGINA Calcio 1.1.2</h2>
+ <p class="muted">Carriera autonoma. I dati restano in questo browser, con una seconda copia di sicurezza locale.</p>
+ <div class="regina-save-panel"><b>💾 Stato salvataggio</b><p id="regina-save-status-settings" data-status="${r112Status}">${r112Escape(r112StatusText)}</p>
+ <div class="regina-save-summary"><span>Stagione <b>${st.season||1}</b></span><span>Prossima giornata <b>${r112Escape(st.nextDay||'—')}</b></span><span>Partite registrate <b>${st.results?.length||0}</b></span></div>
+ ${last?`<p class="tiny">Ultima partita archiviata: <strong>${r112Escape(last.day)}</strong></p>`:''}
+ <div class="row"><button class="btn" type="button" onclick="reginaData.check()">✓ Verifica salvataggio</button><button class="btn alt" type="button" onclick="reginaData.export()">⬇ Esporta backup completo</button></div>
+ <label class="label">⬆ Ripristina un backup JSON<input type="file" accept=".json,application/json" onchange="reginaData.import(event)"></label>
+ <p class="tiny muted">Il backup comprende stagione, obiettivi e finanze. Dopo una partita il salvataggio è automatico: la verifica serve soltanto come controllo.</p></div>
+ <details class="regina-settings-fold"><summary>👤 Allenatore e presidente</summary><label class="label">Allenatore<input id="regCoach" value="${r112Escape(st.coachName||'')}" maxlength="80"></label>
+ <label class="label">Presidente (facoltativo)<input id="regPresident" value="${r112Escape(st.presidentName||'')}" maxlength="80"></label><button class="btn alt" onclick="reginaData.names()">Salva i nomi</button></details>
+ <details class="regina-settings-fold"><summary>🧪 Simulazione e test</summary><label><input type="checkbox" ${st.demoAdvance?'checked':''} onchange="reginaData.demo(this.checked)"> Consenti di giocare più giornate senza attendere la data reale</label><p class="muted tiny">Le partite di prova modificano comunque la carriera: crea un backup prima di utilizzarle.</p></details>
+ <details class="regina-settings-fold"><summary>🏆 Carriera e nuove stagioni</summary>${rCareerView()}</details>
+ <details class="regina-settings-fold"><summary>⚠️ Azioni irreversibili</summary><p class="muted">Elimina la carriera soltanto se vuoi ricominciare. I dati persi potrebbero non essere recuperabili senza un backup.</p><button class="btn bad" onclick="reginaData.clear()">Cancella carriera</button></details>
+ </section>`;
+};
+// L'area Oggi rende selezionabili le tappe senza uscire dalla pagina.
+function r112TodayButton(t,action,label){
+ return `<button class="btn alt regina-today-btn" data-task-id="${r112Escape(t.id)}" data-task-action="${action}" onclick="reginaToday.handle(event)" type="button">${label}</button>`;
+}
+function r112TodayGoals(){
+ const items=todayTasks(),groups=new Map();for(const t of items){const name=t.frontTitle||'Altri obiettivi';
+  if(!groups.has(name))groups.set(name,[]);groups.get(name).push(t);
+ }
+ let result='<div class="regina-today-goals"><p class="muted tiny">Segna qui i completamenti: aggiornano subito la preparazione della squadra.</p>';
+ for(const [name,list] of groups){let done=list.filter(t=>Number(t.fraction)>=1).length;
+  result+=`<details class="regina-today-front" ${done<list.length?'open':''}><summary><b>${r112Escape(name)}</b><small>${done}/${list.length}</small></summary>`;
+  for(const t of list){const fraction=Number(t.fraction)||0;result+=`<div class="regina-today-item ${fraction>=1?'done':''}"><span class="regina-today-title">${r112Escape(t.title)}<small>${fraction>=1?'Completata':fraction>0?Math.round(fraction*100)+'% completato':'Da fare'}</small></span>
+  <span class="regina-today-actions">${r112TodayButton(t,fraction>=1?'todo':'done',fraction>=1?'↩':'✓')}${r112TodayButton(t,'partial','◐')}${r112TodayButton(t,'edit','✎')}</span></div>`;}
+  result+='</details>';
+ }
+ return result+(groups.size?'':'<p class="muted">Nessun obiettivo programmato per questa giornata.</p>')+'</div>';
+}
+window.reginaToday={handle(ev){ev?.stopPropagation();const btn=ev?.currentTarget;const id=btn?.dataset?.taskId,action=btn?.dataset?.taskAction;
+ if(!id)return;if(action==='edit')goalOpenTask(id);else if(action==='partial')goalPartial(id);else goalStatus(id,action);
+}};
+const r112OldToday=todayView;
+todayView=function(){const html=r112OldToday();if(!st)return html;
+ const t=document.createElement('template');t.innerHTML=html;
+ for(const p of [...t.content.querySelectorAll('p.muted')])if(/memoria originale|REGINA sono lette/.test(p.textContent))p.textContent='I tuoi obiettivi influenzano direttamente le prestazioni della squadra.';
+ for(const n of [...t.content.querySelectorAll('.notice')]){
+  if(/Collegati\s+\d+\s+fronti|Obiettivi originali non visibili/.test(n.textContent))n.remove();
+ }
+ const heading=[...t.content.querySelectorAll('h3')].find(x=>x.textContent.includes('Tappe previste per la giornata'));
+ if(heading){let next=heading.nextElementSibling;
+  while(next&&((next.matches?.('.task'))||(next.matches?.('p')&&/Gestisci obiettivi|Nessuna tappa prevista/.test(next.textContent)))){
+   const old=next;next=next.nextElementSibling;old.remove();
+  }
+  heading.insertAdjacentHTML('afterend',r112TodayGoals());
+ }
+ return t.innerHTML;
+};
+// La valutazione e' sintetica per impostazione predefinita, approfondibile.
+r11ReviewPanel=function(){const x=r11Review(r11ReviewDay),missing=x.records.filter(y=>y.fraction===0),partial=x.records.filter(y=>y.fraction>0&&y.fraction<1);
+ const important=[...missing,...partial].sort((a,b)=>b.difficulty-a.difficulty).slice(0,4);
+ const title=x.grade==null?'—':x.grade.toFixed(1)+'/10';
+ return `<section class="card r112-review"><div class="row spread"><div><h3>📊 Bilancio della giornata</h3><p class="muted tiny">${x.done} completate · ${x.part} parziali · ${x.missed} non svolte</p></div><strong class="r112-review-grade">${title}</strong></div>
+ <label class="label">Data <input type="date" value="${r112Escape(r11ReviewDay)}" onchange="reginaReview.select(this.value)"></label>
+ ${important.length?`<div class="r112-review-missed"><b>Da migliorare:</b> ${important.map(y=>`${r112Escape(y.name)}${y.fraction>0?' ('+Math.round(y.fraction*100)+'%)':''}`).join('; ')}${missing.length+partial.length>4?'…':''}</div>`:'<p class="muted tiny">Nessuna attività mancante registrata.</p>'}
+ <details class="r112-review-extra"><summary>▾ Voti settimanali e analisi dettagliata</summary>${r11WeekStrip(r11ReviewDay)}${r11ReviewDescription(x)}</details></section>`;
+};
+// Elimina le operazioni di collegamento all'app Citta' anche dalla pagina Obiettivi.
+const r112OldObjectives=objectivesView;
+objectivesView=function(){const t=document.createElement('template');t.innerHTML=r112OldObjectives();
+ for(const button of [...t.content.querySelectorAll('button')])if(/Importa nuovi impegni dalla città|Importa nuovi impegni dalla citta/i.test(button.textContent))button.remove();
+ for(const n of [...t.content.querySelectorAll('.go-dashboard .notice')])if(/REGINA città|copia autonoma/i.test(n.textContent))n.textContent='Gli obiettivi e i progressi sono gestiti autonomamente in REGINA Calcio.';
+ const oldDays=[...t.content.querySelectorAll('.go-dashboard > .go-day')].filter(n=>n.querySelector('h3')?.textContent.trim().startsWith('📅'));
+ if(oldDays.length){const fold=document.createElement('details');fold.className='r112-day-list';
+  fold.innerHTML='<summary>▾ Elenco dettagliato del periodo ('+oldDays.length+' giorni con attività)</summary>';
+  oldDays[0].before(fold);for(const n of oldDays)fold.appendChild(n);
+ }
+ return t.innerHTML;
+};
+// Scorrimento automatico continuo durante il drag da telefono: permette di
+// raggiungere anche i giorni lontani e il calendario partendo dagli arretrati.
+let r112ScrollTimer=null;
+function r112StartScroll(){
+ if(r112ScrollTimer!==null)return;
+ r112ScrollTimer=setInterval(()=>{
+  if(!rDragTouch){clearInterval(r112ScrollTimer);r112ScrollTimer=null;return;}
+  const x=rDragTouch.x,y=rDragTouch.y,w=innerWidth,h=innerHeight;
+  const verticalMargin=Math.min(120,Math.max(74,h*.16));
+  if(y<verticalMargin)window.scrollBy(0,-Math.round(11+(verticalMargin-y)*.25));
+  else if(y>h-verticalMargin)window.scrollBy(0,Math.round(11+(y-(h-verticalMargin))*.25));
+  const pane=document.querySelector('.regina-pl-scroll');
+  if(pane){const box=pane.getBoundingClientRect();
+   if(box.bottom>0&&box.top<h){
+    const margin=Math.min(92,Math.max(50,box.width*.23));
+    if(x<box.left+margin)pane.scrollLeft-=Math.max(22,Math.round((box.left+margin-x)*.5));
+    else if(x>box.right-margin)pane.scrollLeft+=Math.max(22,Math.round((x-(box.right-margin))*.5));
+   }
+  }
+ },30);
+}
+document.addEventListener('touchstart',e=>{
+ if(!e.target.closest?.('.regina-pl-item')||e.target.closest('button'))return;
+ setTimeout(()=>{if(rDragTouch)r112StartScroll()},315);
+},{passive:true});
+document.addEventListener('touchend',()=>{if(r112ScrollTimer!==null){clearInterval(r112ScrollTimer);r112ScrollTimer=null}},{passive:true});
+document.addEventListener('touchcancel',()=>{if(r112ScrollTimer!==null){clearInterval(r112ScrollTimer);r112ScrollTimer=null}},{passive:true});
+// Regole anti-sovrascrittura per piu' schede: avviso e blocco delle copie vecchie.
+let r112ObservedAt=Date.now();
+window.addEventListener('storage',ev=>{
+ if(ev.key!==APPKEY||!st||!ev.newValue)return;
+ try{const incoming=JSON.parse(ev.newValue);
+  if(r112HasNewer(incoming,st)){r112Blocked=true;
+   r112Notice('warning','⚠️ Un’altra scheda ha una carriera più recente. Ricarica questa pagina prima di giocare.');
+  }
+ }catch(e){}
+});
+// Blocca azioni su uno stato stantio prima del recupero, senza perdere dati.
+const r112PrevAdvance=advance;
+advance=function(...args){if(r112Status==='checking')return alert('Sto verificando l’ultima stagione salvata.');
+ if(r112Blocked)return alert('Esiste una carriera più recente in un’altra scheda. Ricarica la pagina prima di giocare.');
+ return r112PrevAdvance.apply(this,args);};
+const r112PrevPostDay=playPostDay;
+playPostDay=function(...args){if(r112Status==='checking'||r112Blocked)return alert('Verifica o ricarica la carriera prima di giocare.');return r112PrevPostDay.apply(this,args)};
+// Indicatore su tutte le pagine e badge versione.
+const r112OldHeader=header;
+header=function(){let html=r112OldHeader().replace(/v1\.1\.1/g,'v1.1.2');
+ return html.replace('</nav>',`</nav><div class="regina-save-line" id="regina-save-status" data-status="${r112Status}">${r112Escape(r112StatusText)}</div>`);
+};
+const r112CSS=document.createElement('style');r112CSS.textContent=`
+.regina-save-line{font-size:11px;color:#e4faef;padding:6px 12px 9px;text-align:center}
+.regina-save-line[data-status=warning]{color:#ffebaa}.regina-save-line[data-status=error]{color:#ffacac}.regina-save-line[data-status=saving]{color:#fff0b8}
+.regina-save-panel{padding:15px;border:1px solid #c8dfe4;border-radius:12px;background:#f4fafb;margin:13px 0}
+.regina-save-summary{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.regina-save-summary span{font-size:12px;background:white;border-radius:7px;padding:7px}
+.regina-save-panel #regina-save-status-settings{margin:10px 0}.regina-settings-fold{border:1px solid #d7e1e3;border-radius:10px;margin:10px 0;padding:12px;background:#fff}
+.regina-settings-fold summary{font-weight:750;cursor:pointer;padding:5px}.regina-settings-fold>*:not(summary){margin-top:12px}
+.regina-today-goals{margin:12px 0}.regina-today-front{border:1px solid #d3e4e5;border-radius:9px;margin:9px 0;background:#fafdfb;padding:9px}
+.regina-today-front summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.regina-today-front summary small{color:#597481;font-weight:bold}.regina-today-item{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:9px 2px;border-top:1px solid #e2edec}
+.regina-today-item:first-of-type{margin-top:8px}.regina-today-item.done{background:#f1faf4}.regina-today-title{font-size:13px;flex:1;font-weight:650}
+.regina-today-title small{display:block;color:#66818a;font-size:11px;font-weight:normal;margin-top:3px}
+.regina-today-actions{display:flex;gap:4px;flex-shrink:0}.regina-today-btn{min-width:36px;padding:7px 9px;font-size:14px}
+.r112-review{padding:15px!important}.r112-review-grade{font-size:24px;color:#157289}.r112-review-missed{border-left:3px solid #dc9775;background:#fff7ed;padding:9px;font-size:13px;border-radius:4px;margin:11px 0}
+.r112-review-extra{margin:9px 0}.r112-review-extra summary{font-weight:650;cursor:pointer;color:#146e7f}
+.r112-day-list{margin:13px 0;border:1px solid #cfdee3;border-radius:10px;padding:12px}.r112-day-list>summary{cursor:pointer;font-weight:700;color:#1d6474}
+.regina-pl-dragging{outline:3px solid #1e86a5!important;box-shadow:0 1px 10px rgba(0,0,0,.2)}
+@media(max-width:400px){.regina-today-item{align-items:flex-start;flex-wrap:wrap}.regina-today-actions{margin-left:auto}.regina-save-line{font-size:10px}}
+`;document.head.appendChild(r112CSS);
+// Non scrivere salvataggi vuoti durante il boot. Prima recupera il migliore.
+r112Recover();
 
 if(st)render();
 })();
