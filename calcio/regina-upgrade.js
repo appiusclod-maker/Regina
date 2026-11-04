@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 0.9.2: categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.1 (include tutte le funzioni 1.0.0 e 1.1.0): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -444,6 +444,1066 @@ article=function(m,metrics){
  return out;
 };
 window.article=article;
+
+// ============================================================================
+// REGINA CALCIO 1.0 — consolidamento funzionale compatibile con 0.9.2
+// Dati personali esclusivamente nel browser; invariati APPKEY/GK/FK.
+// ============================================================================
+const RV1='1.1.1', PLKEY='regina-calcio-planner-v1';
+const R_SLOTS=[['dawn','🌅 Prima mattina'],['morning','☀️ Mattina'],['lunch','🍝 Pranzo'],['afternoon','🌤️ Pomeriggio'],['evening','🌆 Sera'],['late','🌙 Sera tardi']];
+const R_EFFECTS={none:'Normale',risk:'Rischioso',critical:'Critico',reward:'Premiante',decisive:'Decisivo'};
+const rLim=(x,a=0,b=10)=>Math.min(b,Math.max(a,Number(x)||0));
+const rD=v=>/^\d{4}-\d\d-\d\d$/.test(String(v||''))?v:'';
+const rRef=t=>String(t?.repeatGroup||t?.id||'');
+const rFmtName=p=>short(p?.name||p||'');
+const rSelect=(name,values,value)=>'<select name="'+name+'">'+values.map(([k,label])=>'<option value="'+E(k)+'" '+(value===k?'selected':'')+'>'+E(label)+'</option>').join('')+'</select>';
+function rTaskMeta(t){
+ let time=String(t?.defaultTime||(t?.due||'').split('T')[1]||'');let hour=Number(time.slice(0,2));
+ let inferred= /^\d\d:\d\d/.test(time)?hour<7?'dawn':hour<12?'morning':hour<15?'lunch':hour<19?'afternoon':hour<23?'evening':'late':'morning';
+ return {difficulty:rLim(t?.reginaDifficulty??3,1,5),impact:{miss:t?.reginaImpact?.miss||'none',partial:t?.reginaImpact?.partial||'none',done:t?.reginaImpact?.done||'none'},slot:t?.reginaSlot||inferred};
+}
+function rGoalStore(){return tasks()||{tasks:[],fronts:[]};}
+function rUpdateGoalStore(fn){let g=rGoalStore();if(!Array.isArray(g.tasks))return false;fn(g);commitGoals(g);return true;}
+function rCurrentTask(g,id){if(!id)return null;return g.tasks.find(t=>t.id===id)||groupTask(g,id);}
+function rSlotOptions(active){return rSelect('reginaSlot',R_SLOTS,active||'morning');}
+function rImpactOptions(name,value,values){return '<label class="label">'+name+rSelect(name,values,value||'none')+'</label>';}
+// A. Modifica tappa: difficoltà e impatto distinti per 0 / parziale / 100%.
+const rPrevOpenTask=window.goalOpenTask;
+window.goalOpenTask=function(id,...rest){
+ rPrevOpenTask(id,...rest);
+ const form=document.getElementById('goal-task-form');if(!form)return;
+ const t=rCurrentTask(rGoalStore(),id),meta=rTaskMeta(t),last=form.querySelector('.row:last-child');
+ const block=document.createElement('fieldset');block.className='regina-v1-effects';
+ block.innerHTML='<legend>⚡ Impatto calcistico della tappa</legend>'+
+ '<p class="muted tiny">Si può scegliere un effetto diverso per ciascun esito, senza conflitti. Critico: espulsione, rigore concesso o gol subito. Decisivo: un gol segnato garantito per ogni tappa.</p>'+
+ '<label class="label">Difficoltà (1–5)'+rSelect('reginaDifficulty',[[1,'1 · Molto facile'],[2,'2 · Facile'],[3,'3 · Media'],[4,'4 · Difficile'],[5,'5 · Molto difficile']],meta.difficulty)+'</label>'+
+ '<div class="regina-v1-effects-grid">'+
+ rImpactOptions('miss',meta.impact.miss,[['none','0% · Normale'],['risk','0% · Rischioso'],['critical','0% · Critico']])+
+ rImpactOptions('partial',meta.impact.partial,[['none','1–99% · Normale'],['risk','1–99% · Rischioso'],['critical','1–99% · Critico'],['reward','1–99% · Premiante'],['decisive','1–99% · Decisivo (gol)']])+
+ rImpactOptions('done',meta.impact.done,[['none','100% · Normale'],['reward','100% · Premiante'],['decisive','100% · Decisivo (gol)']])+'</div>'+
+ '<label class="label">Fascia della giornata'+rSlotOptions(meta.slot)+'</label>';
+ if(last)last.before(block);else form.appendChild(block);
+ // Nomi visibili più leggibili: i tre stati sono riconoscibili anche dal valore.
+ for(const [name,title] of [['miss','❌ Non completato'],['partial','◐ Parziale'],['done','✅ Completato']]){
+  const sel=block.querySelector('select[name="'+name+'"]');if(sel)sel.parentElement.prepend(document.createTextNode(title+' · '));
+ }
+};
+const rPrevSaveTask=window.goalSaveTask;
+window.goalSaveTask=function(ev){
+ const form=ev?.target,fd=form?new FormData(form):null;
+ if(!fd)return rPrevSaveTask(ev);
+ const id=String(fd.get('id')||''),before=new Set(rGoalStore().tasks.map(t=>t.id));
+ const difficulty=rLim(fd.get('reginaDifficulty')||3,1,5);
+ const valid=(v,allowed)=>allowed.includes(v)?v:'none';
+ const impact={miss:valid(String(fd.get('miss')||'none'),['none','risk','critical']),partial:valid(String(fd.get('partial')||'none'),['none','risk','critical','reward','decisive']),done:valid(String(fd.get('done')||'none'),['none','reward','decisive'])};
+ const slot=R_SLOTS.some(x=>x[0]===fd.get('reginaSlot'))?String(fd.get('reginaSlot')):'morning';
+ rPrevSaveTask(ev); // Salva la tappa con lo schema originale; preserva tutti i dati esistenti.
+ rUpdateGoalStore(g=>{
+  let target=g.tasks.find(t=>t.id===id);
+  if(!target)target=g.tasks.filter(t=>!before.has(t.id)).at(-1);
+  if(target){target.reginaDifficulty=difficulty;target.reginaImpact=impact;target.reginaSlot=slot;}
+ });
+};
+// La schermata della tappa conserva i dettagli senza costringere a riaprire il modal.
+function rSpecialBadges(t){let x=rTaskMeta(t),items=[];if(x.difficulty!==3)items.push('Difficoltà '+x.difficulty+'/5');for(let [k,lab] of [['miss','Saltato'],['partial','Parziale'],['done','Completo']])if(x.impact[k]!=='none')items.push(lab+': '+R_EFFECTS[x.impact[k]]);return items.length?'<small class="regina-v1-badges">'+E(items.join(' · '))+'</small>':''}
+const rBeforeObjectiveCards=objectivesView;
+objectivesView=function(){
+ let html=rBeforeObjectiveCards();
+ const tmp=document.createElement('template');tmp.innerHTML=html;
+ const dash=tmp.content.querySelector('.go-dashboard');if(!dash)return html;
+ const g=rGoalStore(),byId=new Map((g.tasks||[]).map(t=>[t.id,t]));
+ for(const row of dash.querySelectorAll('article.go-task')){
+  const button=row.querySelector('button[onclick*="goalOpenTask"]');if(!button)continue;
+  const id=(button.getAttribute('onclick')||'').match(/goalOpenTask\((['"])(.*?)\1/)?.[2];
+  const task=byId.get(id)||rCurrentTask(g,id);if(!task)continue;
+  const text=row.querySelector('small.muted');if(text)text.insertAdjacentHTML('afterend',rSpecialBadges(task));
+ }
+ const planner=makeWeekPlanner(g);
+ const before=dash.querySelector('.go-mode')||dash.querySelector('.go-day');
+ if(before){let holder=document.createElement('div');holder.innerHTML=planner;before.before(holder)}
+ return tmp.innerHTML;
+};
+// B. Calendario settimanale: trascinamento da archivio a giorno/fascia, anche touch.
+let rPlannerDay=TODAY(),rDragId=null,rDragTouch=null,rPlannerCollapsed=false;
+try{let p=JSON.parse(localStorage.getItem(PLKEY)||'null');if(p?.day)rPlannerDay=rD(p.day)||TODAY();if(p?.collapsed)rPlannerCollapsed=!!p.collapsed;}catch(e){}
+function rWeekStart(d){let w=new Date(d+'T12:00:00'),delta=(w.getDay()+6)%7;return PLUS(d,-delta)}
+function rPlannerSave(){try{localStorage.setItem(PLKEY,JSON.stringify({day:rPlannerDay,collapsed:rPlannerCollapsed}))}catch(e){}}
+function rPlanItem(t,where){
+ const id=E(t.id),meta=rTaskMeta(t),done=t.status==='done';return '<div class="regina-pl-item '+(done?'is-done':'')+'" draggable="true" data-regina-id="'+id+'" ondragstart="reginaPlan.drag(event)" ondragend="reginaPlan.end(event)">'+
+ '<span class="regina-pl-grip" aria-hidden="true">⠿</span><span class="regina-pl-title">'+E(t.title)+'</span>'+rSpecialBadges(t)+
+ '<button type="button" class="regina-pl-edit" onclick="goalOpenTask('+JSON.stringify(String(t.id)).replace(/"/g,'&quot;')+')" title="Modifica tappa">✎</button></div>';
+}
+function rGroupedForDate(g,day){return goalListForDay(day).filter(t=>{
+  const target=rD((t.due||t.deadlineDate||'').slice(0,10));return target===day||t.footballCreditDay===day||String(t.id).startsWith('virtual:');
+ });}
+function makeWeekPlanner(g){
+ const start=rWeekStart(rPlannerDay),days=Array.from({length:7},(_,i)=>PLUS(start,i));
+ const backlog=g.tasks.filter(t=>t.title&&!t.archived&&!t.isGenerated&&t.status!=='done'&&t.status!=='failed'&&
+  (!rD(String(t.due||t.deadlineDate||'').slice(0,10))||rD(String(t.due||'').slice(0,10))<TODAY()&&t.repeat==='none'));
+ const frontal=new Map(g.fronts.map(f=>[f.id,f.title]));const buckets=new Map();
+ for(const t of backlog){if(!buckets.has(t.frontId))buckets.set(t.frontId,[]);buckets.get(t.frontId).push(t)}
+ const back=[...buckets].map(([fid,ls])=>'<details class="regina-pl-backfront"><summary>'+E(frontal.get(fid)||'Senza fronte')+' · '+ls.length+'</summary>'+ls.map(t=>rPlanItem(t,'backlog')).join('')+'</details>').join('');
+ let html='<section class="regina-planner"><div class="row spread"><div><h3>📅 Pianifica la settimana</h3><small class="muted">Trascina le tappe nel giorno e nella fascia desiderati. Orario preciso facoltativo. Le tappe arretrate restano da gestire.</small></div><button type="button" class="btn alt" onclick="reginaPlan.toggle()">'+(rPlannerCollapsed?'Apri':'Chiudi')+'</button></div>';
+ if(rPlannerCollapsed)return html+'</section>';
+ html+='<div class="row spread regina-pl-toolbar"><button class="btn alt" onclick="reginaPlan.week(-1)">‹ Settimana precedente</button><b>'+E(start)+' — '+E(days[6])+'</b><button class="btn alt" onclick="reginaPlan.week(1)">Settimana successiva ›</button><button class="btn alt" onclick="reginaPlan.today()">Oggi</button></div>';
+ html+='<div class="regina-pl-scroll"><div class="regina-pl-week">'+days.map(day=>{
+  const ls=rGroupedForDate(g,day),used=new Set(),perSlot=new Map(R_SLOTS.map(x=>[x[0],[]]));
+  for(const t of ls){let key=t.id;if(used.has(key))continue;used.add(key);let slot=rTaskMeta(t).slot;if(!perSlot.has(slot))slot='morning';perSlot.get(slot).push(t)}
+  const label=new Date(day+'T12:00:00').toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'});
+  return '<div class="regina-pl-day"><h4 class="'+(day===TODAY()?'regina-pl-today':'')+'">'+E(label)+'</h4>'+R_SLOTS.map(([key,name])=>'<div class="regina-pl-drop" data-day="'+day+'" data-slot="'+key+'" ondragover="reginaPlan.over(event)" ondrop="reginaPlan.drop(event)"><small>'+E(name)+'</small>'+(perSlot.get(key)||[]).map(t=>rPlanItem(t,'day')).join('')+'</div>').join('')+'</div>';
+ }).join('')+'</div></div>';
+ html+='<div class="regina-pl-backlog"><h4>🗂️ Da pianificare o ripianificare · '+backlog.length+'</h4>'+
+ (back||'<p class="muted">Nessuna tappa in attesa.</p>')+'</div>'+ 
+ '<p class="muted tiny">Sul telefono tieni premuta una tappa e trascinala. In alternativa premi ✎ e imposta data e fascia. Le ricorrenze spostate cambiano soltanto per quella data.</p></section>';
+ return html;
+}
+function rMoveTask(id,day,slot){
+ if(!rD(day)||!R_SLOTS.some(x=>x[0]===slot))return false;
+ let g=rGoalStore(),t=rCurrentTask(g,id);if(!t)return false;
+ const sourceDay=(String(id).match(/\d{4}-\d\d-\d\d$/)||[])[0]||String(t.occurrenceDate||t.due||'').slice(0,10);
+ if(t.repeat&&t.repeat!=='none'){
+  if(!sourceDay)return alert('Per spostare una ricorrenza serve un’occorrenza già datata.'),false;
+  // Un'unica eccezione alla ricorrenza; il modello non cambia.
+  const group=rRef(t),base=g.tasks.find(x=>rRef(x)===group&&!x.isGenerated)||t;
+  base.skipDates=[...new Set([...(base.skipDates||[]),sourceDay])];
+  const copy=structuredClone(base);copy.id=uid();copy.repeat='none';delete copy.repeatGroup;copy.isGenerated=false;copy.occurrenceDate='';copy.skipDates=[];copy.scheduleStart='';copy.due=day+(copy.defaultTime?'T'+copy.defaultTime:'');copy.reginaSlot=slot;copy.status='todo';copy.progressFraction=0;copy.checks=[];copy.actualValue=0;copy.footballCreditDay=null;
+  g.tasks.push(copy);
+  g.tasks=g.tasks.filter(x=>!(x.isGenerated&&rRef(x)===group&&String(x.occurrenceDate||x.due||'').slice(0,10)===sourceDay));
+ }else{t.due=day+(t.defaultTime?'T'+t.defaultTime:'');t.reginaSlot=slot;t.footballCreditDay=null;t.carrySince=null;}
+ commitGoals(g);return true;
+}
+function rMoveWithPrompt(id){let t=rCurrentTask(rGoalStore(),id);if(!t)return;let date=prompt('Data (AAAA-MM-GG):',rD(String(t.due||'').slice(0,10))||TODAY());if(date===null)return;date=rD(date);if(!date)return alert('Data non valida');let slot=prompt('Fascia: dawn, morning, lunch, afternoon, evening, late',rTaskMeta(t).slot);if(slot!==null)rMoveTask(id,date,slot);}
+window.reginaPlan={
+ week(step){rPlannerDay=PLUS(rPlannerDay,step*7);rPlannerSave();render()},today(){rPlannerDay=TODAY();rPlannerSave();render()},
+ toggle(){rPlannerCollapsed=!rPlannerCollapsed;rPlannerSave();render()},move:rMoveTask,choose:rMoveWithPrompt,
+ drag(e){rDragId=e.currentTarget.dataset.reginaId;if(e.dataTransfer){e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',rDragId)}},
+ over(e){e.preventDefault();e.currentTarget.classList.add('regina-pl-over')},
+ drop(e){e.preventDefault();e.currentTarget.classList.remove('regina-pl-over');let id=e.dataTransfer?.getData('text/plain')||rDragId;rDragId=null;if(id)rMoveTask(id,e.currentTarget.dataset.day,e.currentTarget.dataset.slot)},
+ end(){rDragId=null;document.querySelectorAll('.regina-pl-over').forEach(n=>n.classList.remove('regina-pl-over'))}
+};
+// Pointer/touch support via delega: fa scorrere anche il contenitore quando si trascina al bordo.
+let rTouchTimer=null;
+document.addEventListener('touchstart',e=>{
+ const item=e.target.closest?.('.regina-pl-item');if(!item||e.target.closest('button'))return;
+ const touch=e.touches[0],id=item.dataset.reginaId;
+ clearTimeout(rTouchTimer);rTouchTimer=setTimeout(()=>{rDragTouch={id,x:touch.clientX,y:touch.clientY};item.classList.add('regina-pl-dragging');navigator.vibrate?.(18)},280);
+},{passive:true});
+document.addEventListener('touchmove',e=>{
+ if(!rDragTouch){clearTimeout(rTouchTimer);return}
+ e.preventDefault();const t=e.touches[0];rDragTouch.x=t.clientX;rDragTouch.y=t.clientY;
+ document.querySelectorAll('.regina-pl-over').forEach(x=>x.classList.remove('regina-pl-over'));
+ let target=document.elementFromPoint(t.clientX,t.clientY)?.closest?.('.regina-pl-drop');if(target)target.classList.add('regina-pl-over');
+ const scroll=document.querySelector('.regina-pl-scroll');if(scroll){let box=scroll.getBoundingClientRect();if(t.clientX>box.right-25)scroll.scrollLeft+=13;if(t.clientX<box.left+25)scroll.scrollLeft-=13;}
+ if(t.clientY>window.innerHeight-55)window.scrollBy(0,12);if(t.clientY<55)window.scrollBy(0,-12);
+},{passive:false});
+document.addEventListener('touchend',()=>{
+ clearTimeout(rTouchTimer);if(!rDragTouch)return;
+ const p=rDragTouch;rDragTouch=null;document.querySelectorAll('.regina-pl-dragging').forEach(x=>x.classList.remove('regina-pl-dragging'));
+ const target=document.elementFromPoint(p.x,p.y)?.closest?.('.regina-pl-drop');if(target)rMoveTask(p.id,target.dataset.day,target.dataset.slot);
+ else document.querySelectorAll('.regina-pl-over').forEach(x=>x.classList.remove('regina-pl-over'));
+},{passive:true});
+// Un'attività scaduta resta nel contenitore da ripianificare: non pesa nella
+// giornata corrente finché l'utente non la trascina esplicitamente.
+const rOriginalTodayTasks=todayTasks;
+todayTasks=function(){const d=st?.nextDay||TODAY();return rOriginalTodayTasks().filter(t=>{
+ const due=rD(String(t.due||'').slice(0,10));
+ return !(due&&due<d&&(!t.repeat||t.repeat==='none')&&t.footballCreditDay!==d);
+ });};
+// C. Difficoltà ponderata e bonus di continuità senza penalità.
+const rBaseMetrics=taskMetrics;
+taskMetrics=function(){
+ const m=rBaseMetrics(),list=todayTasks();
+ for(const cat of CATKEYS){const x=list.filter(t=>t.category===cat);if(!x.length){m[cat]=10;continue;}
+  const simple=x.reduce((n,t)=>n+rLim(t.fraction,0,1),0)/x.length;
+  const ww=x.reduce((n,t)=>n+rTaskMeta(t).difficulty,0);
+  const weighted=x.reduce((n,t)=>n+rLim(t.fraction,0,1)*rTaskMeta(t).difficulty,0)/Math.max(1,ww);
+  const adjustment=9.55*(weighted-simple);
+  m[cat]=rLim(m[cat]+adjustment);
+ }
+ // Il passato può soltanto aggiungere un piccolo premio, non ridurre mai la condizione.
+ const recent=(st?.results||[]).slice(0,7).filter(x=>x?.metrics&&x.day&&x.day<(st?.nextDay||TODAY())&&(!st.reginaSeasonStart||x.day>=st.reginaSeasonStart));
+ let streak=0,expected=PLUS(st?.nextDay||TODAY(),-1);for(const r of recent){
+  if(r.day!==expected||!(r.match?.reginaPlannedCount>0)||(r.match?.reginaCompletionRate||0)<.8)break;
+  streak++;expected=PLUS(expected,-1);
+ }
+ if(streak>=3)m.mental=rLim(m.mental+Math.min(.45,.1*(streak-2)));
+ return m;
+};
+// D. Gli eventi critici e decisivi modificano il RISULTATO PRIMA della classifica.
+function rSpecialTriggers(){
+ let goals=0,crits=[],adjustments={},risk=0,rewards=0;
+ for(const t of todayTasks()){
+  const p=rLim(t.fraction,0,1),state=p<=0?'miss':p>=1?'done':'partial',meta=rTaskMeta(t),kind=meta.impact[state];
+  if(kind==='decisive')goals++;
+  if(kind==='critical')crits.push({task:t,category:t.category});
+  if(kind==='risk'||kind==='reward'){
+   const delta=(kind==='reward'?1:-1)*.30*(.65+meta.difficulty*.14),metric=CATKEYS.includes(t.category)?t.category:'mental';
+   adjustments[metric]=Math.max(-1.6,Math.min(1.6,(adjustments[metric]||0)+delta));
+   if(kind==='risk')risk++;else rewards++;
+  }
+ }
+ return {goals,crits,risk,rewards,adjustments};
+}
+function rPlayersFor(m,side,position){
+ let players=(m.lineups?.[side]||[]).map(id=>({id,...(m.playerNames?.[id]||{})})).filter(x=>x.name);
+ return players.filter(p=>p.pos===position).length?players.filter(p=>p.pos===position):players;
+}
+function rWeightedName(m,side){
+ let players=(m.lineups?.[side]||[]).map(id=>({id,...(m.playerNames?.[id]||{})})).filter(x=>x.name);
+ if(!players.length)return null;
+ // Peso PER REPARTO: 70% attaccanti, 24% centrocampisti, 6% difensori.
+ const pool={A:players.filter(x=>x.pos==='A'),C:players.filter(x=>x.pos==='C'),D:players.filter(x=>x.pos==='D'),P:players.filter(x=>x.pos==='P')};
+ const available=[['A',.70],['C',.24],['D',.06]].filter(([k])=>pool[k].length);
+ let total=available.reduce((s,x)=>s+x[1],0),draw=Math.random()*total,role='A';
+ for(const [k,w] of available){draw-=w;if(draw<=0){role=k;break}}let candidates=pool[role].length?pool[role]:players;
+ let weights=candidates.map(p=>Math.max(.1,1+.22*((m.forms?.[p.id]?.effective||5)-5)+.10*((m.grades?.[p.id]||6)-6))),sum=weights.reduce((s,v)=>s+v,0),q=Math.random()*sum;
+ for(let i=0;i<candidates.length;i++){q-=weights[i];if(q<=0)return candidates[i]}
+ return candidates.at(-1);
+}
+function rUpdateGoalStats(m,side,amount){const own=side===m.a?'ga':'gb',si=side===m.a?0:1;m[own]+=amount;
+ if(m.stats){for(const key of ['shots','onTarget'])if(Array.isArray(m.stats[key]))m.stats[key][si]+=amount;}
+}
+function rAddGoal(m,side,minute,forced,kind='azione'){
+ const p=rWeightedName(m,side);const name=p?.name||teamById(side)?.name||'Squadra';
+ m.events.push({side,minute,type:'gol',name,kind,action:kind==='rigore'?'dal dischetto': 'dopo una manovra insistita',reginaGuaranteed:forced});
+ rUpdateGoalStats(m,side,1);
+ if(p?.id&&m.grades){m.grades[p.id]=normalizeVote(Math.min(9,(Number(m.grades[p.id])||6)+.5))}
+}
+// I marcatori naturali rispettano il ruolo complessivo del reparto, non soltanto
+// il peso individuale (4 centrocampisti non devono superare 2 attaccanti).
+const rOldWeightedPick=weightedPick;
+weightedPick=function(ps){
+ if(!Array.isArray(ps)||!ps.length)return rOldWeightedPick(ps);
+ const roles=[['A',.70],['C',.24],['D',.06]].filter(([role])=>ps.some(p=>p.pos===role));
+ if(!roles.length)return rOldWeightedPick(ps);
+ let q=Math.random()*roles.reduce((n,x)=>n+x[1],0),role=roles[0][0];
+ for(const [k,w] of roles){q-=w;if(q<=0){role=k;break}}
+ const set=ps.filter(p=>p.pos===role);let w=set.map(p=>Math.max(.3,1+(Number(p.tech||5)-5)*.15+(Number(p.fitness||6)-6)*.04)),total=w.reduce((n,x)=>n+x,0),v=Math.random()*total;
+ for(let i=0;i<set.length;i++){v-=w[i];if(v<=0)return set[i]}return set.at(-1);
+};
+const rOldCalc=calcMatch;
+calcMatch=function(a,b,ma=null,mb=null){
+ let special=null,ours=(a===st?.club||b===st?.club),ownSide=a===st?.club?a:b,opp=a===st?.club?b:a;
+ if(ours){special=rSpecialTriggers();const own=a===st.club?ma:mb;
+  if(own)for(const [k,delta] of Object.entries(special.adjustments)){own[k]=rLim(own[k]+delta)}
+ }
+ const m=rOldCalc(a,b,ma,mb);
+ if(!ours||!special)return m;
+ let forcedGoals=special.goals,criticalCount=special.crits.length;
+ // Eventi garantiti aggiunti al tracciato cronologico prima di applicare punti e giornale.
+ for(let i=0;i<forcedGoals;i++)rAddGoal(m,ownSide,Math.floor(6+Math.random()*79),true);
+ let expulsions=0;
+ for(let i=0;i<criticalCount;i++){
+  let reason=special.crits[i],chance=Math.random();
+  if(reason.category==='discipline'&&chance<.5)chance=.12;
+  let minute=Math.floor(13+Math.random()*65);
+  if(chance<.34){
+   let already=new Set(m.events.filter(x=>x.side===ownSide&&x.type==='rosso').map(x=>x.name));
+   let players=(m.lineups?.[ownSide]||[]).map(id=>m.playerNames?.[id]).filter(p=>p?.name&&!already.has(p.name));
+   if(!players.length){rAddGoal(m,opp,minute,true);continue}
+   let player=players[Math.floor(Math.random()*players.length)];
+   m.events.push({side:ownSide,type:'rosso',minute,name:player.name,reginaGuaranteed:true});expulsions++;
+   // L'inferiorità numerica agisce realmente sui minuti successivi: alcune
+   // occasioni e alcune reti ordinarie della squadra in dieci non si concretizzano.
+   for(const ev of m.events.slice()){
+    if(ev.side!==ownSide||ev.minute<=minute||ev.reginaGuaranteed)continue;
+    if(ev.type==='gol'&&Math.random()<.20){
+     ev.type='occasione';ev.outcome='conclusione murata';ev.action='tiro in inferiorità numerica';ev.reginaRedPrevented=true;
+     if(ownSide===m.a)m.ga=Math.max(0,m.ga-1);else m.gb=Math.max(0,m.gb-1);
+     const si=ownSide===m.a?0:1;if(Array.isArray(m.stats?.onTarget))m.stats.onTarget[si]=Math.max(0,m.stats.onTarget[si]-1);
+    }
+    if(ev.type==='occasione'&&Math.random()<.13){ev.outcome='fuori misura';ev.action='ripartenza affrettata in dieci uomini'}
+   }
+   // La maggior parte della gara rimanente è in inferiorità: rischio supplementare
+   // di subire un gol, proporzionale ai minuti da giocare.
+   let vulnerability=Math.min(.75,(90-minute)/90*.82);
+   if(Math.random()<vulnerability)rAddGoal(m,opp,Math.min(90,minute+4+Math.floor(Math.random()*(86-minute))),false);
+  }else if(chance<.68){
+   m.events.push({side:ownSide,type:'rigore_concesso',minute,name:teamById(ownSide)?.name||'Squadra',reginaGuaranteed:true});
+   if(Math.random()<.76)rAddGoal(m,opp,Math.min(90,minute+1),false,'rigore');
+   else {let p=rWeightedName(m,opp);m.events.push({side:opp,minute:Math.min(90,minute+1),type:'rigore_sbagliato',name:p?.name||teamById(opp).name})}
+  }else rAddGoal(m,opp,minute,true);
+ }
+ if(expulsions&&m.stats){const i=ownSide===a?0:1,j=1-i;
+  if(Array.isArray(m.stats.possession)){const shift=Math.min(12,expulsions*4);m.stats.possession[i]=Math.max(18,m.stats.possession[i]-shift);m.stats.possession[j]=100-m.stats.possession[i]}
+ }
+ const todays=todayTasks();m.reginaPlannedCount=todays.length;m.reginaCompletionRate=todays.length?todays.reduce((n,t)=>n+rLim(t.fraction,0,1),0)/todays.length:0;
+ m.reginaImpacts={goals:forcedGoals,critical:criticalCount,red:expulsions,risk:special.risk,reward:special.rewards};
+ m.events.sort((x,y)=>(x.minute||0)-(y.minute||0));
+ normalizeMatchVotes(m);return m;
+};
+// Le gare UEFA utilizzano la stessa scala voti e non ricevono bonus duplicati.
+// E. Gazzetta: una sola cronaca fluida, fatti verificabili e campionato contestualizzato.
+function rMatchNarrative(m){
+ const mine=st.club,opp=m.a===mine?m.b:m.a,diff=m.a===mine?m.ga-m.gb:m.gb-m.ga;
+ const events=(m.events||[]).filter(e=>['gol','rosso','rigore_sbagliato','rigore_concesso','intervento','occasione'].includes(e.type));
+ let goals=events.filter(e=>e.type==='gol'),red=events.filter(e=>e.type==='rosso'),miss=events.filter(e=>e.type==='rigore_sbagliato');
+ const opponent=teamById(opp)?.name||'gli avversari',mineN=teamById(mine)?.name||'la squadra';
+ let intro=diff>0?`${pressClub(mine,true)} conquista tre punti contro ${pressClub(opp)} (${m.ga}–${m.gb})`:
+ diff<0?`${pressClub(mine,true)} perde la sfida con ${pressClub(opp)} (${m.ga}–${m.gb})`:
+ `Termina in parità il confronto tra ${pressClub(m.a)} e ${pressClub(m.b)} (${m.ga}–${m.gb})`;
+ intro+='.';
+ let chosen=[...events].filter(e=>e.type==='gol').slice(0,5);if(red.length)chosen.push(red[0]);if(miss.length)chosen.push(miss[0]);const penalties=events.filter(e=>e.type==='rigore_concesso');if(penalties.length)chosen.push(penalties[0]);
+ chosen.sort((a,b)=>a.minute-b.minute);
+ const sentences=chosen.map(e=>{
+  let subject=rFmtName(e.name),club=pressClub(e.side);
+  if(e.type==='gol')return `Al ${e.minute}′ ${subject} va a segno per ${club}${e.kind==='rigore'?' dal dischetto':''}`;
+  if(e.type==='rosso')return `al ${e.minute}′ ${subject} viene espulso e ${club} resta in inferiorità numerica`;
+  if(e.type==='rigore_sbagliato')return `al ${e.minute}′ ${subject} fallisce un rigore`;
+  if(e.type==='rigore_concesso')return `al ${e.minute}′ ${club} concede un rigore agli avversari`;
+  return '';
+ }).filter(Boolean);
+ if(sentences.length)intro+=' '+sentences[0][0].toUpperCase()+sentences[0].slice(1)+(sentences.length>1?'; '+sentences.slice(1).join('; '):'')+'.';
+ const occasions=events.filter(e=>e.type==='occasione').filter(e=>!goals.some(g=>g.name===e.name&&Math.abs(g.minute-e.minute)<3));
+ const otherPlayers=[];for(const e of occasions){const x=rFmtName(e.name);if(x&&!otherPlayers.includes(x)&&!goals.some(g=>rFmtName(g.name)===x))otherPlayers.push(x)}
+ if(otherPlayers.length)intro+=' Nel corso della gara si mettono in evidenza anche '+otherPlayers.slice(0,2).join(' e ')+' con iniziative offensive che tengono in apprensione le difese.';
+ const defensive=(m.events||[]).filter(e=>e.type==='intervento'&&e.side===mine).map(e=>rFmtName(e.name)).filter(Boolean);
+ const backs=[...new Set(defensive)].filter(x=>!otherPlayers.includes(x)&&!goals.some(g=>rFmtName(g.name)===x));
+ if(backs.length)intro+=' Prezioso anche il lavoro difensivo di '+backs[0]+', protagonista di una chiusura importante.';
+ if(m.reginaImpacts?.red)intro+=' L’inferiorità numerica pesa sulla gestione dei minuti successivi.';
+ const dm=m.metrics?.[mine];if(dm){const metricNames={fitness:'forma fisica',technical:'tecnica',discipline:'correttezza',mental:'motivazione',luck:'fortuna',tactics:'tattica'};let hi=Object.entries(dm).filter(([k,v])=>CATKEYS.includes(k)&&v>=8.5).map(([k])=>metricNames[k]||k);
+  let low=Object.entries(dm).filter(([k,v])=>CATKEYS.includes(k)&&v<=3.1).map(([k])=>metricNames[k]||k);
+  if(hi.length)intro+=' La preparazione di giornata si riflette soprattutto in '+hi.slice(0,2).join(' e ')+'.';
+  if(low.length)intro+=' Restano invece difficoltà evidenti sul piano di '+low.slice(0,2).join(' e ')+'.';
+ }
+ return intro;
+}
+function rLeagueContext(m){
+ if(!st?.standings||!st.league)return '';
+ const clubs=sortedStandings(st.league),rank=clubs.findIndex(t=>t.id===st.club);if(rank<0)return '';
+ const near=clubs.filter((t,i)=>t.id!==st.club&&Math.abs(i-rank)<=2).slice(0,3);
+ const thisRound=st.roundLog?.[0]?.matches||[];
+ let s=`In classifica ${pressClub(st.club)} occupa ora il ${rank+1}° posto con ${clubs[rank].pts} punti`;
+ if(near.length)s+=`; a distanza ravvicinata ci sono ${near.map(t=>pressClub(t.id)+' ('+t.pts+')').join(', ')}`;
+ s+='.';
+ const rivals=near.map(t=>{let x=thisRound.find(m=>m.a===t.id||m.b===t.id);if(!x)return null;let n=x.a===t.id?x.ga-x.gb:x.gb-x.ga;return [t.name,n>0?'ha vinto':n<0?'ha perso':'ha pareggiato',teamById(x.a===t.id?x.b:x.a)?.name]});
+ if(rivals.some(Boolean))s+=' Nella stessa giornata '+rivals.filter(Boolean).slice(0,2).map(x=>x[0]+' '+x[1]+' contro '+x[2]).join(', mentre ')+'.';
+ return s;
+}
+function rMemoryStory(m){let prev=(st.results||[]).filter(r=>r.match&&(r.match.a===st.club||r.match.b===st.club)).slice(0,5);if(!prev.length)return '';
+ const side=st.club,cur=(m.a===side?m.ga-m.gb:m.gb-m.ga),hist=prev.map(r=>r.match.a===side?r.match.ga-r.match.gb:r.match.gb-r.match.ga);
+ const present=new Set((m.events||[]).filter(x=>x.type==='gol'&&x.side===side).map(x=>rFmtName(x.name)));
+ for(const r of prev){
+  const missed=(r.match.events||[]).find(x=>x.type==='rigore_sbagliato'&&x.side===side&&present.has(rFmtName(x.name)));
+  if(missed)return rFmtName(missed.name)+' si è preso la rivincita dopo il rigore sbagliato nella precedente fase del campionato: la rete di oggi cambia il giudizio sul suo momento.';
+  const sent=(r.match.events||[]).find(x=>x.type==='rosso'&&x.side===side&&present.has(rFmtName(x.name)));
+  if(sent)return 'Tra i protagonisti c’è anche '+rFmtName(sent.name)+', tornato decisivo dopo un’espulsione che aveva fatto discutere nelle scorse giornate.';
+ }
+ if(cur>0&&hist[0]<0){let x=0;for(const d of hist){if(d<0)x++;else break}if(x>=2)return `Il risultato interrompe una serie di ${x} sconfitte consecutive: un riscatto che può cambiare l’inerzia della stagione.`;}
+ if(cur<0&&hist.every(x=>x>0))return `La battuta d’arresto interrompe una serie di ${hist.length} successi consecutivi e riapre interrogativi sulla continuità della squadra.`;
+ if(cur>=0&&hist.slice(0,3).every(x=>x>=0))return `La squadra allunga la striscia di risultati utili, un dato che diventa sempre più importante nella corsa ai propri obiettivi.`;
+ return '';
+}
+function rPressQuote(m){let d=m.a===st.club?m.ga-m.gb:m.gb-m.ga,coach=st.coachName||'l’allenatore',idx=((st.results||[]).length*5+m.ga*3+m.gb)%3;
+ let positive=['«La squadra ha risposto con carattere. Il lavoro quotidiano si è visto soprattutto nei momenti difficili».','«Tre punti importanti, ma sappiamo che non possiamo concedere tutto quello che abbiamo concesso oggi».','«I ragazzi hanno interpretato la gara con grande concentrazione. Il campionato resta lungo».'];
+ let negative=['«Abbiamo commesso errori e siamo i primi a doverli correggere. Ora serve una reazione».','«Il risultato fa male, ma la prestazione ci lascia indicazioni precise su cui lavorare».','«Non cerchiamo scuse: dobbiamo dare di più, soprattutto nei momenti decisivi».'];
+ let neutral=['«Abbiamo avuto occasioni per vincere; dobbiamo essere più incisivi».','«La classifica si muove, ma dobbiamo trovare maggiore continuità».','«Un punto è un punto, adesso bisogna migliorare quello che non ha funzionato».'];
+ return `${coach} commenta così: ${d>0?positive[idx]:d<0?negative[idx]:neutral[idx]}`;
+}
+const rOldArticle=article;
+article=function(m,metrics){
+ const old=rOldArticle(m,metrics);if(!old||!m||!st||(m.a!==st.club&&m.b!==st.club))return old;
+ const d=m.a===st.club?m.ga-m.gb:m.gb-m.ga;const club=teamById(st.club)?.name||'SQUADRA';
+ const recent=(st.results||[]).length,scorers=(m.events||[]).filter(e=>e.type==='gol'&&e.side===st.club),names=Array.from(new Set(scorers.map(e=>rFmtName(e.name))));
+ const head=d>0?[`${club.toLocaleUpperCase('it-IT')} NON MOLLA: VITTORIA PESANTE!`,
+ `${names[0]?.toLocaleUpperCase('it-IT')||club.toLocaleUpperCase('it-IT')} FA LA DIFFERENZA: TRE PUNTI D'ORO`,
+ `${club.toLocaleUpperCase('it-IT')} SI PRENDE LA SCENA: IL CAMPIONATO SI ACCENDE`]:
+ d<0?[`${club.toLocaleUpperCase('it-IT')}, PASSO FALSO CHE FA MALE`,
+ `ALLARME ${club.toLocaleUpperCase('it-IT')}: RESTANO I RIMPIANTI`,
+ `${club.toLocaleUpperCase('it-IT')} KO: SERVE UNA RISPOSTA`]:
+ [`${club.toLocaleUpperCase('it-IT')}, UN PUNTO E TANTE DOMANDE`,
+ `${club.toLocaleUpperCase('it-IT')} NON SFONDA: LA CLASSIFICA SI MUOVE`,
+ `${club.toLocaleUpperCase('it-IT')}, PAREGGIO CHE FA DISCUTERE`];
+ let title=head[(recent+m.ga+m.gb)%head.length];
+ if(st.coachName&&(recent+m.ga+m.gb)%4===0)title=rFmtName(st.coachName).toLocaleUpperCase('it-IT')+': '+title;
+ // Si recuperano soltanto le notizie economiche reali già prodotte dall'addon.
+ let paragraphs=[rMatchNarrative(m),rLeagueContext(m),rMemoryStory(m),rPressQuote(m)].filter(Boolean);
+ const finance=String(old.body||'').split(/\n\n/).filter(x=>/(LA SOCIETÀ INVESTE|TENSIONI NEI REPARTI|SEGNALI DI CRESCITA|PREOCCUPAZIONE IN SOCIETÀ)/.test(x));
+ paragraphs.push(...finance);
+ return {title:typeof pressHeadlineWithoutArticles==='function'?pressHeadlineWithoutArticles(title):title,body:paragraphs.join('\n\n'),headlineReason:'cronaca contestualizzata'};
+};window.article=article;
+// I rigori concessi appaiono anche nella scheda eventi, non soltanto nell'articolo.
+const rPreviousGaz=gazView;
+gazView=function(){let html=rPreviousGaz(),rec=st?.results?.[selectedReport]||st?.results?.[0];const pens=(rec?.match?.events||[]).filter(x=>x.type==='rigore_concesso');
+ if(!pens.length)return html;
+ const penaltyText='<div class="notice tiny"><b>Rigori concessi:</b> '+pens.map(x=>x.minute+'′, '+E(teamById(x.side)?.name||'la squadra')).join(' · ')+'</div>';
+ return html.replace('</article>',penaltyText+'</article>');
+};
+// F. Finanze: valute, commissioni, ripartizione percentuale, baseline e delta.
+const R_CURRENCIES=['EUR','USD','GBP','THB','CNY','MMK','JPY','CHF','CAD','AUD','SGD','HKD','OTHER'];
+function rFinanceInit(){const fs=load();for(const a of fs.accounts){a.currency=R_CURRENCIES.includes(a.currency)?a.currency:'EUR';a.rateEuro=Number(a.rateEuro)>0?Number(a.rateEuro):1;
+ a.baseRateEuro=Number(a.baseRateEuro)>0?Number(a.baseRateEuro):a.rateEuro;
+ if(!Number.isFinite(Number(a.lastBalance)))a.lastBalance=Number(a.balance)||0;
+ if(!Number.isFinite(Number(a.lastPressBalance)))a.lastPressBalance=Number(a.balance)||0;
+ a.commissionRate=Number.isFinite(Number(a.commissionRate))?Math.max(0,Number(a.commissionRate)):0;
+ if(!a.allocations||typeof a.allocations!=='object'){
+  a.allocations={};const arr=(a.sectors||[]).filter(x=>SECTOR_MAP[x]);const share=arr.length?100/arr.length:0;for(const sector of arr)a.allocations[sector]=share;
+ }
+ }
+ return fs;}
+function rEurAmount(a,v,useBaseline=false){return cents((Number(v)||0)*(useBaseline?(a.baseRateEuro||1):(a.rateEuro||1)))}
+
+const rOldBudget=budget;
+budget=function(){
+ const fs=rFinanceInit();const hist=outcomes(),w=hist.filter(x=>x==='W').length,d=hist.filter(x=>x==='D').length,spent=(fs.purchases||[]).reduce((n,p)=>n+Number(p.cost||0),0);
+ let delta=0;if(fs.enabled&&fs.accounts.length){
+  // Non scambiare un rialzo del cambio per un guadagno personale.
+  const change=fs.accounts.reduce((n,a)=>n+rEurAmount(a,Number(a.balance)-Number(a.baseline),true),0);
+  const sensitivity=({bassa:.6,media:1,alta:1.45})[fs.sensitivity]||1;
+  delta=Math.sign(change)*Math.min(8,Math.sqrt(Math.abs(change)/200)*1.15*sensitivity);
+ }
+ return Math.max(0,cents(10+w*.6+d*.2+delta-spent));
+};
+function rDeleteAccount(id){
+ const fs=rFinanceInit(),a=fs.accounts.find(x=>x.id===id);if(!a)return;
+ if(!confirm('Eliminare il conto «'+a.name+'» dalla sola REGINA Calcio? Lo storico dei movimenti sarà conservato.'))return;
+ fs.accounts=fs.accounts.filter(x=>x.id!==id);
+ if(fs.enabled&&fs.baseline!=null)fs.baseline=cents(fs.baseline-rEurAmount(a,a.balance));
+ save();render();
+}
+window.reginaFin.remove=rDeleteAccount;
+
+function rAccountLastChange(a){return rEurAmount(a,(Number(a.balance)||0)-(Number(a.lastBalance)||0),true)}
+total=function(){return cents(rFinanceInit().accounts.reduce((sum,a)=>sum+rEurAmount(a,a.balance),0))};
+clubSectorStates=function(){const accounts=rFinanceInit().accounts;return CLUB_SECTORS.flatMap(([id,title])=>{
+ let assigned=accounts.filter(a=>Number(a.allocations?.[id])>0);if(!assigned.length)return [];
+ const bal=cents(assigned.reduce((sum,a)=>sum+rEurAmount(a,a.balance,true)*Number(a.allocations[id])/100,0));
+ const base=cents(assigned.reduce((sum,a)=>sum+rEurAmount(a,a.baseline,true)*Number(a.allocations[id])/100,0));
+ const previous=cents(assigned.reduce((sum,a)=>sum+rEurAmount(a,a.lastBalance,true)*Number(a.allocations[id])/100,0));
+ const delta=cents(bal-base),recent=cents(bal-previous),scale=Math.max(250,Math.abs(base)*.35);
+ const health=Math.round(rLim(6+4*Math.tanh(delta/scale))*10)/10;
+ const label=health<4?'In difficoltà':health<5.5?'Sotto pressione':health<=6.5?'Stabile':health<8?'In crescita':'In ottima salute';
+ return [{id,title,balance:bal,baseline:base,delta,recent,health,label,accounts:assigned.map(a=>a.id)}];
+ });};
+function rAmountEuro(t){if(Number.isFinite(t.amountEuro))return t.amountEuro;
+ const fs=rFinanceInit(),a=fs.accounts.find(x=>x.name===t.accountName);return cents((Number(t.amount)||0)*(a?.rateEuro||1));}
+graph=function(){
+ let months=[],now=new Date();for(let i=5;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth()-i,1),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),inc=0,exp=0;
+ for(const t of rFinanceInit().transactions){if(!String(t.date).startsWith(key))continue;if(t.type==='income')inc+=rAmountEuro(t);if(t.type==='expense')exp+=rAmountEuro(t);if(t.feeEuro)exp+=t.feeEuro}
+ months.push({key,inc,exp});}
+ const max=Math.max(1,...months.flatMap(x=>[x.inc,x.exp]));
+ return '<div class="fin-chart">'+months.map(x=>'<div><span class="fin-pair"><i style="height:'+Math.round(x.inc/max*90)+'px;background:#368f80"></i><i style="height:'+Math.round(x.exp/max*90)+'px;background:#d36f6f"></i></span><small>'+E(x.key.slice(5))+'</small></div>').join('')+'</div><p class="tiny muted">Entrate e uscite convertite in euro. Commissioni incluse nelle uscite; giroconti esclusi.</p>';
+};
+getMonth=function(){let key=TODAY().slice(0,7),inc=0,exp=0;for(const t of rFinanceInit().transactions){if(!String(t.date).startsWith(key))continue;if(t.type==='income')inc+=rAmountEuro(t);if(t.type==='expense')exp+=rAmountEuro(t);if(t.feeEuro)exp+=t.feeEuro;}return {inc:cents(inc),exp:cents(exp)}};
+function rRecord(e){e.preventDefault();let fd=new FormData(e.target),fs=rFinanceInit(),type=fd.get('opType'),source=fs.accounts.find(a=>a.id===fd.get('from')),dest=fs.accounts.find(a=>a.id===fd.get('to'));
+ let amount=Number(fd.get('amount')),fee=Math.max(0,Number(fd.get('fee')||0));if(!source||!(amount>0)||!Number.isFinite(fee))return alert('Inserisci conto e importi validi.');
+ if(type==='transfer'&&(!dest||dest.id===source.id))return alert('Scegli un conto di destinazione diverso.');
+ const originalSource=source.balance,originalDest=dest?.balance,oldLastSource=source.lastBalance,oldLastDest=dest?.lastBalance;
+ source.lastBalance=source.balance;if(dest)dest.lastBalance=dest.balance;
+ if(type==='income')source.balance=cents(source.balance+amount-fee);
+ else if(type==='expense')source.balance=cents(source.balance-amount-fee);
+ else if(type==='transfer'){source.balance=cents(source.balance-amount-fee);dest.balance=cents(dest.balance+amount*source.rateEuro/dest.rateEuro)}
+ else return alert('Operazione non valida');
+ if(!confirm('Registrare il movimento? '+(type==='transfer'?'Il conto destinazione riceverà il valore convertito al cambio impostato.':''))){source.balance=originalSource;source.lastBalance=oldLastSource;if(dest){dest.balance=originalDest;dest.lastBalance=oldLastDest}return;}
+ const transaction={id:uid(),type,date:new Date().toISOString(),amount,amountEuro:rEurAmount(source,amount),fee,feeEuro:rEurAmount(source,fee),currency:source.currency,accountName:source.name,toName:dest?.name||'',category:type==='transfer'?'Giroconto':String(fd.get('category')||'Altro'),note:String(fd.get('note')||'').slice(0,150)};
+ fs.transactions.unshift(transaction);save();render();
+}
+function rAddAccount(e){e.preventDefault();let fd=new FormData(e.target),name=String(fd.get('accName')||'').trim(),cur=String(fd.get('currency')||'EUR'),balance=Number(fd.get('accBalance')),rate=Number(fd.get('rateEuro'));if(!name||!R_CURRENCIES.includes(cur)||!Number.isFinite(balance)||!(rate>0))return alert('Nome, valuta, saldo e cambio validi obbligatori.');
+ const fs=rFinanceInit();fs.accounts.push({id:uid(),name,balance:cents(balance),baseline:cents(balance),lastBalance:cents(balance),lastPressBalance:cents(balance),currency:cur,rateEuro:rate,baseRateEuro:rate,allocations:{},sectors:[],commissionRate:0});
+ // baseline generale sempre espresso in euro; le successive variazioni sono confrontabili.
+ if(fs.enabled&&fs.baseline!=null)fs.baseline=cents(fs.baseline+balance*rate);save();render();
+}
+function rAccountEdit(id){let fs=rFinanceInit(),a=fs.accounts.find(x=>x.id===id);if(!a)return;
+ let val=prompt('Saldo attuale '+a.currency+' (prima '+a.balance+')',String(a.balance));if(val===null)return;
+ val=Number(val.replace(',','.'));if(!Number.isFinite(val))return alert('Saldo non valido');
+ let rate=prompt('Quanto vale 1 '+a.currency+' in EUR? Non modifica il riferimento iniziale.',String(a.rateEuro));if(rate===null)return;rate=Number(rate.replace(',','.'));if(!(rate>0))return alert('Tasso non valido');
+ a.lastBalance=Number(a.balance);a.balance=cents(val);a.rateEuro=rate;
+ fs.transactions.unshift({id:uid(),date:new Date().toISOString(),type:'reconcile',accountName:a.name,amount:cents(val-a.lastBalance),amountEuro:rEurAmount(a,val-a.lastBalance),category:'Aggiornamento saldo'});
+ save();render();
+}
+function rSaveAlloc(id){let fs=rFinanceInit(),a=fs.accounts.find(x=>x.id===id);const area=document.getElementById('regina-alloc-'+id);if(!a||!area)return;
+ let val={},sum=0;for(const input of area.querySelectorAll('input[data-sector]')){let number=Number(input.value||0);if(!Number.isFinite(number)||number<0||number>100)return alert('Percentuali da 0 a 100');if(number>0)val[input.dataset.sector]=number;sum+=number}
+ if(sum>100.001)return alert('La somma delle percentuali non può superare il 100%.');
+ a.allocations=val;a.sectors=Object.keys(val);save();render();
+}
+window.reginaFin.add=rAddAccount;window.reginaFin.update=rAccountEdit;window.reginaFin.record=rRecord;window.reginaFin.alloc=rSaveAlloc;
+function rEuroStats(){const fs=rFinanceInit(),acc=fs.accounts;
+ const body=acc.map(a=>'<tr><td>'+E(a.name)+'<br><small>'+E(a.currency)+'</small></td><td>'+Number(a.balance||0).toLocaleString('it-IT',{maximumFractionDigits:2})+' '+a.currency+'<br><small>≈ '+euro(rEurAmount(a,a.balance))+'</small></td><td>'+euro(rEurAmount(a,a.baseline,true))+'</td><td>'+euro(rAccountLastChange(a))+'</td><td><button class="btn alt tiny" onclick="reginaFin.update(\''+a.id+'\')">Aggiorna</button> <button class="btn alt tiny" onclick="reginaFin.remove(\''+a.id+'\')">✕</button></td></tr>').join('');
+ const form='<form class="fin-grid" onsubmit="reginaFin.add(event)"><label>Conto<input name="accName" maxlength="60" required placeholder="Conto corrente"></label><label>Valuta<select name="currency" onchange="this.form.elements.rateEuro.value=this.value===\'EUR\'?1:\'\'">'+R_CURRENCIES.map(x=>'<option>'+x+'</option>').join('')+'</select></label><label>Saldo iniziale<input name="accBalance" type="number" step="0.01" required></label><label>1 unità vale €<input name="rateEuro" type="number" step="any" min="0.00000001" value="1" required></label><button class="btn">+ Aggiungi conto</button></form>';
+ return '<h3>Conti e valute</h3><p class="muted tiny">La somma complessiva è in euro. I cambi si inseriscono manualmente. Il valore iniziale resta fisso in valuta e al cambio iniziale, indipendentemente dai successivi aggiornamenti.</p><div class="tablewrap"><table class="table"><tr><th>Conto</th><th>Saldo</th><th>Partenza €</th><th>Ultima variazione €</th><th></th></tr>'+body+'</table></div>'+form;
+}
+function rAllocationEditor(){const fs=rFinanceInit(),sectors=clubSectorStates();
+ const forms=fs.accounts.map(a=>{
+  const items=CLUB_SECTORS.map(([id,name])=>'<label>'+E(name)+' (%)<input type="number" min="0" max="100" step="1" data-sector="'+id+'" value="'+(Number(a.allocations[id])||0)+'"></label>').join('');
+  return '<details class="fin-sector-account"><summary>'+E(a.name)+' · Ripartisci risorse (max 100%)</summary><div class="fin-grid" id="regina-alloc-'+E(a.id)+'">'+items+'</div><button class="btn alt" onclick="reginaFin.alloc(\''+a.id+'\')">Salva ripartizione</button></details>';
+ }).join('');
+ const states=sectors.map(s=>'<tr><td>'+E(s.title)+'</td><td>'+s.health.toFixed(1)+'/10</td><td>'+euro(s.baseline)+'</td><td>'+euro(s.balance)+'</td><td>'+euro(s.recent)+'</td></tr>').join('');
+ return '<h3>🏟️ Settori finanziati</h3><p class="muted tiny">Il saldo di riferimento è quello iniziale. La variazione recente confronta il saldo attuale con la precedente immissione; gli effetti sul club usano il capitale iniziale come base. Gli importi sono ripartiti, mai moltiplicati tra settori.</p>'+forms+'<div class="tablewrap"><table class="table"><tr><th>Settore</th><th>Salute</th><th>Partenza</th><th>Attuale</th><th>Ultima variazione</th></tr>'+states+'</table></div>';
+}
+function rTransactionForm(){let fs=rFinanceInit(),options=fs.accounts.map(a=>'<option value="'+E(a.id)+'">'+E(a.name)+' ('+a.currency+')</option>').join('');
+ return '<h3>Entrate, spese, giroconti e commissioni</h3><form class="fin-grid" onsubmit="reginaFin.record(event)">'+
+ '<label>Tipo<select name="opType"><option value="expense">Uscita</option><option value="income">Entrata</option><option value="transfer">Giroconto</option></select></label>'+ 
+ '<label>Conto di partenza<select name="from">'+options+'</select></label>'+ 
+ '<label>Conto destinazione<select name="to"><option value="">—</option>'+options+'</select></label>'+ 
+ '<label>Importo (valuta del conto)<input type="number" step="0.01" min="0.01" name="amount" required></label>'+ 
+ '<label>Commissione (stessa valuta)<input type="number" step="0.01" min="0" name="fee" value="0"></label>'+ 
+ '<label>Categoria<select name="category">'+CAT.map(x=>'<option>'+E(x)+'</option>').join('')+'</select></label>'+ 
+ '<label>Nota<input name="note" maxlength="150"></label><button class="btn" '+(!fs.accounts.length?'disabled':'')+'>Registra movimento</button></form>';
+}
+const rPreviousFinanceView=financeView;
+financeView=function(){rFinanceInit();let html=rPreviousFinanceView();
+ const i=html.indexOf('<h3>Conti</h3>'),j=html.indexOf('<h3>Andamento degli ultimi sei mesi</h3>');
+ if(i>=0&&j>i)html=html.slice(0,i)+rEuroStats()+rAllocationEditor()+rTransactionForm()+html.slice(j);
+ // I riepiloghi originali si sostituiscono con valori effettivi in euro, senza
+ // esporre dati di conti nel giornale.
+ const mo=getMonth(),summary='<div class="fin-summary">'+[['Patrimonio complessivo',euro(total())],['Entrate del mese',euro(mo.inc)],['Uscite + commissioni',euro(mo.exp)],['Budget operativo',budget().toFixed(2)+' cr.'],['Budget trasferimenti',Number(st.budget||0).toFixed(2)+' cr.']].map(x=>'<div><small>'+x[0]+'</small><strong>'+x[1]+'</strong></div>').join('')+'</div>';
+ html=html.replace(/<div class="fin-summary">[\s\S]*?<\/div><p class="tiny muted">/,(s)=>summary+'<p class="tiny muted">');
+ return html;
+};
+// Aggiornamento automatico del delta recente dopo una pubblicazione della Gazzetta.
+const rPreviousReport=sectorPressReport;
+sectorPressReport=function(){
+ const report=rPreviousReport();const states=clubSectorStates();
+ const fs=rFinanceInit();if(fs.enabled){const changed=states.map(s=>{let pressDelta=rFinanceInit().accounts.filter(a=>Number(a.allocations?.[s.id])>0).reduce((tot,a)=>tot+rEurAmount(a,(Number(a.balance)||0)-(Number(a.lastPressBalance)||0),true)*Number(a.allocations[s.id])/100,0);return {...s,pressDelta:cents(pressDelta)};}).filter(s=>Math.abs(s.pressDelta)>=Math.max(80,Math.abs(s.baseline)*.04));
+  for(const x of changed.slice(0,2))report.push(x.pressDelta>0?'Il settore '+x.title.toLowerCase()+' registra un miglioramento sensibile delle risorse rispetto al precedente aggiornamento.':'Le ultime disponibilità del settore '+x.title.toLowerCase()+' risultano in calo rispetto al controllo precedente.');
+ }
+ for(const a of fs.accounts)a.lastPressBalance=a.balance;
+ save();return report;
+};
+// Personale e Primavera: effetti graduali, non comandi tattici.
+const rOldFinishEffects=finishEffects;
+finishEffects=function(metrics){
+ rOldFinishEffects(metrics);
+ const fs=rFinanceInit();if(!fs.enabled)return;
+ const states=clubSectorStates(),get=id=>states.find(x=>x.id===id)?.health??6;
+ const doctors=get('doctors'),trainers=get('trainers');
+ for(const p of MY_SQ()){
+  if(Number(p.injured)>0&&doctors>6.5&&Math.random()<Math.min(.25,(doctors-6)*.045))p.injured=Math.max(0,p.injured-1);
+  if(Number.isFinite(p.fitness))p.fitness=+rLim(p.fitness+(trainers-6)*.045).toFixed(2);
+ }
+};
+function rGenerateYouth(){
+ if(!rFinanceInit().enabled)return;
+ const academy=clubSectorStates().find(x=>x.id==='academy');if(!academy)return;
+ const level=academy.health,scouting=clubSectorStates().find(x=>x.id==='scouting')?.health||6;
+ const given=['Andrea','Matteo','Lorenzo','Samuele','Davide','Edoardo','Riccardo','Alessio'];
+ const surnames=['Ricci','Marini','Ferrari','Conti','Moretti','Romano','Serra','Galli','Rossi','Costa'];
+ const seed=Number(st.season||1)*13+st.club.length+Math.round(level*4),name=given[seed%given.length]+' '+surnames[(seed*3+Math.round(scouting))%surnames.length];
+ const quality=+rLim(2.1+level*.30+Math.max(0,scouting-6)*.11+Math.random()*.75,1,8.5).toFixed(3);
+ const positions=['A','C','D','P'];let pos=positions[seed%4];
+ st.reginaYouth=st.reginaYouth||[];
+ st.reginaYouth.unshift({id:'primavera-'+st.season+'-'+seed,name,pos,tech:quality,age:18,club:st.club,fitness:6.5,mental:6.2,injured:0,red:0,out:false,generated:true});
+ st.reginaYouth=st.reginaYouth.slice(0,8);
+}
+function rPromoteYouth(id){
+ let x=(st.reginaYouth||[]).find(x=>x.id===id&&x.club===st.club);if(!x)return;
+ if(MY_SQ().length>=25)return alert('La rosa contiene già 25 calciatori. Libera un posto tramite il mercato prima di promuovere questo giovane.');
+ if(!confirm('Promuovere '+x.name+' in prima squadra?'))return;
+ MY_SQ().push(x);st.reginaYouth=st.reginaYouth.filter(y=>y.id!==id);persist();render();
+}
+window.reginaYouth={promote:rPromoteYouth};
+const rBeforeFinanceYouth=financeView;
+financeView=function(){let html=rBeforeFinanceYouth();let prospects=(st.reginaYouth||[]).filter(x=>x.club===st.club);
+ if(!prospects.length)return html;
+ let block='<section class="card"><h3>🌱 Primavera · giovani osservati</h3><p class="muted">Nuovi talenti generati fra una stagione e la successiva. La salute del settore giovanile e dello scouting influisce sulla qualità, non sostituisce i risultati degli obiettivi.</p>'+prospects.map(x=>'<div class="row outrow"><strong>'+E(x.name)+' · '+x.pos+' · tecnica '+x.tech.toFixed(1)+'</strong> <button class="btn alt" onclick="reginaYouth.promote(\''+x.id+'\')">Promuovi</button></div>').join('')+'</section>';
+ return html+block;
+};
+// G. Carriera: storia stagionale, offerte, promozioni/retrocessioni sui 100 club.
+function rMembership(){return Object.fromEntries(Object.entries(teams).map(([k,items])=>[k,items.map(t=>t.id)]))}
+function rApplyMembership(members){if(!members)return;const byID=new Map(ALLCLUBS.map(x=>[x.id,x]));
+ for(const [g,ids] of Object.entries(members)){if(!teams[g]||!Array.isArray(ids)||ids.length!==20)continue;teams[g]=ids.map(id=>byID.get(id)).filter(Boolean);for(const t of teams[g])t.league=g;}
+}
+if(st?.reginaMembership)rApplyMembership(st.reginaMembership);
+function rCareerHistory(){return st.reginaCareerHistory||(st.reginaCareerHistory=[])}
+function rReputation(){return Math.round(rLim(st?.reginaReputation??50,0,100));}
+function rRewardReputation(entry){let gain=entry.placing<=3?9:entry.placing<=8?3:entry.placing>=17?-7:-1;if(entry.promoted)gain+=8;return Math.round(rLim(rReputation()+gain,0,100));}
+function rSortTeams(){return [...ALLCLUBS].filter(x=>x.id!==st.club).sort((a,b)=>(a.league==='A'?3:a.league==='B'?2:1)-(b.league==='A'?3:b.league==='B'?2:1));}
+function rCareerOffers(){let rep=rReputation(),oldClub=teamById(st.club),all=rSortTeams(),select=[];
+ for(const league of (rep>=75?['A','B','C_A','C_B','C_C']:rep>=45?['B','C_A','C_B','C_C','A']:['C_A','C_B','C_C','B'])){
+  const available=all.filter(t=>t.league===league&&t.id!==st.club&&!select.some(x=>x.id===t.id));if(!available.length)continue;
+  available.sort((x,y)=>(Math.abs((x.mv||5)-(oldClub?.mv||5)))-(Math.abs((y.mv||5)-(oldClub?.mv||5))));
+  const ix=(st.season*3+league.length+rep)%Math.min(available.length,7);select.push(available[ix]);if(select.length>=3)break;
+ }
+ return select.map(x=>({id:x.id,name:x.name,league:x.league}));
+}
+function rLeagueTransfers(){
+ let p=st.postseason;if(!p)return {promoted:false,relegated:false,notice:'Nessuna fase finale'};
+ const before=teamById(st.club)?.league||st.league;
+ let move=(id,to)=>{const old=teamById(id)?.league;if(!old||old===to)return false;
+  let ix=teams[old].findIndex(t=>t.id===id);if(ix<0)return false;
+  let [t]=teams[old].splice(ix,1);t.league=to;teams[to].push(t);return true};
+ const inLeague=(ids,league)=>[...new Set(ids)].filter(id=>teamById(id)?.league===league);
+ let upB=inLeague(p.autopromoted||[],'B'),downA=inLeague(p.relegated||[],'A');
+ let upC=inLeague(p.autopromoted||[],'C_A').concat(inLeague(p.autopromoted||[],'C_B'),inLeague(p.autopromoted||[],'C_C'));
+ let downB=inLeague(p.relegated||[],'B');
+ while(upB.length<3){let x=sortedStandings('B').find(t=>!upB.includes(t.id));if(!x)break;upB.push(x.id)}
+ while(downA.length<3){let x=sortedStandings('A').slice().reverse().find(t=>!downA.includes(t.id));if(!x)break;downA.push(x.id)}
+ // Passano in A tre club B; A rimane di 20 squadre.
+ for(const id of downA.slice(0,3))move(id,'B');for(const id of upB.slice(0,3))move(id,'A');
+ // Quattro squadre dalla C alla B e quattro dalla B alla C, una per posto liberato.
+ while(downB.length<upC.length){let x=sortedStandings('B').slice().reverse().find(t=>!downB.includes(t.id)&&teamById(t.id).league==='B');if(!x)break;downB.push(x.id)}
+ for(let i=0;i<Math.min(upC.length,downB.length);i++){
+  const source=teamById(upC[i])?.league;if(!source)continue;
+  move(downB[i],source);move(upC[i],'B');
+ }
+ return {promoted:(before.startsWith('C')&&teamById(st.club).league==='B')||(before==='B'&&teamById(st.club).league==='A'),relegated:(before==='A'&&teamById(st.club).league==='B')||(before==='B'&&teamById(st.club).league.startsWith('C'))};
+}
+function rNextSeason(offerId){
+ if(!st||!(st.finished&&st.postseason?.done))return alert('La stagione corrente non è ancora conclusa.');
+ if(!confirm('Cominciare una nuova stagione? Carriera, giornali e obiettivi saranno conservati.'))return;
+ const oldClub=st.club,oldLeague=teamById(oldClub)?.league||st.league,rank=sortedStandings(oldLeague).findIndex(x=>x.id===oldClub)+1;
+ let result=rLeagueTransfers(),career=rCareerHistory();career.push({season:st.season,club:oldClub,clubName:teamById(oldClub)?.name||oldClub,league:oldLeague,placing:rank,points:st.standings[oldClub]?.pts||0,promoted:result.promoted,relegated:result.relegated,date:TODAY()});
+ st.reginaReputation=rRewardReputation(career.at(-1));st.reginaMembership=rMembership();
+ let offers=st.reginaManagerOffers||[];if(offerId&&offers.some(x=>x.id===offerId))st.club=offerId;
+ st.league=teamById(st.club)?.league||st.league;
+ st.season=(Number(st.season)||1)+1;rGenerateYouth();st.game=0;st.finished=false;st.postseason=null;st.fixtures=createFixtures();st.fixture=st.fixtures[st.league];st.marketOpen=false;st.offers=[];st.marketSeen=[];
+ st.standings=Object.fromEntries(ALLCLUBS.map(t=>[t.id,{p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]));
+ st.lineup=autoLineupFor(st,st.club);st.reginaManagerOffers=[];
+ // La giornata successiva è già stata avanzata dal motore della stagione conclusa.
+ st.reginaSeasonStart=st.nextDay;selectedReport=0;view='today';persist();render();
+}
+function rCareerView(){if(!st)return '';
+ const eligible=!!(st.finished&&st.postseason?.done),hist=rCareerHistory();if(eligible&&(!st.reginaManagerOffers||!st.reginaManagerOffers.length)){
+  st.reginaManagerOffers=rCareerOffers();persist();
+ }
+ return '<section class="card"><h3>🏆 Carriera dell’allenatore · stagione '+E(st.season||1)+'</h3><p>Reputazione: <b>'+rReputation()+'/100</b> · Squadra attuale: <b>'+E(teamById(st.club)?.name||'')+'</b></p>'+
+ (eligible?'<div class="notice"><b>Stagione conclusa.</b> Puoi restare alla guida della squadra oppure accettare una proposta di un altro club.</div>'+ 
+ '<button class="btn" onclick="reginaCareer.next()">Prosegui con la mia squadra →</button>'+ 
+ (st.reginaManagerOffers||[]).map(o=>'<div class="row outrow"><b>'+E(o.name)+' · '+E(GROUPN[o.league])+'</b> <button class="btn alt" onclick="reginaCareer.next(\''+o.id+'\')">Accetta offerta e inizia stagione</button></div>').join(''):'<p class="muted">Le offerte di allenatore arrivano a stagione conclusa, in base alla tua reputazione e ai risultati.</p>')+
+ (hist.length?'<details><summary>Albo delle stagioni precedenti ('+hist.length+')</summary>'+hist.slice().reverse().map(h=>'<p class="tiny">'+E(h.season)+' · '+E(h.clubName)+' · '+E(GROUPN[h.league]||h.league)+' · '+h.placing+'° posto, '+h.points+' punti'+(h.promoted?' · ⬆️ Promozione':h.relegated?' · ⬇️ Retrocessione':'')+'</p>').join('')+'</details>':'')+'</section>';
+}
+window.reginaCareer={next:rNextSeason};
+const rOldTodayView=todayView;
+todayView=function(){let html=rOldTodayView();if(!st)return html;
+ const t=rSpecialTriggers();let info=[];
+ if(t.goals)info.push('⚽ '+t.goals+' '+(t.goals===1?'gol garantito':'gol garantiti')+' da tappe decisive');
+ if(t.crits.length)info.push('🟥 '+t.crits.length+' '+(t.crits.length===1?'evento critico obbligatorio':'eventi critici obbligatori'));
+ if(t.rewards)info.push('🟢 '+t.rewards+' '+(t.rewards===1?'premio probabilistico':'premi probabilistici'));
+ if(t.risk)info.push('🟠 '+t.risk+' '+(t.risk===1?'rischio probabilistico':'rischi probabilistici'));
+ if(!info.length)return html;
+ return '<section class="card"><h3>⚡ Impatto speciale della giornata</h3><p>'+E(info.join(' · '))+'</p><p class="tiny muted">Critico e decisivo garantiscono un evento in campo, non l’esito della partita. Il risultato considera anche la forza delle due squadre e la condizione dei giocatori.</p></section>'+html;
+};
+const rOldLeagueView=leagueView;leagueView=function(){return rOldLeagueView()+rCareerView()};
+const rOldSettingsView=settingsView;settingsView=function(){return rOldSettingsView()+rCareerView()+'<p class="muted tiny">REGINA Calcio '+RV1+' · aggiornamento consolidato. I dati rimangono nel dispositivo; esegui regolarmente un backup completo.</p>'};
+// H. Versione sempre visibile senza modificare il file centrale.
+const rOriginalHeader=header;
+header=function(){return rOriginalHeader().replace('</nav>','<span class="regina-v1-badge">v'+RV1+'</span></nav>')};
+const rStyles=document.createElement('style');rStyles.textContent=`
+.regina-v1-effects{border:1px solid #b5cedd;border-radius:12px;padding:13px;margin:12px 0}.regina-v1-effects legend{font-weight:800}
+.regina-v1-effects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.regina-v1-effects select{max-width:100%}
+.regina-v1-badges{display:block;color:#315e81;margin-top:4px;line-height:1.45}
+.regina-v1-badge{font-size:11px;padding:6px;background:#184f60;color:#fff;border-radius:9px}
+.regina-planner{margin:16px 0 20px;border:1px solid #afced9;padding:13px;border-radius:12px;background:#f5fafb}
+.regina-planner h3{margin:0}.regina-pl-toolbar{margin:15px 0;gap:8px;flex-wrap:wrap}
+.regina-pl-scroll{overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:11px;scrollbar-width:thin}
+.regina-pl-week{display:grid;grid-template-columns:repeat(7,minmax(184px,1fr));gap:8px;min-width:1280px;align-items:start}
+.regina-pl-day{border:1px solid #d3e1e8;border-radius:10px;background:white;padding:7px}.regina-pl-day h4{margin:0 0 7px;text-align:center;padding:8px;border-radius:8px}
+.regina-pl-day h4.regina-pl-today{background:#d9efe7}.regina-pl-drop{border:1px dashed #d5e2ea;min-height:66px;padding:5px;margin-bottom:7px;border-radius:7px}
+.regina-pl-drop>small{display:block;color:#607782;margin-bottom:4px}.regina-pl-over{background:#d7ebf5;border-color:#4088b1}
+.regina-pl-item{display:flex;gap:6px;align-items:center;flex-wrap:wrap;border:1px solid #cad7d9;border-radius:7px;background:#fff;padding:7px;margin:4px 0;touch-action:pan-y;cursor:grab}
+.regina-pl-item.is-done{opacity:.64}.regina-pl-grip{font-size:18px;color:#7c9aa3}.regina-pl-title{font-weight:650;font-size:12px;flex:1;min-width:85px}
+.regina-pl-item .regina-v1-badges{font-size:10px;flex-basis:100%}.regina-pl-edit{border:1px solid #cbd8df;border-radius:6px;background:#f5f8f9;padding:4px 7px}
+.regina-pl-dragging{outline:2px solid #0e88a4}.regina-pl-backlog{margin-top:15px}.regina-pl-backfront{margin:7px 0;border:1px solid #d7e4e9;border-radius:8px;padding:9px}
+.regina-pl-backfront summary{cursor:pointer;font-weight:700}.regina-pl-backfront .regina-pl-item{max-width:470px}
+@media(max-width:650px){.regina-pl-toolbar .btn{font-size:11px;padding:7px}.regina-planner{padding:8px}.regina-pl-day{min-width:178px}}
+`;
+document.head.appendChild(rStyles);
+
+
+// ============================================================================
+// REGINA CALCIO 1.1 — valutazione giornaliera, partite, calendario e storico
+// Nessuna modifica alle chiavi esistenti di carriera, obiettivi e finanze.
+// ============================================================================
+
+// I. Valutazione personale 0–10. I fronti senza attività NON producono penalità.
+// Le giornate già disputate sono fotografate prima della partita: modifiche
+// successive alle tappe non alterano retroattivamente i voti già archiviati.
+function r11ReviewLive(day){
+ const g=rGoalStore(),fronts=new Map((g.fronts||[]).map(f=>[f.id,f.title]));
+ const arr=goalListForDay(day).filter(t=>t?.title&&!t.archived&&!(day<TODAY()&&t.virtual)&&
+  (goalStamp(t.due||t.deadlineDate)===day||t.footballCreditDay===day||goalStamp(t.occurrenceDate)===day));
+ const records=[],seen=new Set();
+ for(const t of arr){
+  const key=t.repeat&&t.repeat!=='none'?(rRef(t)+'|'+day):String(t.id);
+  if(seen.has(key))continue;seen.add(key);
+  const difficulty=rTaskMeta(t).difficulty;
+  const fraction=t.status==='done'?1:t.status==='failed'?0:rLim(Number(t.progressFraction)||0,0,1);
+  records.push({name:String(t.title),front:fronts.get(t.frontId)||'Senza fronte',difficulty,
+   fraction:+fraction.toFixed(4),completed:fraction>=1,partial:fraction>0&&fraction<1});
+ }
+ let weight=records.reduce((v,t)=>v+t.difficulty,0);
+ const points=records.reduce((v,t)=>v+t.difficulty*t.fraction,0);
+ const grade=weight?Math.round(100*points/weight)/10:null;
+ const done=records.filter(t=>t.completed),partial=records.filter(t=>t.partial),missing=records.filter(t=>t.fraction===0);
+ const sort=(a,b)=>b.difficulty-a.difficulty||a.name.localeCompare(b.name,'it');
+ return {day,grade,number:records.length,done:done.length,part:partial.length,missed:missing.length,
+  records:records.sort(sort),savedAt:new Date().toISOString()};
+}
+function r11Review(day){return st?.reginaDailyReviews?.[day]||r11ReviewLive(day)}
+function r11ReviewDescription(x){
+ if(!x.number)return '<p class="muted">Nessuna attività programmata: nessun voto personale assegnato.</p>';
+ const status=x.day>=TODAY()&&!st?.reginaDailyReviews?.[x.day]?'ancora in corso':'conclusa';
+ const missing=x.records.filter(r=>r.fraction===0),partial=x.records.filter(r=>r.fraction>0&&r.fraction<1),done=x.records.filter(r=>r.fraction>=1);
+ let out='<p><b>'+x.done+' completate</b> su '+x.number+', '+x.part+' parziali e '+x.missed+' non svolte. La giornata è '+status+'. Il voto pesa ogni attività in base alla difficoltà (1–5).</p>';
+ if(done.length)out+='<p><b>Attività completate:</b> '+done.slice(0,6).map(t=>E(t.name)+' (difficoltà '+t.difficulty+')').join('; ')+(done.length>6?'; e altre '+(done.length-6):'')+'.</p>';
+ if(missing.length)out+='<p><b>Non svolte:</b> '+missing.map(t=>E(t.name)+' <span class="regina-review-detail">('+E(t.front)+', difficoltà '+t.difficulty+')</span>').join('; ')+'.</p>';
+ if(partial.length)out+='<p><b>Rimaste incomplete:</b> '+partial.map(t=>E(t.name)+' <b>'+Math.round(t.fraction*100)+'%</b> <span class="regina-review-detail">('+E(t.front)+', difficoltà '+t.difficulty+')</span>').join('; ')+'.</p>';
+ if(!missing.length&&!partial.length)out+='<p>Tutte le attività programmate sono state completate.</p>';
+ return out;
+}
+function r11WeekStrip(day){
+ const start=rWeekStart(day);const days=Array.from({length:7},(_,i)=>PLUS(start,i));
+ let scores=[];
+ const strip=days.map(d=>{const review=r11Review(d),n=review.grade;
+  if(n!=null&&d<=TODAY())scores.push(n);
+  return '<button type="button" class="regina-review-day '+(d===day?'selected':'')+'" onclick="reginaReview.select(\''+d+'\')"><small>'+new Date(d+'T12:00:00').toLocaleDateString('it-IT',{weekday:'short',day:'numeric'})+'</small><b>'+(n==null||d>TODAY()?'—':n.toFixed(1))+'</b></button>';
+ }).join('');
+ const avg=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
+ const mon=day.slice(0,7),n=new Date(Number(day.slice(0,4)),Number(day.slice(5,7)),0).getDate();let monthly=[];
+ for(let i=1;i<=n;i++){let d=mon+'-'+String(i).padStart(2,'0');if(d>TODAY())break;let v=r11Review(d).grade;if(v!=null)monthly.push(v)}
+ const ma=monthly.length?(monthly.reduce((a,b)=>a+b,0)/monthly.length).toFixed(1):'—';
+ return '<div class="regina-review-strip">'+strip+'</div><p class="tiny muted">Media della settimana: <b>'+avg+'</b> · Media del mese: <b>'+ma+'</b>. I giorni senza tappe non ricevono voto.</p>';
+}
+let r11ReviewDay=TODAY();
+window.reginaReview={select(day){if(!rD(day))return;r11ReviewDay=day;render()}};
+function r11ReviewPanel(){const x=r11Review(r11ReviewDay);const archived=!!st?.reginaDailyReviews?.[x.day];
+ return '<section class="card regina-review" aria-label="Valutazione giornaliera"><div class="row spread"><div><h3>📊 La mia giornata</h3><p class="muted tiny">Voto personale basato sulle tappe, senza bonus calcistici aggiuntivi.</p></div><strong class="regina-review-score">'+(x.grade==null?'—':x.grade.toFixed(1)+'/10')+'</strong></div>'+ 
+ '<label class="label">Giornata <input type="date" value="'+r11ReviewDay+'" onchange="reginaReview.select(this.value)"></label>'+r11WeekStrip(r11ReviewDay)+r11ReviewDescription(x)+
+ (archived?'<p class="tiny muted">Valutazione archiviata al termine della partita: non cambia se modifichi successivamente gli obiettivi.</p>':
+ r11ReviewDay<TODAY()?'<p class="tiny muted">Giornata ricostruita dalle tappe ancora disponibili: i dati storici precedenti all’aggiornamento potrebbero essere incompleti.</p>':'')+
+ '</section>';
+}
+const r11BaseObjectives=objectivesView;
+objectivesView=function(){return r11ReviewPanel()+r11BaseObjectives()};
+// Congela il giudizio soltanto dopo una simulazione terminata correttamente.
+const r11OldRound=simulateRound;
+simulateRound=function(){
+ const day=st?.nextDay,review=day&&!st?.reginaDailyReviews?.[day]?r11ReviewLive(day):null;
+ const initial=st?.results?.length||0;
+ const result=r11OldRound();
+ if(st&&review&&(st.results||[]).length>initial){st.reginaDailyReviews=st.reginaDailyReviews||{};st.reginaDailyReviews[day]=review;persist()}
+ return result;
+};
+const r11OldPost=playPostDay;
+playPostDay=function(){
+ const day=st?.nextDay,review=day&&!st?.reginaDailyReviews?.[day]?r11ReviewLive(day):null;
+ const initial=st?.results?.length||0;
+ const result=r11OldPost();
+ if(st&&review&&(st.results||[]).length>initial){st.reginaDailyReviews=st.reginaDailyReviews||{};st.reginaDailyReviews[day]=review;persist()}
+ return result;
+};
+
+// II. Partite: sinergia tra motivazione, forma fisica, lucidità e disciplina,
+// eventi aggiuntivi coerenti e statistiche sempre compatibili con i gol.
+function r11GameSynergy(m){
+ if(!m)return null;
+ let x={...m};let fitness=rLim(x.fitness),mental=rLim(x.mental),discipline=rLim(x.discipline),tactics=rLim(x.tactics);
+ // La preparazione della giornata domina; la sinergia è contenuta a ±0,55.
+ let teamwork=Math.max(-.55,Math.min(.55,((fitness+mental)/2-5.5)*.075+((tactics+discipline)/2-5.5)*.04));
+ x.fitness=rLim(fitness+teamwork*.36);x.mental=rLim(mental+teamwork*.36);
+ x.tactics=rLim(tactics+teamwork*.34);x.discipline=rLim(discipline+teamwork*.24);
+ return x;
+}
+function r11MatchFix(m){
+ if(!m?.stats||!m.a||!m.b)return m;
+ for(const [idx,side] of [[0,m.a],[1,m.b]]){
+  const goals=side===m.a?m.ga:m.gb,shots=m.events.filter(x=>x.side===side&&['gol','occasione','rigore_sbagliato'].includes(x.type)).length;
+  if(Array.isArray(m.stats.onTarget))m.stats.onTarget[idx]=Math.max(goals,Number(m.stats.onTarget[idx])||0);
+  if(Array.isArray(m.stats.shots))m.stats.shots[idx]=Math.max(goals,shots,Number(m.stats.onTarget?.[idx])||0,Number(m.stats.shots[idx])||0);
+  const cards=m.events.filter(x=>x.side===side&&['giallo','rosso'].includes(x.type)).length;
+  if(Array.isArray(m.stats.fouls))m.stats.fouls[idx]=Math.max(cards,Number(m.stats.fouls[idx])||0);
+ }
+ if(Array.isArray(m.stats.possession)){
+  const home=rLim(Number(m.stats.possession[0])||50,19,81);
+  m.stats.possession=[Math.round(home),100-Math.round(home)];
+ }
+ return m;
+}
+const r11PreviousMatch=calcMatch;
+calcMatch=function(a,b,ma=null,mb=null){
+ // Nessuna tattica selezionabile: dipende soltanto dalla condizione risultante
+ // dagli obiettivi e dalle capacità dei giocatori.
+ const m=r11PreviousMatch(a,b,r11GameSynergy(ma),r11GameSynergy(mb));
+ if(!m?.events)return m;
+ const mine=st?.club,own=mine===a||mine===b?mine:null,opp=own===a?b:a;
+ if(own&&m.metrics?.[own]){
+  const cond=m.metrics[own];const spirit=(rLim(cond.mental)+rLim(cond.fitness))/2;
+  const behind=own===a?m.ga<m.gb:m.gb<m.ga;
+  // Una squadra motivata e resistente può trovare una reazione nel finale.
+  // Non è un bonus garantito: la forza degli avversari resta determinante.
+  if(behind&&spirit>=7.2&&Math.random()<Math.min(.16,.035+(spirit-7.2)*.043)){
+   rAddGoal(m,own,78+Math.floor(Math.random()*13),false);
+   m.reginaLateReaction=true;
+  }
+  // Un crollo fisico profondo può concedere un'occasione in più all'avversario.
+  if(rLim(cond.fitness)<2.4&&Math.random()<Math.min(.14,(2.4-rLim(cond.fitness))*.08)){
+   const p=rWeightedName(m,opp);
+   m.events.push({side:opp,minute:75+Math.floor(Math.random()*16),type:'occasione',name:p?.name||teamById(opp)?.name||'Avversario',
+    action:'conclusione ravvicinata su una difesa stanca',outcome:'parata',opponent:(m.lineups?.[own]||[]).map(id=>m.playerNames?.[id]).find(x=>x?.pos==='P')?.name||'il portiere'});
+   if(Array.isArray(m.stats?.shots))m.stats.shots[opp===a?0:1]++;
+  }
+ }
+ m.events.sort((x,y)=>(x.minute||0)-(y.minute||0));
+ r11MatchFix(m);normalizeMatchVotes(m);
+ return m;
+};
+// La Gazzetta lascia intuire le ragioni della prestazione, senza spiegoni
+// matematici, falsi fatti o un nuovo pannello «Perché questo risultato?».
+const r11NarrativeBefore=rMatchNarrative;
+rMatchNarrative=function(m){
+ let prose=r11NarrativeBefore(m);if(!m?.stats)return prose;
+ const mine=st?.club;if(m.a!==mine&&m.b!==mine)return prose;
+ const i=m.a===mine?0:1,j=1-i,shots=m.stats.shots||[0,0],onTarget=m.stats.onTarget||[0,0];
+ const red=m.events.filter(x=>x.type==='rosso'&&x.side===mine).length;
+ const positives=[];
+ if(red&&Number(shots[i])<Number(shots[j]))positives.push('L’inferiorità numerica costringe la squadra a una gara di sacrificio, lasciando più conclusioni agli avversari.');
+ else if(Number(shots[i])>=Number(shots[j])+6)positives.push('Il volume di gioco premia la squadra, che chiude con '+shots[i]+' tiri contro '+shots[j]+' dei rivali.');
+ else if(Number(shots[j])>=Number(shots[i])+6)positives.push('La pressione avversaria è evidente nei numeri: '+shots[j]+' conclusioni contro '+shots[i]+'.');
+ else if(Number(onTarget[i])>=5&&Number(onTarget[j])>=5)positives.push('Da entrambe le parti i portieri sono chiamati a intervenire ripetutamente.');
+ if(m.reginaLateReaction)positives.push('Nel finale arriva un sussulto di orgoglio che mantiene viva la partita fino all’ultimo.');
+ return prose+(positives.length?' '+positives.slice(0,2).join(' '):'');
+};
+
+// III. Calendario: oltre al trascinamento, un solo tocco apre data e fascia.
+const r11OldPlanItem=rPlanItem;
+rPlanItem=function(t,where){
+ const html=r11OldPlanItem(t,where),arg=E(JSON.stringify(String(t.id)));
+ return html.replace(/<\/div>$/,'<button type="button" class="regina-pl-edit" onclick="reginaPlan.quick('+arg+')" title="Sposta senza trascinare">📅</button></div>');
+};
+function r11QuickClose(){document.getElementById('regina-quick-layer')?.remove();document.body.classList.remove('regina-quick-open')}
+function r11QuickMove(id){
+ let task=rCurrentTask(rGoalStore(),id);if(!task)return;
+ const layer=document.createElement('div');layer.id='regina-quick-layer';layer.className='regina-quick-layer';
+ const current=rD(String(task.due||'').slice(0,10))||TODAY();
+ layer.innerHTML='<div class="regina-quick-dialog" role="dialog" aria-modal="true" aria-label="Sposta tappa">'+
+ '<h3>📅 Sposta la tappa</h3><p><b>'+E(task.title)+'</b></p><label class="label">Giorno<input type="date" name="day" value="'+current+'"></label>'+ 
+ '<label class="label">Fascia'+rSelect('slot',R_SLOTS,rTaskMeta(task).slot)+'</label>'+ 
+ '<div class="row"><button type="button" class="btn" id="regina-quick-submit">Sposta</button><button type="button" class="btn alt" id="regina-quick-cancel">Annulla</button></div>'+ 
+ (task.repeat&&task.repeat!=='none'?'<p class="tiny muted">Verrà spostata soltanto questa occorrenza, non l’intera serie.</p>':'')+'</div>';
+ document.body.appendChild(layer);document.body.classList.add('regina-quick-open');
+ layer.addEventListener('click',e=>{if(e.target===layer||e.target.id==='regina-quick-cancel')r11QuickClose()});
+ layer.querySelector('#regina-quick-submit').onclick=()=>{
+  const day=layer.querySelector('[name=day]').value,slot=layer.querySelector('[name=slot]').value;
+  if(!rD(day))return alert('Scegli una data valida.');
+  r11QuickClose();const y=window.scrollY;
+  // Durante il render di spostamento conserva almeno il punto verticale.
+  if(rMoveTask(id,day,slot))requestAnimationFrame(()=>window.scrollTo(0,y));
+ };
+}
+window.reginaPlan.quick=r11QuickMove;
+window.reginaPlan.quickClose=r11QuickClose;
+
+// IV. Finanze: fotografia giornaliera dei conti, archivio storico e calendario.
+// Primo punto storico = giorno dell'installazione della 1.1; dati anteriori
+// non vengono inventati. Snapshot intragiornalieri mantengono ogni modifica.
+function r11History(){
+ const fs=rFinanceInit();if(!fs.reginaFinanceHistory11||!Array.isArray(fs.reginaFinanceHistory11.snapshots))
+  fs.reginaFinanceHistory11={version:1,started:TODAY(),snapshots:[],manual:[]};
+ const h=fs.reginaFinanceHistory11;h.manual=Array.isArray(h.manual)?h.manual:[];
+ return h;
+}
+function r11FinanceState(){
+ return rFinanceInit().accounts.map(a=>({id:String(a.id),name:String(a.name),
+  currency:String(a.currency||'EUR'),balance:Number(a.balance)||0,rateEuro:Number(a.rateEuro)||1}));
+}
+function r11SameFinanceState(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function r11RecordSnapshot(){
+ const h=r11History(),accounts=r11FinanceState(),last=h.snapshots.at(-1);
+ if(last&&r11SameFinanceState(last.accounts,accounts))return false;
+ h.snapshots.push({date:TODAY(),at:new Date().toISOString(),accounts});
+ return true;
+}
+// Seed conservativo prima delle prime modifiche 1.1; NON ricostruisce il passato.
+(function(){
+ try{const h=r11History();if(!h.snapshots.length&&rFinanceInit().accounts.length){r11RecordSnapshot();const ok=save();if(!ok)console.warn('REGINA: storico finanziario non persistito');}}catch(e){console.warn('REGINA: inizializzazione storico',e)}
+})();
+const r11PreviousFinanceSave=save;
+save=function(){
+ try{r11RecordSnapshot()}catch(e){console.warn('REGINA: impossibile fotografare i saldi',e)}
+ return r11PreviousFinanceSave();
+};
+let r11HistDay=TODAY(),r11HistMonth=TODAY().slice(0,7),r11HistMode='month',r11CompareDay=PLUS(TODAY(),-30);
+function r11HistoryAsOf(day){
+ const h=r11History();
+ const snap=[...h.snapshots].reverse().find(x=>x.date<=day);
+ const data=new Map((snap?.accounts||[]).map(a=>[String(a.id),{...a,lastDate:snap.date,source:'auto'}]));
+ // Le registrazioni manuali integrate si applicano dalla data dichiarata;
+ // una fotografia successiva prevale su valori manuali più vecchi.
+ const manual=h.manual.filter(x=>x.date<=day && (!snap||x.date>=snap.date)).sort((a,b)=>a.date.localeCompare(b.date)||String(a.at).localeCompare(String(b.at)));
+ for(const x of manual){data.set(String(x.id),{...x,lastDate:x.date,source:'manuale'})}
+ const rows=[...data.values()];const sum=rows.reduce((n,a)=>n+(Number(a.balance)||0)*(Number(a.rateEuro)||1),0);
+ const first=h.snapshots[0]?.date||h.started;
+ const complete=Boolean(snap&&day>=first); // Il prima non può essere inferito.
+ return {date:day,rows,total:rows.length?cents(sum):null,complete,
+  recent:rows.length&&rows.every(a=>a.lastDate===day)};
+}
+function r11ShiftMonth(month,delta){const [y,m]=month.split('-').map(Number);const d=new Date(y,m-1+delta,1);
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function r11HistoryCalendar(){
+ let [y,m]=r11HistMonth.split('-').map(Number),days=new Date(y,m,0).getDate();
+ const start=(new Date(y,m-1,1).getDay()+6)%7;
+ let html='<div class="regina-fin-cal-head"><button class="btn alt" onclick="reginaHistory.month(-1)">‹</button><b>'+new Date(y,m-1,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'})+'</b><button class="btn alt" onclick="reginaHistory.month(1)">›</button></div>';
+ html+='<div class="regina-fin-calendar">'+['L','M','M','G','V','S','D'].map(x=>'<span class="regina-fin-dayhead">'+x+'</span>').join('');
+ for(let i=0;i<start;i++)html+='<span></span>';
+ for(let i=1;i<=days;i++){
+  const day=r11HistMonth+'-'+String(i).padStart(2,'0'),v=day<=TODAY()?r11HistoryAsOf(day):null;
+  const vText=v?.total==null?'—':Math.round(v.total).toLocaleString('it-IT')+' €';
+  html+='<button type="button" '+(day>TODAY()?'disabled':'')+' class="regina-fin-calday '+(day===r11HistDay?'selected':'')+'" onclick="reginaHistory.day(\''+day+'\')"><strong>'+i+'</strong><small>'+E(vText)+'</small></button>';
+ }
+ return html+'</div>';
+}
+function r11FinanceBreakdown(day){
+ const h=r11HistoryAsOf(day);
+ if(h.total==null)return '<p class="muted">Nessun saldo storico disponibile per questa data. Inserisci dati storici manualmente oppure seleziona una data successiva al primo aggiornamento.</p>';
+ const rows=h.rows.map(a=>'<tr><td>'+E(a.name)+'</td><td>'+Number(a.balance).toLocaleString('it-IT',{maximumFractionDigits:2})+' '+E(a.currency)+'</td><td>'+euro(a.balance*a.rateEuro)+'</td><td class="tiny">'+E(a.lastDate)+(a.lastDate!==day?' · ultimo saldo noto':'')+'</td></tr>').join('');
+ return '<div class="fin-summary"><div><small>Patrimonio stimato dai saldi disponibili</small><strong>'+euro(h.total)+'</strong></div><div><small>Precisione temporale</small><strong>'+(h.recent?'Aggiornato nel giorno':'Ultimi saldi noti')+'</strong></div></div>'+ 
+ (!h.complete?'<p class="notice">⚠️ Prima dell’attivazione dello storico i dati sono <b>parziali</b>. Non è possibile garantire che tutti i conti siano rappresentati.</p>':'')+
+ '<div class="tablewrap"><table class="table"><thead><tr><th>Conto</th><th>Saldo originale</th><th>Valore EUR</th><th>Data saldo</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+ '<p class="tiny muted">I valori in euro utilizzano il cambio registrato insieme al saldo. Quando non ci sono modifiche in una data, il sistema mostra l’ultimo saldo noto, non inventa movimenti o variazioni.</p>';
+}
+function r11ChartDays(){
+ const d=r11HistDay;
+ if(r11HistMode==='day')return [d];
+ if(r11HistMode==='week'){const first=rWeekStart(d);return Array.from({length:7},(_,i)=>PLUS(first,i)).filter(x=>x<=TODAY())}
+ if(r11HistMode==='month'){let n=new Date(Number(d.slice(0,4)),Number(d.slice(5,7)),0).getDate();return Array.from({length:n},(_,i)=>d.slice(0,7)+'-'+String(i+1).padStart(2,'0')).filter(x=>x<=TODAY())}
+ let year=d.slice(0,4);return Array.from({length:12},(_,i)=>{
+  let mon=Number(i+1),last=new Date(Number(year),mon,0).getDate(),date=year+'-'+String(mon).padStart(2,'0')+'-'+String(last).padStart(2,'0');return date>TODAY()?TODAY():date;
+ }).filter((x,i,arr)=>x<=TODAY()&&arr.indexOf(x)===i);
+}
+function r11HistoryChart(){
+ if(r11HistMode==='day')return '';
+ let vals=r11ChartDays().map(day=>({day,...r11HistoryAsOf(day)}));const valid=vals.filter(v=>v.total!=null);
+ if(!valid.length)return '';
+ const min=Math.min(...valid.map(v=>v.total)),max=Math.max(...valid.map(v=>v.total));
+ const range=Math.max(1,max-min);const width=680,height=145,pad=16;
+ let pts=vals.map((v,i)=>{
+  if(v.total==null)return null;
+  const x=pad+(vals.length===1?0:i/(vals.length-1))*(width-2*pad);
+  const y=height-pad-((v.total-min)/range)*(height-2*pad);
+  return {x,y,v};
+ }).filter(Boolean);
+ const path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+ const diff=valid.length>1?cents(valid.at(-1).total-valid[0].total):0;
+ return '<div class="regina-fin-chart"><h4>Andamento '+({week:'settimanale',month:'mensile',year:'annuale'}[r11HistMode]||'')+'</h4>'+ 
+ '<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Andamento del patrimonio sui saldi disponibili"><path d="'+path+'" fill="none" stroke="currentColor" stroke-width="3"/>'+pts.map(p=>'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="currentColor"/>').join('')+'</svg>'+ 
+ '<div class="row spread tiny"><span>'+E(valid[0].day)+' · '+euro(valid[0].total)+'</span><span>'+E(valid.at(-1).day)+' · '+euro(valid.at(-1).total)+'</span></div>'+ 
+ '<p class="tiny muted">Differenza tra primo e ultimo saldo disponibile del periodo: <b>'+(diff>=0?'+':'')+euro(diff)+'</b>. La linea usa l’ultimo valore conosciuto, non interpola movimenti sconosciuti.</p></div>';
+}
+function r11Compare(){let a=r11HistoryAsOf(r11CompareDay),b=r11HistoryAsOf(r11HistDay);
+ if(a.total==null||b.total==null)return '<p class="tiny muted">Per confrontare due giornate servono saldi registrati in entrambe.</p>';
+ let delta=cents(b.total-a.total);
+ return '<p>Dal <b>'+r11CompareDay+'</b> al <b>'+r11HistDay+'</b>: <strong>'+(delta>=0?'+':'')+euro(delta)+'</strong>.</p>'+(!a.complete||!b.complete?'<p class="tiny muted">Confronto parziale: lo storico disponibile non copre tutti i conti in entrambe le date.</p>':'');
+}
+function r11FinanceHistoryPanel(){const fs=rFinanceInit();const h=r11History();
+ let opts=fs.accounts.map(a=>'<option value="'+E(a.id)+'">'+E(a.name)+' ('+E(a.currency)+')</option>').join('');
+ return '<section id="regina-fin-history" class="card regina-fin-history"><div class="row spread"><h3>📆 Patrimonio nel tempo</h3><span class="pill">Storico dal '+E(h.started)+'</span></div>'+ 
+ '<p class="muted">Consulta i saldi in ogni giorno disponibile. Lo storico conserva i cambi e le commissioni già registrati, senza modificare il riferimento iniziale dei settori societari.</p>'+ 
+ '<div class="row regina-fin-h-modes">'+[['day','Giorno'],['week','Settimana'],['month','Mese'],['year','Anno']].map(([k,label])=>'<button type="button" class="btn '+(r11HistMode===k?'':'alt')+'" onclick="reginaHistory.mode(\''+k+'\')">'+label+'</button>').join('')+'</div>'+ 
+ '<div class="two"><label class="label">Giorno da esaminare <input type="date" max="'+TODAY()+'" value="'+r11HistDay+'" onchange="reginaHistory.day(this.value)"></label>'+ 
+ '<label class="label">Confronta con <input type="date" max="'+TODAY()+'" value="'+r11CompareDay+'" onchange="reginaHistory.compare(this.value)"></label></div>'+ 
+ r11HistoryCalendar()+'<h4>Situazione del '+r11HistDay+'</h4>'+r11FinanceBreakdown(r11HistDay)+r11HistoryChart()+r11Compare()+
+ '<details class="regina-fin-manual"><summary>✎ Aggiungi un saldo relativo a una data passata</summary><p class="tiny muted">Utile per recuperare dati precedenti all’aggiornamento. Non modifica il saldo corrente né lo stato attuale della società. Se mancano altri conti, il patrimonio storico sarà indicato come parziale.</p>'+ 
+ '<form class="fin-grid" onsubmit="reginaHistory.manual(event)"><label>Conto<select name="account" required>'+opts+'</select></label>'+ 
+ '<label>Data passata<input type="date" name="date" max="'+PLUS(TODAY(),-1)+'" required></label>'+ 
+ '<label>Saldo nella valuta del conto<input type="number" name="balance" step="0.01" required></label>'+ 
+ '<label>Valore di 1 unità in EUR<input type="number" name="rate" step="any" min="0.00000001" required></label>'+ 
+ '<button class="btn" type="submit" '+(!opts?'disabled':'')+'>Registra il saldo storico</button></form></details></section>';
+}
+window.reginaHistory={
+ day(day){if(!rD(day)||day>TODAY())return;r11HistDay=day;r11HistMonth=day.slice(0,7);render()},
+ month(n){r11HistMonth=r11ShiftMonth(r11HistMonth,n);render()},
+ mode(m){if(['day','week','month','year'].includes(m)){r11HistMode=m;render()}},
+ compare(day){if(rD(day)&&day<=TODAY()){r11CompareDay=day;render()}},
+ manual(ev){ev.preventDefault();const fd=new FormData(ev.target),fs=rFinanceInit(),a=fs.accounts.find(x=>x.id===String(fd.get('account')||'')),day=String(fd.get('date')||''),bal=Number(fd.get('balance')),rate=Number(fd.get('rate'));
+  if(!a||!rD(day)||day>=TODAY()||!Number.isFinite(bal)||!(rate>0))return alert('Conto, data passata, saldo e cambio validi obbligatori.');
+  const h=r11History();h.manual.push({id:a.id,name:a.name,currency:a.currency,date:day,at:new Date().toISOString(),balance:cents(bal),rateEuro:rate});
+  if(save()){r11HistDay=day;r11HistMonth=day.slice(0,7);render()}
+ }
+};
+const r11OldFinanceView=financeView;
+financeView=function(){let html=r11OldFinanceView();return html.replace('<h2>💶 Finanze e gestione societaria</h2>','<h2>💶 Finanze e gestione societaria</h2><p><a class="btn alt" href="#regina-fin-history">📆 Consulta lo storico dei saldi ↓</a></p>')+r11FinanceHistoryPanel()};
+
+// V. Stili leggeri, nessun grafico esterno o nuova pagina.
+const r11CSS=document.createElement('style');r11CSS.textContent=`
+.regina-review,.regina-fin-history{margin-top:15px}.regina-review h3,.regina-fin-history h3{margin:0}
+.regina-review-score{font-size:25px;color:#126077}.regina-review-detail{font-size:12px;color:#64737d}
+.regina-review-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:12px 0}
+.regina-review-day{border:1px solid #cadfe6;border-radius:8px;background:#f6fbfc;padding:6px 2px;min-width:0}
+.regina-review-day small{display:block;font-size:10px;white-space:nowrap}.regina-review-day b{display:block;font-size:14px}
+.regina-review-day.selected,.regina-fin-calday.selected{outline:2px solid #277a97;background:#e5f5f4}
+.regina-quick-layer{position:fixed;inset:0;background:rgba(8,24,35,.61);z-index:11000;display:flex;justify-content:center;align-items:center;padding:14px}
+.regina-quick-dialog{max-width:400px;width:100%;background:#fff;color:#1d3540;border-radius:15px;padding:19px;max-height:90vh;overflow:auto}
+.regina-quick-dialog h3{margin-top:0}.regina-quick-open{overflow:hidden}
+.regina-fin-h-modes{flex-wrap:wrap;gap:7px;margin:11px 0}.regina-fin-cal-head{display:flex;justify-content:space-between;align-items:center;margin:12px 0}
+.regina-fin-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:8px 0 17px}
+.regina-fin-dayhead{text-align:center;font-size:11px;font-weight:bold;color:#607681}
+.regina-fin-calday{border:1px solid #d4e1e6;border-radius:7px;background:#f8fbfc;padding:6px 1px;min-height:47px;min-width:0}
+.regina-fin-calday strong{font-size:12px;display:block}.regina-fin-calday small{font-size:9px;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.regina-fin-calday:disabled{opacity:.3}.regina-fin-chart{margin:14px 0}.regina-fin-chart svg{display:block;width:100%;max-height:180px;margin:10px 0;color:#22718c;background:#f3f9fb;border-radius:9px}
+.regina-fin-manual{border:1px solid #dae6e8;border-radius:10px;padding:11px;margin-top:15px}.regina-fin-manual summary{font-weight:700;cursor:pointer}
+@media(max-width:580px){.regina-fin-calendar{gap:2px}.regina-fin-calday small{font-size:8px}.regina-fin-calday{padding:5px 0}.regina-review-day small{font-size:9px}}
+`;document.head.appendChild(r11CSS);
+
+
+// ============================================================================
+// REGINA CALCIO 1.1.1 — risultati meritocratici e protezione anti-demotivazione.
+// Calcolato PRIMA di classifiche, articoli e archivi. Nessuna riscrittura delle
+// partite gia' giocate. Non si aggiungono comandi tattici o nuovi dati personali.
+// ============================================================================
+const r111PrevMatch=calcMatch;
+function r111Tier(id){const league=teamById(id)?.league||'C_A';return league==='A'?3:league==='B'?2:1;}
+function r111Quality(m,id){
+ const group=st?.squad?.[id]||[];
+ const lookup=new Map(group.map(p=>[p.id,Number(p.tech)||0]));
+ const starters=m.lineups?.[id]||[];
+ const quality=starters.map(x=>lookup.get(x)).filter(x=>Number.isFinite(x)&&x>0);
+ if(!quality.length)quality.push(...group.map(x=>Number(x.tech)||0).filter(x=>x>0).slice(0,11));
+ return quality.length?quality.reduce((v,x)=>v+x,0)/quality.length:null;
+}
+function r111Readiness(m){
+ // La preparazione reale del giorno, non il rapporto nudo 21/34, governa
+ // la partita. Lo studio non aumenta artificialmente la tecnica dei singoli.
+ const w={fitness:.25,mental:.20,discipline:.15,technical:.12,tactics:.13,luck:.15};
+ return Object.entries(w).reduce((v,[key,weight])=>v+rLim(m?.[key]??5.5)*weight,0);
+}
+function r111DesiredResult(m,own,opp){
+ if(!st||!(todayTasks()||[]).length)return null;
+ const metrics=m.metrics?.[own];if(!metrics)return null;
+ const score=r111Readiness(metrics),baseQuality=r111Quality(m,own),rivalQuality=r111Quality(m,opp);
+ if(score<8.0)return null;
+ const gap=(baseQuality!=null&&rivalQuality!=null)?rivalQuality-baseQuality:0;
+ const tierGap=Math.max(0,r111Tier(opp)-r111Tier(own));
+ // Contro avversari dello stesso livello, con un distacco tecnico non enorme,
+ // un'ottima giornata equivale a VITTORIA CERTA, senza sconfitte casuali.
+ // Squadra di categoria superiore o differenza enorme: minimo PAREGGIO;
+ // una giornata ancora migliore permette di conquistare anche i tre punti.
+ const unbalanced=tierGap>0||gap>1.65;
+ const heroicWinThreshold=9.2+.22*tierGap+.16*Math.max(0,gap-1.65);
+ const required=(!unbalanced||score>=heroicWinThreshold)?'W':'D';
+ return {score:+score.toFixed(2),gap:+gap.toFixed(2),tierGap,required};
+}
+function r111MinuteForRecovery(m,opp,ordinal,count){
+ const opponentGoals=(m.events||[]).filter(x=>x.side===opp&&x.type==='gol');
+ const lastOpp=Math.max(0,...opponentGoals.map(x=>Number(x.minute)||0));
+ const start=Math.max(16,Math.min(68,70-count*12));
+ const end=Math.max(74,Math.min(90,lastOpp+3));
+ return Math.max(2,Math.min(90,Math.round(start+(end-start)*(ordinal+1)/count)));
+}
+calcMatch=function(a,b,ma=null,mb=null){
+ const m=r111PrevMatch(a,b,ma,mb);
+ if(!m?.events||!st||!(a===st.club||b===st.club))return m;
+ const own=st.club,opp=own===a?b:a,policy=r111DesiredResult(m,own,opp);
+ if(!policy)return m;
+ const scored=()=>own===m.a?m.ga:m.gb,conceded=()=>own===m.a?m.gb:m.ga;
+ // Il risultato nasce da reti effettivamente segnate: ogni rete supplementare
+ // ha marcatore, minuto, azione, tiro, voto, cronaca e classifica coerenti.
+ const needed=Math.max(0,conceded()+(policy.required==='W'?1:0)-scored());
+ if(needed){
+  for(let i=0;i<needed;i++){
+   const minute=r111MinuteForRecovery(m,opp,i,needed);
+   rAddGoal(m,own,minute,false);
+   const goal=m.events.at(-1);if(goal){goal.reginaRiscatto=true;
+    goal.action=i===needed-1&&policy.required==='W'?'con una conclusione che completa il riscatto della squadra':'al termine di un’azione insistita';}
+  }
+  m.reginaRiscatto=true;
+ }
+ // Restano immutati i gol subiti, i rigori, le espulsioni e ogni evento critico.
+ m.reginaFairPlay={readiness:policy.score,technicalGap:policy.gap,higherTier:policy.tierGap,
+  minimumResult:policy.required,correctedGoals:needed};
+ m.events.sort((x,y)=>(Number(x.minute)||0)-(Number(y.minute)||0));
+ r11MatchFix(m);normalizeMatchVotes(m);
+ return m;
+};
 
 if(st)render();
 })();
