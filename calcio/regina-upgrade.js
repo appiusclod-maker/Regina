@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.2 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.3 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -1695,7 +1695,7 @@ window.reginaData={export:r112Export,import:r112Import,check:r112SaveCheck,demo(
 // stanno in accordion, mentre backup e stato salvataggio sono subito visibili.
 settingsView=function(){
  const last=st.results?.[0],game=st.game||0;
- return `<section class="card regina-settings-112"><h2>⚙️ Impostazioni · REGINA Calcio 1.1.2</h2>
+ return `<section class="card regina-settings-112"><h2>⚙️ Impostazioni · REGINA Calcio 1.1.3</h2>
  <p class="muted">Carriera autonoma. I dati restano in questo browser, con una seconda copia di sicurezza locale.</p>
  <div class="regina-save-panel"><b>💾 Stato salvataggio</b><p id="regina-save-status-settings" data-status="${r112Status}">${r112Escape(r112StatusText)}</p>
  <div class="regina-save-summary"><span>Stagione <b>${st.season||1}</b></span><span>Prossima giornata <b>${r112Escape(st.nextDay||'—')}</b></span><span>Partite registrate <b>${st.results?.length||0}</b></span></div>
@@ -1813,7 +1813,7 @@ const r112PrevPostDay=playPostDay;
 playPostDay=function(...args){if(r112Status==='checking'||r112Blocked)return alert('Verifica o ricarica la carriera prima di giocare.');return r112PrevPostDay.apply(this,args)};
 // Indicatore su tutte le pagine e badge versione.
 const r112OldHeader=header;
-header=function(){let html=r112OldHeader().replace(/v1\.1\.1/g,'v1.1.2');
+header=function(){let html=r112OldHeader().replace(/v1\.1\.1/g,'v1.1.3');
  return html.replace('</nav>',`</nav><div class="regina-save-line" id="regina-save-status" data-status="${r112Status}">${r112Escape(r112StatusText)}</div>`);
 };
 const r112CSS=document.createElement('style');r112CSS.textContent=`
@@ -1837,6 +1837,279 @@ const r112CSS=document.createElement('style');r112CSS.textContent=`
 `;document.head.appendChild(r112CSS);
 // Non scrivere salvataggi vuoti durante il boot. Prima recupera il migliore.
 r112Recover();
+
+// ============================================================================
+// REGINA CALCIO 1.1.3 — Planner mobile, scorrimento bidirezionale e riepilogo
+// visivo. Nessuna migrazione dei salvataggi o alterazione dei risultati.
+// ============================================================================
+
+// 1. Riepilogo leggibile: una panoramica breve, categorie espandibili e nomi
+// completi di tutte le tappe non svolte/parziali senza un paragrafo infinito.
+function r113GroupItems(items){
+ const groups=new Map();
+ for(const t of items){const front=String(t.front||'Altro');if(!groups.has(front))groups.set(front,[]);groups.get(front).push(t)}
+ return [...groups].map(([front,rows])=>'<section class="r113-front"><h5>'+E(front)+' <span>'+rows.length+'</span></h5>'+
+  rows.map(t=>{const pc=Math.round(rLim(t.fraction,0,1)*100),part=pc>0&&pc<100;
+   return '<div class="r113-entry"><div class="r113-entry-title">'+E(t.name)+'</div>'+
+    '<div class="r113-entry-sub"><span>Difficoltà '+rLim(t.difficulty||3,1,5)+'/5</span>'+
+    (part?'<span class="r113-part-pct">'+pc+'% svolto</span>':'<span>Non svolto</span>')+'</div>'+
+    (part?'<div class="r113-mini-bar"><i style="width:'+pc+'%"></i></div>':'')+'</div>';
+  }).join('')+'</section>').join('');
+}
+function r113ReviewPanel(){
+ const x=r11Review(r11ReviewDay),missing=x.records.filter(y=>y.fraction<=0),partial=x.records.filter(y=>y.fraction>0&&y.fraction<1),done=x.records.filter(y=>y.fraction>=1);
+ const date=new Date(x.day+'T12:00:00').toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const score=Number.isFinite(x.grade)?x.grade:null,ratio=score==null?0:Math.max(0,Math.min(100,Math.round(score*10)));
+ const k=score==null?'Senza voto':score<4?'Giornata difficile':score<6?'Sotto le aspettative':score<7.5?'Discreta giornata':score<9?'Buona giornata':'Giornata eccellente';
+ const top=[...missing,...partial].sort((a,b)=>b.difficulty-a.difficulty||a.name.localeCompare(b.name,'it')).slice(0,3);
+ const archived=!!st?.reginaDailyReviews?.[x.day];
+ return '<section class="card r113-review" aria-label="Bilancio personale">'+
+ '<div class="r113-review-head"><div><span class="r113-eyebrow">📊 IL MIO BILANCIO</span><h3>'+E(k)+'</h3><p class="muted">'+E(date)+'</p></div>'+
+ '<div class="r113-grade"><strong>'+(score===null?'—':score.toFixed(1))+'</strong><small>/10</small></div></div>'+
+ '<div class="r113-grade-track" role="meter" aria-label="Voto della giornata" aria-valuemin="0" aria-valuemax="10" aria-valuenow="'+(score??0)+'"><i style="width:'+ratio+'%"></i></div>'+
+ '<div class="r113-stats"><div class="r113-stat done"><strong>'+x.done+'</strong><small>Completate</small></div><div class="r113-stat partial"><strong>'+x.part+'</strong><small>Parziali</small></div><div class="r113-stat missed"><strong>'+x.missed+'</strong><small>Non svolte</small></div></div>'+
+ '<label class="r113-date">Consulta un giorno <input type="date" value="'+E(r11ReviewDay)+'" onchange="reginaReview.select(this.value)"></label>'+
+ (top.length?'<div class="r113-focus"><strong>⚠️ Priorità rimaste indietro</strong><p>'+top.map(y=>'<span>'+E(y.name)+(y.fraction>0?' · '+Math.round(y.fraction*100)+'%':'')+'</span>').join('')+'</p></div>':
+   x.number?'<div class="r113-focus success">✅ Nessuna attività incompleta.</div>':'<div class="r113-focus">Non sono previste tappe in questa giornata.</div>')+
+ '<div class="r113-review-folds">'+
+ '<details '+(missing.length?'':'')+'><summary><span>🔴 Non svolte</span><b>'+missing.length+'</b></summary><div class="r113-fold-body">'+(missing.length?r113GroupItems(missing):'<p class="muted tiny">Nessuna.</p>')+'</div></details>'+
+ '<details><summary><span>🟠 Completate in parte</span><b>'+partial.length+'</b></summary><div class="r113-fold-body">'+(partial.length?r113GroupItems(partial):'<p class="muted tiny">Nessuna.</p>')+'</div></details>'+
+ '<details><summary><span>🟢 Completate</span><b>'+done.length+'</b></summary><div class="r113-fold-body">'+(done.length?r113GroupItems(done):'<p class="muted tiny">Nessuna.</p>')+'</div></details>'+
+ '<details class="r113-trend"><summary><span>📈 Ultimi sette giorni e medie</span></summary><div class="r113-fold-body">'+r11WeekStrip(r11ReviewDay)+'</div></details></div>'+
+ (archived?'<p class="r113-foot">🔒 Voto archiviato alla chiusura della partita: resta invariato.</p>':
+  x.day<TODAY()?'<p class="r113-foot">I voti precedenti al nuovo archivio potrebbero essere ricostruiti da dati parziali.</p>':'<p class="r113-foot">Il voto considera completamento e difficoltà delle tappe, senza bonus aggiuntivi alle partite.</p>')+
+ '</section>';
+}
+r11ReviewPanel=r113ReviewPanel;
+
+// 2. Planner: il normale scorrimento della lista rimane libero; per trascinare
+// su Android si parte dall'impugnatura ⠿, che disabilita il pan nativo SOLO lì.
+// La vecchia gestione touch viene intercettata in cattura per evitare che
+// due gestori competano e annullino il drag dopo qualche centimetro.
+let r113Touch=null,r113Frame=0,r113Chip=null,r113ActiveTarget=null,r113Mouse=null;
+function r113Pane(){return document.querySelector('.regina-pl-scroll')}
+function r113TouchPoint(ev){const list=ev.changedTouches||ev.touches||[];
+ if(!r113Touch)return list[0]||null;
+ return [...list].find(t=>t.identifier===r113Touch.identifier)||list[0]||null;
+}
+function r113Distance(v,zone,edge){const n=Math.max(0,zone-v);return Math.min(70,Math.max(17,n*.72+8))}
+function r113UpdateTarget(){
+ if(!r113Touch||!r113Touch.active)return;
+ const {x,y}=r113Touch;
+ const node=document.elementFromPoint(x,y)?.closest?.('.regina-pl-drop')||null;
+ if(r113ActiveTarget!==node){r113ActiveTarget?.classList.remove('regina-pl-over');r113ActiveTarget=node;r113ActiveTarget?.classList.add('regina-pl-over')}
+ if(r113Chip){r113Chip.style.left=Math.min(Math.max(8,x+12),innerWidth-185)+'px';r113Chip.style.top=Math.min(Math.max(18,y-56),innerHeight-74)+'px';
+  if(node){const label=new Date(node.dataset.day+'T12:00:00').toLocaleDateString('it-IT',{weekday:'short',day:'numeric'});r113Chip.innerHTML='<b>📅 '+E(label)+'</b><small>'+E(node.querySelector('small')?.textContent||'')+'</small>'}
+  else r113Chip.innerHTML='<b>⠿ Sposta la tappa</b><small>Scorri ai bordi · rilascia su una fascia</small>';
+ }
+}
+function r113ScrollV(dy){
+ if(!dy)return false;
+ const doc=document.scrollingElement||document.documentElement;
+ const before=doc.scrollTop,max=Math.max(0,doc.scrollHeight-doc.clientHeight);
+ if(max>0){doc.scrollTop=Math.min(max,Math.max(0,before+dy));if(doc.scrollTop!==before)return true}
+ // Alcune pagine ospitanti scorrono in un contenitore diverso dal documento.
+ let el=r113Touch?.origin||null;
+ for(let n=el?.parentElement;n;n=n.parentElement){
+  if(n.scrollHeight>n.clientHeight+40&&getComputedStyle(n).overflowY.match(/auto|scroll/)){
+   const prev=n.scrollTop;n.scrollTop+=dy;if(n.scrollTop!==prev)return true;
+  }
+ }
+ return false;
+}
+function r113ScrollTick(){
+ r113Frame=0;if(!r113Touch?.active)return;
+ const {x,y}=r113Touch,ww=innerWidth,hh=innerHeight;
+ const bandY=Math.min(180,Math.max(105,hh*.23));
+ const topD=y<bandY?-r113Distance(y,bandY):0;
+ const botD=y>hh-bandY?r113Distance(hh-y,bandY):0;
+ r113ScrollV(topD||botD);
+ const pane=r113Pane();
+ if(pane){const box=pane.getBoundingClientRect();if(box.bottom>0&&box.top<hh){
+  // Due zone laterali indipendenti: trascina verso un bordo per muovere
+  // continuamente il calendario fino a qualunque giorno della settimana.
+  const bandX=Math.min(135,Math.max(75,box.width*.27));
+  const left=x<box.left+bandX?-r113Distance(x-box.left,bandX):0;
+  const right=x>box.right-bandX?r113Distance(box.right-x,bandX):0;
+  if(left||right){pane.scrollLeft+=left||right;}
+ }}
+ r113UpdateTarget();r113Frame=requestAnimationFrame(r113ScrollTick);
+}
+function r113StartDragging(){
+ if(!r113Touch||r113Touch.active)return;
+ r113Touch.active=true;r113Touch.origin?.classList.add('regina-pl-dragging');
+ r113Chip=document.createElement('div');r113Chip.className='r113-drag-chip';r113Chip.setAttribute('aria-hidden','true');document.body.appendChild(r113Chip);
+ r113UpdateTarget();r113Frame=requestAnimationFrame(r113ScrollTick);
+ navigator.vibrate?.(12);
+}
+function r113Cleanup(){
+ if(r113Touch?.timer)clearTimeout(r113Touch.timer);
+ if(r113Frame)cancelAnimationFrame(r113Frame);r113Frame=0;
+ r113Touch?.origin?.classList.remove('regina-pl-dragging');
+ r113ActiveTarget?.classList.remove('regina-pl-over');r113ActiveTarget=null;
+ r113Chip?.remove();r113Chip=null;r113Touch=null;
+}
+// Gestori registrati in capture: i vecchi listener touch in bubble non
+// devono attivare il loro timer e perdere la posizione di scorrimento.
+document.addEventListener('touchstart',ev=>{
+ const grip=ev.target.closest?.('.regina-pl-grip');
+ if(!grip)return;
+ const item=grip.closest('.regina-pl-item');if(!item)return;
+ ev.stopImmediatePropagation();ev.preventDefault();
+ const p=ev.changedTouches[0];r113Cleanup();
+ r113Touch={identifier:p.identifier,id:item.dataset.reginaId,x:p.clientX,y:p.clientY,origin:item,active:false,timer:0};
+ r113Touch.timer=setTimeout(r113StartDragging,180);
+},{capture:true,passive:false});
+document.addEventListener('touchmove',ev=>{
+ if(!r113Touch)return;
+ const p=r113TouchPoint(ev);if(!p)return;
+ ev.stopImmediatePropagation();ev.preventDefault();
+ r113Touch.x=p.clientX;r113Touch.y=p.clientY;
+ // Un movimento sulla maniglia implica intenzione di trascinare.
+ if(!r113Touch.active)r113StartDragging();
+ r113UpdateTarget();
+},{capture:true,passive:false});
+document.addEventListener('touchend',ev=>{
+ if(!r113Touch)return;
+ ev.stopImmediatePropagation();ev.preventDefault();
+ const dest=r113ActiveTarget,id=r113Touch.id;
+ const pos=window.scrollY,left=r113Pane()?.scrollLeft||0;
+ r113Cleanup();
+ if(dest?.dataset?.day&&dest?.dataset?.slot){
+  const ok=rMoveTask(id,dest.dataset.day,dest.dataset.slot);
+  if(ok)requestAnimationFrame(()=>{const pane=r113Pane();if(pane)pane.scrollLeft=left;
+   // Lascio la vista sul calendario, anziché riportarla all'inizio pagina.
+   window.scrollTo(0,Math.min(pos,Math.max(0,document.documentElement.scrollHeight-innerHeight)));
+  });
+ }else r113Toast('Tappa non spostata: trascina ⠿ su una fascia del calendario, oppure usa 📅 Sposta.');
+},{capture:true,passive:false});
+document.addEventListener('touchcancel',ev=>{
+ if(!r113Touch)return;ev.stopImmediatePropagation();r113Cleanup();
+},{capture:true,passive:true});
+// Autoscorrimento anche col mouse e HTML Drag & Drop su desktop.
+document.addEventListener('dragover',ev=>{
+ if(!rDragId)return;
+ const pane=r113Pane(),x=ev.clientX,y=ev.clientY;
+ const edge=90;if(y<edge)r113ScrollV(-25);else if(y>innerHeight-edge)r113ScrollV(25);
+ if(pane){const b=pane.getBoundingClientRect();if(b.top<innerHeight&&b.bottom>0){if(x<b.left+edge)pane.scrollLeft-=30;else if(x>b.right-edge)pane.scrollLeft+=30;}}
+},{capture:true});
+
+// 3. Alternativa comoda al trascinamento. Dialogo compatto e nativo con
+// selezione della data e della fascia; utile per le tappe molto lontane.
+function r113Toast(msg){
+ document.querySelector('.r113-toast')?.remove();let p=document.createElement('div');p.className='r113-toast';p.textContent=msg;document.body.appendChild(p);setTimeout(()=>p.remove(),3700);
+}
+window.reginaPlan.quickMove=function(id){
+ const g=rGoalStore(),t=rCurrentTask(g,id);if(!t)return;
+ const old=document.querySelector('#r113-move-dialog');old?.remove();
+ const d=new Date(rPlannerDay+'T12:00:00'),week=rWeekStart(rPlannerDay),days=Array.from({length:7},(_,i)=>PLUS(week,i));
+ const current=rD(String(t.due||t.occurrenceDate||'').slice(0,10))||rPlannerDay;
+ const f=document.createElement('div');f.id='r113-move-dialog';f.className='r113-modal';
+ f.innerHTML='<div class="r113-modal-box" role="dialog" aria-modal="true" aria-label="Sposta tappa">'+
+ '<div class="row spread"><h3>📅 Sposta tappa</h3><button type="button" class="btn alt" data-close="1">✕</button></div>'+
+ '<p><b>'+E(t.title)+'</b></p><label>Giorno<input type="date" id="r113-date" value="'+E(current)+'"></label>'+
+ '<div class="r113-quick-days">'+days.map(day=>'<button class="btn alt" type="button" data-date="'+day+'">'+E(new Date(day+'T12:00:00').toLocaleDateString('it-IT',{weekday:'short',day:'numeric'}))+'</button>').join('')+'</div>'+
+ '<label>Fascia del giorno<select id="r113-slot">'+R_SLOTS.map(([k,v])=>'<option value="'+E(k)+'" '+(rTaskMeta(t).slot===k?'selected':'')+'>'+E(v)+'</option>').join('')+'</select></label>'+
+ '<div class="row"><button type="button" class="btn" data-apply="1">Sposta nel calendario</button><button type="button" class="btn alt" data-close="1">Annulla</button></div></div>';
+ const close=()=>f.remove();f.addEventListener('click',ev=>{
+  if(ev.target===f||ev.target.closest('[data-close]'))return close();
+  const day=ev.target.closest('[data-date]');if(day){f.querySelector('#r113-date').value=day.dataset.date;f.querySelectorAll('[data-date]').forEach(b=>b.classList.toggle('selected',b===day));return;}
+  if(ev.target.closest('[data-apply]')){
+   const date=f.querySelector('#r113-date').value,slot=f.querySelector('#r113-slot').value;
+   if(!date)return r113Toast('Seleziona un giorno.');close();
+   if(rMoveTask(id,date,slot)){rPlannerDay=date;rPlannerSave();render();r113Toast('✅ Tappa spostata al '+date+'.');}
+  }
+ });document.body.appendChild(f);
+};
+// Inserisce il pulsante Sposta in ogni tappa del calendario e nell'arretrato,
+// senza modificarne lo schema, i dati o i gestori originali.
+const r113PreviousObjectives=objectivesView;
+objectivesView=function(){
+ const html=r113PreviousObjectives(),tmp=document.createElement('template');tmp.innerHTML=html;
+ for(const item of tmp.content.querySelectorAll('.regina-pl-item')){
+  const id=item.dataset.reginaId;if(!id)continue;
+  const grip=item.querySelector('.regina-pl-grip');if(grip){grip.title='Tieni premuto qui per trascinare';grip.setAttribute('aria-label','Trascina questa tappa');}
+  const button=document.createElement('button');button.type='button';button.className='regina-pl-move';button.textContent='📅';button.title='Sposta a un giorno e fascia';
+  button.setAttribute('aria-label','Sposta '+(item.querySelector('.regina-pl-title')?.textContent||'tappa'));
+  button.setAttribute('onclick','reginaPlan.quickMove('+JSON.stringify(id)+')');
+  const edit=item.querySelector('.regina-pl-edit');if(edit)edit.before(button);else item.appendChild(button);
+ }
+ // La guida segnala l'impugnatura: è il modo affidabile per trascinare con
+ // un dito senza disabilitare lo scorrimento naturale delle liste.
+ const planner=tmp.content.querySelector('.regina-planner .row.spread small.muted');
+ if(planner)planner.textContent='Trascina dal simbolo ⠿ e tieni il dito vicino ai bordi per scorrere. Oppure usa 📅 per spostare subito una tappa.';
+ return tmp.innerHTML;
+};
+
+// All'apertura del calendario sul telefono, mostra subito il giorno corrente.
+// Lo scorrimento manuale successivo viene mantenuto anche dopo un aggiornamento.
+let r113LastWeek='',r113LastHorizontal=null;
+document.addEventListener('scroll',ev=>{
+ const sc=ev.target?.closest?.('.regina-pl-scroll');if(sc&&r113Touch===null){
+  r113LastHorizontal=sc.scrollLeft;r113LastWeek=rWeekStart(rPlannerDay);
+ }
+},{capture:true,passive:true});
+const r113RenderBefore=render;
+render=function(...args){
+ const result=r113RenderBefore.apply(this,args);
+ if(view==='objectives')requestAnimationFrame(()=>{
+  const pane=r113Pane();if(!pane)return;
+  const week=rWeekStart(rPlannerDay);
+  if(r113LastWeek===week&&r113LastHorizontal!==null){pane.scrollLeft=r113LastHorizontal;return;}
+  const focusDay=pane.querySelector('.regina-pl-today')||[...pane.querySelectorAll('.regina-pl-day h4')].find(x=>x.textContent.includes('lun'));
+  if(focusDay&&innerWidth<680){const p=focusDay.closest('.regina-pl-day'),box=p.getBoundingClientRect(),container=pane.getBoundingClientRect();
+   pane.scrollLeft+=box.left-container.left-container.width*.22;
+  }
+  r113LastWeek=week;r113LastHorizontal=pane.scrollLeft;
+ });
+ return result;
+};
+const r113OldWeek=window.reginaPlan.week,r113OldToday=window.reginaPlan.today;
+window.reginaPlan.week=function(...args){r113LastHorizontal=null;return r113OldWeek.apply(this,args)};
+window.reginaPlan.today=function(...args){r113LastHorizontal=null;return r113OldToday.apply(this,args)};
+
+// 4. Migliorie responsive: sul telefono il planner occupa tutta la larghezza
+// utile, ma resta un vero calendario a 7 giorni (scorrimento orizzontale).
+const r113Styles=document.createElement('style');r113Styles.textContent=`
+.r113-review{background:#fff!important;border:1px solid #e0e9ee;border-radius:15px!important;padding:15px!important}
+.r113-review-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.r113-review-head h3{margin:6px 0;font-size:19px;line-height:1.23}
+.r113-review-head p{margin:3px 0 8px;font-size:12px;text-transform:capitalize}.r113-eyebrow{font-size:10px;letter-spacing:.11em;font-weight:800;color:#24667b}
+.r113-grade{background:#ecf7f5;min-width:82px;border-radius:14px;padding:12px 10px;text-align:center;color:#116a69;flex-shrink:0}
+.r113-grade strong{font-size:30px;line-height:1}.r113-grade small{font-size:12px}
+.r113-grade-track{height:9px;border-radius:20px;background:#e5eef1;overflow:hidden;margin:13px 0}.r113-grade-track i{display:block;background:#208c94;height:100%;border-radius:20px;transition:width .2s}
+.r113-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 16px}.r113-stat{padding:10px 4px;border-radius:10px;text-align:center;border:1px solid #dbe9e8}
+.r113-stat strong{font-size:22px;display:block;line-height:1.15}.r113-stat small{font-size:10px;display:block;margin-top:3px;line-height:1.2}
+.r113-stat.done{background:#f0faf4;color:#256d4a}.r113-stat.partial{background:#fff8e8;color:#97700f}.r113-stat.missed{background:#fff4f1;color:#a43d35}
+.r113-date{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#45626d;margin-bottom:14px}
+.r113-date input{max-width:165px;width:55%;padding:6px 9px;border:1px solid #cfdde1;border-radius:8px;background:#fff}
+.r113-focus{padding:12px;border-radius:10px;background:#fff9ef;border:1px solid #f0e1c8;font-size:12px;line-height:1.45;margin:12px 0}
+.r113-focus>strong{display:block;margin-bottom:8px;font-size:13px}.r113-focus p{display:flex;flex-wrap:wrap;gap:5px;margin:0}.r113-focus p>span{background:#fff;border:1px solid #e5d7bc;border-radius:7px;padding:5px 7px;max-width:100%}
+.r113-focus.success{background:#eef9f1}.r113-review-folds details{border:1px solid #dae5e7;border-radius:10px;margin:8px 0;overflow:hidden;background:#fff}
+.r113-review-folds details>summary{cursor:pointer;padding:12px 11px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;font-weight:700}
+.r113-review-folds details>summary b{background:#edf4f5;border-radius:7px;min-width:26px;text-align:center;padding:3px}
+.r113-fold-body{padding:2px 11px 12px;border-top:1px solid #e4eaec}.r113-front{margin:9px 0 15px}.r113-front h5{font-size:12px;color:#385969;margin:5px 0 8px;display:flex;justify-content:space-between;gap:7px}
+.r113-front h5 span{font-weight:normal;color:#829ca6}.r113-entry{padding:9px 0;border-top:1px solid #edf1f2}.r113-entry-title{font-size:13px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+.r113-entry-sub{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#70868b;font-size:11px;margin-top:4px}
+.r113-part-pct{color:#bd7627;font-weight:700}.r113-mini-bar{height:4px;background:#eff0ee;border-radius:9px;margin-top:5px}.r113-mini-bar i{display:block;height:100%;background:#f2a846;border-radius:9px}
+.r113-trend .regina-review-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.r113-trend .regina-review-day{min-width:0;padding:6px 1px}
+.r113-foot{font-size:11px;color:#68838c;line-height:1.45;margin:15px 0 0}
+.regina-planner{max-width:100%;min-width:0}.regina-pl-scroll{max-width:100%;width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;touch-action:auto;overscroll-behavior-x:contain}
+.regina-pl-grip{touch-action:none!important;user-select:none;-webkit-user-select:none;cursor:grab;display:inline-flex;align-items:center;justify-content:center;min-width:24px;min-height:30px;border-radius:7px;background:#edf7fa}
+.regina-pl-item{touch-action:auto!important}.regina-pl-item .regina-pl-move{border:1px solid #cadbe1;border-radius:6px;background:#f6fbff;padding:5px 7px;font-size:15px;flex-shrink:0}
+.regina-pl-item .regina-pl-edit{flex-shrink:0}.regina-pl-over{background:#b8e6f1!important;outline:2px solid #168db1;outline-offset:-2px}
+.r113-drag-chip{position:fixed;z-index:999999;pointer-events:none;background:#154d64;color:#fff;padding:9px 11px;min-width:125px;max-width:180px;border-radius:10px;box-shadow:0 5px 18px #17364450;line-height:1.3}
+.r113-drag-chip b{display:block;font-size:12px}.r113-drag-chip small{display:block;font-size:10px;margin-top:4px;color:#d9f2fa}
+.r113-toast{position:fixed;z-index:999999;left:16px;right:16px;bottom:75px;background:#194f5f;color:#fff;border-radius:12px;padding:13px;font-size:13px;text-align:center;box-shadow:0 4px 16px #0003}
+.r113-modal{position:fixed;inset:0;z-index:999999;background:#0c293b80;display:flex;align-items:center;justify-content:center;padding:16px}
+.r113-modal-box{background:#fff;color:#1a343e;width:100%;max-width:450px;max-height:88vh;overflow:auto;border-radius:15px;padding:18px}
+.r113-modal-box h3{margin:0}.r113-modal-box label{display:block;margin:14px 0;font-size:13px;font-weight:700}.r113-modal-box label input,.r113-modal-box label select{display:block;width:100%;margin-top:6px;padding:9px;border:1px solid #cbdde0;border-radius:8px}
+.r113-quick-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:12px 0}.r113-quick-days .btn{padding:7px 2px;font-size:10px;min-width:0}
+.r113-quick-days .btn.selected{background:#d6eff4;border-color:#1b7897}
+@media(max-width:600px){.r113-review{padding:13px!important}.regina-pl-week{min-width:1180px;grid-template-columns:repeat(7,minmax(168px,1fr))}
+.regina-planner{padding:6px!important}.regina-pl-backlog{max-width:100%}.r113-stats{gap:5px}.r113-stat small{font-size:9px}}
+`;
+document.head.appendChild(r113Styles);
+
 
 if(st)render();
 })();
