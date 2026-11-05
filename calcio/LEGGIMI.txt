@@ -1,0 +1,5 @@
+REGINA CALCIO 1.1.7 · La Gazzetta
+
+Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Dopo la pubblicazione apri online e verifica v1.1.7.
+
+Apri Gazzetta per vedere la nuova impaginazione. Le cronache con il nuovo stile vengono scritte quando si disputa una nuova partita. L’archivio con il calendario delle edizioni si trova sotto il giornale.

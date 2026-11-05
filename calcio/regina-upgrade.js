@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.3 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.7 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -129,11 +129,16 @@ function periodDays(date,mode){
  let total=mode==='day'?1:mode==='week'?7:new Date(Number(date.slice(0,4)),Number(date.slice(5,7)),0).getDate();
  return Array.from({length:total},(_,i)=>PLUS(first,i));
 }
+function goalComponentBoxes(t){
+ if(t.type!=='mixed'||!Array.isArray(t.components)||!t.components.length)return '';
+ const id=E(JSON.stringify(String(t.id)));
+ return '<div class="go-steps">'+t.components.map((x,i)=>'<label><input type="checkbox" '+((t.checks||[]).some(n=>Number(n)===i)?'checked':'')+' onchange="goalStepCheck('+id+','+i+')"> '+E(typeof x==='string'?x:(x.title||x.text||'Tappa'))+'</label>').join('')+'</div>';
+}
 function correctGoalRow(t,day,fronts){
  const progress=t.status==='done'?100:Math.round((Number(t.progressFraction)||0)*100),label=t.status==='done'?'Completata':progress?progress+'%':t.status==='failed'?'Mancata':'Da fare';
  const name=E((fronts||[]).find(f=>f.id===t.frontId)?.title||''),id=E(JSON.stringify(String(t.id)));
  const when=E(JSON.stringify(day)),next=t.status==='done'?'todo':'done';
- let mixed='';if(t.type==='mixed'&&Array.isArray(t.components)&&t.components.length){mixed='<div class="go-steps">'+t.components.map((x,i)=>'<label><input type="checkbox" '+((t.checks||[]).includes(i)?'checked':'')+' onchange="goalStepCheck('+id+','+i+')"> '+E(typeof x==='string'?x:(x.title||x.text||'Tappa'))+'</label>').join('')+'</div>'}
+ const mixed=goalComponentBoxes(t);
  return '<article class="go-task"><div class="go-line"><span class="go-tick">'+(t.status==='done'?'✓':t.status==='partial'?'◐':'○')+'</span><div style="flex:1"><strong>'+E(t.title)+'</strong> <small class="muted">'+E(label)+' · '+name+'</small>'+(t.notes?'<p class="tiny muted">'+E(t.notes)+'</p>':'')+mixed+'</div></div><div class="go-actions">'+
  '<button class="btn alt" onclick="goalStatus('+id+',\''+next+'\')">'+(t.status==='done'?'Riapri':'✓ Completa')+'</button>'+ 
  '<button class="btn alt" onclick="goalPartial('+id+')">◐ Parziale</button>'+ 
@@ -546,6 +551,11 @@ function makeWeekPlanner(g){
  let html='<section class="regina-planner"><div class="row spread"><div><h3>📅 Pianifica la settimana</h3><small class="muted">Trascina le tappe nel giorno e nella fascia desiderati. Orario preciso facoltativo. Le tappe arretrate restano da gestire.</small></div><button type="button" class="btn alt" onclick="reginaPlan.toggle()">'+(rPlannerCollapsed?'Apri':'Chiudi')+'</button></div>';
  if(rPlannerCollapsed)return html+'</section>';
  html+='<div class="row spread regina-pl-toolbar"><button class="btn alt" onclick="reginaPlan.week(-1)">‹ Settimana precedente</button><b>'+E(start)+' — '+E(days[6])+'</b><button class="btn alt" onclick="reginaPlan.week(1)">Settimana successiva ›</button><button class="btn alt" onclick="reginaPlan.today()">Oggi</button></div>';
+ html+='<div class="r115-day-index" role="group" aria-label="Vai al giorno">'+days.map((day,index)=>{
+  const date=new Date(day+'T12:00:00');
+  const weekday=date.toLocaleDateString('it-IT',{weekday:'short'});
+  return '<button type="button" data-day-index="'+index+'" aria-label="Vai a '+E(date.toLocaleDateString('it-IT',{dateStyle:'full'}))+'"'+(day===TODAY()?' aria-current="date"':'')+'><small>'+weekday+'</small><b>'+date.getDate()+'</b></button>';
+ }).join('')+'</div>';
  html+='<div class="regina-pl-scroll"><div class="regina-pl-week">'+days.map(day=>{
   const ls=rGroupedForDate(g,day),used=new Set(),perSlot=new Map(R_SLOTS.map(x=>[x[0],[]]));
   for(const t of ls){let key=t.id;if(used.has(key))continue;used.add(key);let slot=rTaskMeta(t).slot;if(!perSlot.has(slot))slot='morning';perSlot.get(slot).push(t)}
@@ -1712,7 +1722,7 @@ settingsView=function(){
 };
 // L'area Oggi rende selezionabili le tappe senza uscire dalla pagina.
 function r112TodayButton(t,action,label){
- return `<button class="btn alt regina-today-btn" data-task-id="${r112Escape(t.id)}" data-task-action="${action}" onclick="reginaToday.handle(event)" type="button">${label}</button>`;
+ return `<button class="btn alt regina-today-btn" aria-label="${r112Escape(({todo:'Segna da fare',done:'Completa',partial:'Segna parziale',edit:'Modifica'})[action]+' · '+t.title)}" data-task-id="${r112Escape(t.id)}" data-task-action="${action}" onclick="reginaToday.handle(event)" type="button">${label}</button>`;
 }
 function r112TodayGoals(){
  const items=todayTasks(),groups=new Map();for(const t of items){const name=t.frontTitle||'Altri obiettivi';
@@ -1722,7 +1732,7 @@ function r112TodayGoals(){
  for(const [name,list] of groups){let done=list.filter(t=>Number(t.fraction)>=1).length;
   result+=`<details class="regina-today-front" ${done<list.length?'open':''}><summary><b>${r112Escape(name)}</b><small>${done}/${list.length}</small></summary>`;
   for(const t of list){const fraction=Number(t.fraction)||0;result+=`<div class="regina-today-item ${fraction>=1?'done':''}"><span class="regina-today-title">${r112Escape(t.title)}<small>${fraction>=1?'Completata':fraction>0?Math.round(fraction*100)+'% completato':'Da fare'}</small></span>
-  <span class="regina-today-actions">${r112TodayButton(t,fraction>=1?'todo':'done',fraction>=1?'↩':'✓')}${r112TodayButton(t,'partial','◐')}${r112TodayButton(t,'edit','✎')}</span></div>`;}
+  <span class="regina-today-actions">${r112TodayButton(t,fraction>=1?'todo':'done',fraction>=1?'↩':'✓')}${r112TodayButton(t,'partial','◐')}${r112TodayButton(t,'edit','✎')}</span>${goalComponentBoxes(t)}</div>`;}
   result+='</details>';
  }
  return result+(groups.size?'':'<p class="muted">Nessun obiettivo programmato per questa giornata.</p>')+'</div>';
@@ -1852,7 +1862,7 @@ function r113GroupItems(items){
   rows.map(t=>{const pc=Math.round(rLim(t.fraction,0,1)*100),part=pc>0&&pc<100;
    return '<div class="r113-entry"><div class="r113-entry-title">'+E(t.name)+'</div>'+
     '<div class="r113-entry-sub"><span>Difficoltà '+rLim(t.difficulty||3,1,5)+'/5</span>'+
-    (part?'<span class="r113-part-pct">'+pc+'% svolto</span>':'<span>Non svolto</span>')+'</div>'+
+    (part?'<span class="r113-part-pct">'+pc+'% svolto</span>':(pc>=100?'<span>Completata</span>':'<span>Non svolto</span>'))+'</div>'+
     (part?'<div class="r113-mini-bar"><i style="width:'+pc+'%"></i></div>':'')+'</div>';
   }).join('')+'</section>').join('');
 }
@@ -1864,8 +1874,8 @@ function r113ReviewPanel(){
  const top=[...missing,...partial].sort((a,b)=>b.difficulty-a.difficulty||a.name.localeCompare(b.name,'it')).slice(0,3);
  const archived=!!st?.reginaDailyReviews?.[x.day];
  return '<section class="card r113-review" aria-label="Bilancio personale">'+
- '<div class="r113-review-head"><div><span class="r113-eyebrow">📊 IL MIO BILANCIO</span><h3>'+E(k)+'</h3><p class="muted">'+E(date)+'</p></div>'+
- '<div class="r113-grade"><strong>'+(score===null?'—':score.toFixed(1))+'</strong><small>/10</small></div></div>'+
+ '<div class="r113-review-head"><div><span class="r113-eyebrow">Bilancio della giornata</span><h3>'+E(k)+'</h3><p class="muted">'+E(date)+'</p></div>'+
+ '<div class="r113-grade"><strong>'+(score===null?'—':score.toLocaleString('it-IT',{minimumFractionDigits:1,maximumFractionDigits:1}))+'</strong><small>/10</small></div></div>'+
  '<div class="r113-grade-track" role="meter" aria-label="Voto della giornata" aria-valuemin="0" aria-valuemax="10" aria-valuenow="'+(score??0)+'"><i style="width:'+ratio+'%"></i></div>'+
  '<div class="r113-stats"><div class="r113-stat done"><strong>'+x.done+'</strong><small>Completate</small></div><div class="r113-stat partial"><strong>'+x.part+'</strong><small>Parziali</small></div><div class="r113-stat missed"><strong>'+x.missed+'</strong><small>Non svolte</small></div></div>'+
  '<label class="r113-date">Consulta un giorno <input type="date" value="'+E(r11ReviewDay)+'" onchange="reginaReview.select(this.value)"></label>'+
@@ -2111,5 +2121,434 @@ const r113Styles=document.createElement('style');r113Styles.textContent=`
 document.head.appendChild(r113Styles);
 
 
+
+// ============================================================================
+// REGINA CALCIO 1.1.4 — Ore di lavoro e studio: bonus TECNICA facoltativo
+// Le ore realmente svolte si registrano solo su richiesta. Nessuna scadenza,
+// nessun obiettivo mancante, nessuna penalità quando si registrano zero ore.
+// I dati sono piccoli, giornalieri e inclusi nel backup completo della carriera.
+// ============================================================================
+const r114VERSION='1.1.4';
+const r114MaxOne=16, r114MaxTotal=24;
+function r114Day(day){return rD(day)||st?.nextDay||TODAY()}
+function r114Hours(day){
+ const d=r114Day(day),v=st?.reginaWorkStudyHours?.[d]||{};
+ const clean=x=>Math.round(Math.max(0,Math.min(r114MaxOne,Number(x)||0))*4)/4;
+ return {day:d,work:clean(v.work),study:clean(v.study),total:clean(v.work)+clean(v.study)};
+}
+function r114HoursNumber(n){return Number(n||0).toLocaleString('it-IT',{maximumFractionDigits:2})}
+function r114HoursInfo(day){
+ const x=r114Hours(day);
+ const line=[x.work?'Lavoro '+r114HoursNumber(x.work)+' h':'',x.study?'Studio '+r114HoursNumber(x.study)+' h':''].filter(Boolean).join(' · ');
+ return line||'Nessuna ora extra registrata';
+}
+window.reginaHours={
+ save(day,work,study){
+  if(!st)return alert('Avvia prima una carriera calcistica.');
+  const d=rD(day);if(!d)return alert('Data non valida.');
+  const normalize=(value,label)=>{
+   if(String(value).trim()==='')return 0;
+   const n=Number(String(value).trim().replace(',','.'));
+   if(!Number.isFinite(n)||n<0||n>r114MaxOne||Math.abs(n*4-Math.round(n*4))>.00001)throw Error(label+': inserisci ore tra 0 e 16, a intervalli di 15 minuti.');
+   return Math.round(n*4)/4;
+  };
+  let w=0,s=0;
+  try{w=normalize(work,'Lavoro');s=normalize(study,'Studio');if(w+s>r114MaxTotal)throw Error('Massimo 24 ore complessive per giornata.')}catch(e){return alert(e.message)}
+  const old=st.reginaWorkStudyHours?structuredClone(st.reginaWorkStudyHours):null;
+  st.reginaWorkStudyHours=st.reginaWorkStudyHours||{};
+  if(w+s>0)st.reginaWorkStudyHours[d]={work:w,study:s,updatedAt:new Date().toISOString()};
+  else delete st.reginaWorkStudyHours[d];
+  // Le giornate già giocate rimangono storiche: niente ricalcolo della partita.
+  const ok=persist();
+  if(ok===false){st.reginaWorkStudyHours=old||{};return alert('Ore non salvate: verifica lo stato del salvataggio in Impostazioni.');}
+  document.getElementById('r114-hours-modal')?.remove();
+  render();
+ },
+ today(){
+  const box=document.getElementById('r114-hours-today');if(!box)return;
+  this.save(box.dataset.day,box.querySelector('[name="r114work"]')?.value||0,box.querySelector('[name="r114study"]')?.value||0);
+ },
+ edit(day){
+  if(!st)return;
+  const x=r114Hours(day),m=document.createElement('div');m.id='r114-hours-modal';m.className='r114-modal';
+  const archived=(st.results||[]).some(r=>r.day===x.day);
+  m.innerHTML='<section class="r114-dialog" role="dialog" aria-modal="true" aria-label="Ore extra di lavoro e studio">'+
+  '<div class="r114-dialog-top"><h3>📚 Bonus Tecnica</h3><button type="button" class="btn alt" data-close>✕</button></div>'+
+  '<p class="muted">'+E(x.day)+' · Registra soltanto le ore effettivamente svolte, senza creare impegni obbligatori.</p>'+
+  '<div class="r114-hour-inputs"><label>💼 Lavoro (ore)<input name="work" type="number" min="0" max="16" step="0.25" inputmode="decimal" value="'+x.work+'"></label>'+
+  '<label>📖 Studio (ore)<input name="study" type="number" min="0" max="16" step="0.25" inputmode="decimal" value="'+x.study+'"></label></div>'+
+  (archived?'<p class="r114-note">🔒 Partita già disputata: le ore verranno conservate nello storico, ma non cambieranno risultato o voto archiviato.</p>':'<p class="r114-note">Un bonus positivo alla Tecnica, mai una penalità se lasci a zero.</p>')+
+  '<div class="row"><button class="btn" type="button" data-save>Salva ore</button><button class="btn alt" type="button" data-close>Annulla</button></div></section>';
+  m.addEventListener('click',ev=>{if(ev.target===m||ev.target.closest('[data-close]'))m.remove();if(ev.target.closest('[data-save]'))this.save(x.day,m.querySelector('[name="work"]').value,m.querySelector('[name="study"]').value)});
+  document.body.appendChild(m);
+ },
+ record(day){return r114Hours(day)}
+};
+
+// Le ore agiscono sul fronte TECNICA soltanto in positivo: se sono assenti la
+// funzione precedente restituisce ESATTAMENTE gli stessi valori di prima.
+// Le ore aggiungono credito equivalente a lavoro/studio completato, senza
+// gonfiare il numero di tappe previste o abbassare il voto nei giorni senza ore.
+const r114PreviousMetrics=taskMetrics;
+taskMetrics=function(){
+ const m=r114PreviousMetrics(),data=r114Hours(st?.nextDay||TODAY());
+ if(!data.total)return m;
+ const techTasks=todayTasks().filter(t=>t.category==='technical');
+ if(techTasks.length){
+  const planned=techTasks.reduce((n,t)=>n+rTaskMeta(t).difficulty,0);
+  const finished=techTasks.reduce((n,t)=>n+rTaskMeta(t).difficulty*rLim(t.fraction,0,1),0);
+  const extra=Math.min(12,data.total)*2.5; // credito extra, NON un'obbligazione
+  const enhanced=.45+9.55*(finished+extra)/(planned+extra);
+  m.technical=rLim(Math.max(m.technical,enhanced));
+ }
+ // Se Tecnica era già 10/10 per assenza di tappe, il lavoro svolto deve
+ // comunque produrre un piccolo vantaggio reale: non si va oltre 10/10 nella UI.
+ m.reginaWorkStudyHours=data.total;
+ m.reginaHoursMatchBoost=Math.min(.63,.07*data.total);
+ return m;
+};
+const r114PreviousCalcTeam=calcTeam;
+calcTeam=function(id,metrics){
+ const out=r114PreviousCalcTeam(id,metrics);
+ const boost=(id===st?.club)?Math.max(0,Number(metrics?.reginaHoursMatchBoost)||0):0;
+ if(boost>0&&out){
+  out.performance+=boost;
+  for(const f of Object.values(out.forms||{}))if(Number.isFinite(f.effective))f.effective=rLim(f.effective+boost);
+ }
+ return out;
+};
+
+// Il voto personale include il tempo extra come CREDITO POSITIVO di lavoro:
+// aumenta il numeratore e il denominatore soltanto quando ci sono ore fatte.
+// Nessuna ora registrata => voto identico alla versione precedente.
+const r114OldReviewLive=r11ReviewLive;
+r11ReviewLive=function(day){
+ const x=r114OldReviewLive(day),time=r114Hours(day);
+ if(!time.total)return x;
+ x.reginaHours={work:time.work,study:time.study,total:time.total};
+ if(x.number>0){
+  const weight=x.records.reduce((s,t)=>s+t.difficulty,0);
+  const points=x.records.reduce((s,t)=>s+t.difficulty*t.fraction,0);
+  const extra=Math.min(12,time.total)*2.5;
+  x.grade=Math.round(100*(points+extra)/(weight+extra))/10;
+ }
+ return x;
+};
+
+// Campo intuitivo in OGGI: il dato compare nel contesto della giornata senza
+// creare una nuova tappa, e viene salvato su richiesta insieme alla carriera.
+const r114OldToday=todayView;
+todayView=function(){
+ const html=r114OldToday();if(!st)return html;
+ const doc=document.createElement('template');doc.innerHTML=html;
+ const day=st.nextDay||TODAY(),h=r114Hours(day);
+ const block=document.createElement('details');block.className='r114-hours-card';block.id='r114-hours-today';block.dataset.day=day;
+ block.innerHTML='<summary class="r114-hours-title"><b>Ore di lavoro e studio</b><strong>'+r114HoursNumber(h.total)+' h</strong></summary><small class="r115-bonus-note">Bonus facoltativo per la Tecnica</small>'+
+ '<div class="r114-hour-inputs"><label>💼 Lavoro (h)<input name="r114work" type="number" inputmode="decimal" min="0" max="16" step="0.25" value="'+h.work+'"></label>'+
+ '<label>📖 Studio (h)<input name="r114study" type="number" inputmode="decimal" min="0" max="16" step="0.25" value="'+h.study+'"></label></div>'+
+ '<div class="r114-hours-foot"><span>Solo ore effettive · anche 15 minuti</span><button class="btn" type="button" onclick="reginaHours.today()">Salva ore</button></div>';
+ const heading=[...doc.content.querySelectorAll('h3')].find(el=>el.textContent.includes('Tappe previste per la giornata'));
+ if(heading)heading.before(block);else doc.content.querySelector('.card')?.append(block);
+ return doc.innerHTML;
+};
+
+// Il riepilogo può essere consultato per data: mette in evidenza solo il lavoro
+// effettivo, senza presentare lo zero come un'attività mancata.
+const r114PreviousReviewPanel=r11ReviewPanel;
+r11ReviewPanel=function(){
+ const html=r114PreviousReviewPanel(),x=r11Review(r11ReviewDay),h=r114Hours(r11ReviewDay);
+ const line=h.total?'<b>+'+r114HoursNumber(h.total)+' ore di Tecnica</b><small>'+E(r114HoursInfo(r11ReviewDay))+' · credito extra positivo</small>':
+ '<span class="muted">Ore extra non inserite: nessuna penalità</span>';
+ const card='<div class="r114-review-hours"><div>📚 '+line+'</div><button class="btn alt" type="button" onclick="reginaHours.edit(\''+E(r11ReviewDay)+'\')">✎ Ore</button></div>';
+ const last=html.lastIndexOf('</section>');return last>=0?html.slice(0,last)+card+html.slice(last):html+card;
+};
+
+const r114OldHeader=header;
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.7')};
+const r114CSS=document.createElement('style');r114CSS.textContent=`
+.r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
+.r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.r114-hours-title b{font-size:14px;color:#175e6c}.r114-hours-title small{display:block;font-size:11px;color:#62808b;margin:5px 0;line-height:1.4}
+.r114-hours-title strong{background:#dbf3eb;color:#175f49;border-radius:9px;padding:5px 9px;font-size:14px;white-space:nowrap}
+.r114-hour-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}
+.r114-hour-inputs label{font-size:12px;font-weight:650;color:#32525e;min-width:0}
+.r114-hour-inputs input{display:block;margin-top:5px;min-width:0;width:100%;box-sizing:border-box;border:1px solid #c8dce0;border-radius:8px;padding:9px 8px;font-size:16px;background:#fff;color:#17313a}
+.r114-hours-foot{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:12px}
+.r114-hours-foot span{font-size:11px;color:#60818a}.r114-hours-foot .btn{flex-shrink:0}
+.r114-review-hours{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #dfeaec;margin-top:14px;padding-top:12px;font-size:12px}
+.r114-review-hours>div{display:block;line-height:1.5}.r114-review-hours b{font-size:13px;color:#196c62}.r114-review-hours small{display:block;color:#65808a}.r114-review-hours button{flex-shrink:0}
+.r114-modal{position:fixed;inset:0;z-index:999999;background:#092737a8;display:flex;align-items:center;justify-content:center;padding:16px}
+.r114-dialog{background:#fff;border-radius:14px;padding:17px;width:100%;max-width:440px;max-height:90vh;overflow:auto;color:#173743;box-sizing:border-box}
+.r114-dialog-top{display:flex;align-items:center;justify-content:space-between}.r114-dialog-top h3{margin:0}
+.r114-note{background:#f1f8fa;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.5}
+@media(max-width:360px){.r114-hours-card{padding:10px}.r114-hours-foot{flex-wrap:wrap}}
+`;document.head.appendChild(r114CSS);
+
+
+// I pulsanti dei giorni spostano solo il calendario, senza riprogrammare tappe.
+document.addEventListener('click',event=>{
+ const button=event.target.closest?.('.r115-day-index button');
+ if(!button)return;
+ const pane=button.closest('.regina-planner').querySelector('.regina-pl-scroll');
+ const column=pane.querySelectorAll('.regina-pl-day')[Number(button.dataset.dayIndex)];
+ if(column)pane.scrollLeft+=column.getBoundingClientRect().left-pane.getBoundingClientRect().left;
+});
+const visualStyle=document.createElement('style');
+visualStyle.textContent=`
+.r113-review,.regina-today-goals,.regina-planner,.r114-hours-card{
+ --pitch:#155442;--ink:#162f2a;--line:#d4e2db;color:var(--ink);
+ font-variant-numeric:tabular-nums;
+}
+.r113-review-head{background:#154b3d;color:white;padding:18px;border-radius:12px;align-items:center}
+.r113-review-head h3{color:white;font-size:clamp(20px,4vw,28px);letter-spacing:-.025em}
+.r113-review-head .muted,.r113-eyebrow{color:#dfede2}.r113-eyebrow{font-size:12px;letter-spacing:.04em}
+.r113-grade{background:#d9edbb;color:#173c28;border-radius:9px;min-width:60px}
+.r113-grade strong{font-size:32px;font-variant-numeric:tabular-nums}
+.r113-grade-track{height:5px}.r113-grade-track i{background:var(--pitch)}
+.r113-stat small{font-size:12px}.r113-stat.partial{color:#775307}
+.r113-focus p{display:grid}.r113-focus p>span{border:0;background:transparent;border-top:1px solid #e5d7bc;border-radius:0;padding:7px 0 2px;overflow-wrap:anywhere}
+.r113-review-folds details>summary{min-height:44px;box-sizing:border-box;justify-content:start}
+.r113-review-folds summary b{margin-left:auto}
+.r113-review-folds summary::after,.r114-hours-title::after,.regina-today-front summary::after{content:'▸';color:#3f6959}
+.r113-review-folds details[open]>summary::after,.r114-hours-card[open]>.r114-hours-title::after,.regina-today-front[open]>summary::after{content:'▾'}
+.r113-date input,.r114-hours-foot .btn,.r114-review-hours button{min-height:42px}
+.r114-hours-card{background:#f6faf7;margin:14px 0;padding:0}
+.r114-hours-card[open]{padding-bottom:12px}
+.r114-hours-title{cursor:pointer;align-items:center;padding:10px 12px;min-height:44px;box-sizing:border-box}
+.r114-hours-title b{color:var(--pitch);flex:1}.r114-hours-title strong{color:var(--pitch);background:#e2efdf}
+.r114-hour-inputs,.r114-hours-foot,.r115-bonus-note{margin-inline:12px}
+.r115-bonus-note{color:#496359}.regina-today-front{padding:0;border-color:var(--line);background:white}
+.regina-today-front summary{padding:8px 12px;min-height:44px;box-sizing:border-box;color:var(--pitch);background:#f3f7f4;border-radius:9px}
+.regina-today-front summary small{margin-left:auto}.regina-today-item{padding:8px 10px}
+.regina-today-item:first-of-type{margin-top:0}.regina-today-title{min-width:0;overflow-wrap:anywhere;font-size:14px}
+.regina-today-item:has(.go-steps){flex-wrap:wrap}.regina-today-item>.go-steps{flex-basis:100%;grid-column:1/-1;display:grid;width:100%}.regina-today-item>.go-steps label{display:flex;align-items:center;gap:8px;min-height:40px}.regina-today-btn{min-height:44px;min-width:44px;padding:5px}.regina-today-title small{color:#506c60}
+.regina-pl-day{box-sizing:border-box;min-width:0;background:#f7faf8;border-color:var(--line)}
+.regina-pl-day h4{background:#e7efea;color:#233e32;text-transform:capitalize}
+.regina-pl-day h4.regina-pl-today{color:white;background:var(--pitch)}
+.regina-pl-title{overflow-wrap:anywhere}.regina-pl-drop{background:#fff}.regina-pl-drop>small{color:#465e52;font-weight:650}
+.r115-day-index{display:none}.regina-pl-backfront summary{padding-block:8px}
+:is(.regina-planner,.r113-review,.regina-today-goals,.r114-hours-card) :focus-visible{outline:3px solid #226ec1;outline-offset:2px}
+@media(max-width:650px){
+ .regina-pl-toolbar{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+ .regina-pl-toolbar b{grid-row:1;grid-column:1/-1;text-align:center}
+ .regina-pl-toolbar .btn{min-height:42px}.regina-pl-toolbar .btn:last-child{grid-column:1/-1}
+ .r115-day-index{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:0 0 8px}
+ .r115-day-index button{min-width:0;min-height:44px;padding:3px 0;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--pitch);cursor:pointer}
+ .r115-day-index button[aria-current]{background:var(--pitch);color:white}
+ .r115-day-index small,.r115-day-index b{display:block}
+ .regina-pl-week{width:max-content;min-width:100%;grid-template-columns:repeat(7,clamp(190px,63vw,295px))}
+ .regina-pl-grip,.regina-pl-item .regina-pl-edit,.regina-pl-item .regina-pl-move{min-height:44px;min-width:34px;box-sizing:border-box}
+ .r113-stat small{font-size:11px}.regina-today-actions{margin-left:0}
+}
+@media(max-width:380px){.regina-today-item{display:grid;grid-template-columns:minmax(0,1fr)}.regina-today-actions{justify-content:flex-end}}
+`;
+document.head.appendChild(visualStyle);
+// Redazione: ogni edizione si scrive una volta, con i dati disponibili al fischio finale.
+function pressEdition(m, competition='league'){
+ const me=st.club, home=m.a===me, rival=home?m.b:m.a;
+ const ours=home?m.ga:m.gb, theirs=home?m.gb:m.ga, margin=ours-theirs;
+ const club=pressClub(me,true), bare=pressClubName(me), opposition=pressClub(rival);
+ const score=ours+'-'+theirs;
+ const events=(m.events||[]).filter(e=>[m.a,m.b].includes(e.side)&&Number.isFinite(Number(e.minute))).slice().sort((a,b)=>a.minute-b.minute);
+ const surname=e=>e?.name&&e.name!==pressClubName(e.side)?surnameForPress(e.name):'';
+ const subject=e=>surname(e)||pressClub(e.side,true);
+ let a=0,b=0;
+ const goals=events.filter(e=>e.type==='gol').map(e=>{
+  if(e.side===m.a)a++;else b++;
+  return {...e,a,b,lead:(home?1:-1)*(a-b)};
+ });
+ const complete=a===m.ga&&b===m.gb;
+ const last=complete?goals.at(-1):null;
+ // Ultima rete che spezza la parità in favore di chi vince, anche se poi arriva il 3-1.
+ const winner=complete&&margin?goals.filter((g,i)=>g.lead===Math.sign(margin)&&(goals[i-1]?.lead||0)===0).at(-1):null;
+ const comeback=complete&&margin!==0&&goals.some(g=>g.lead*Math.sign(margin)<0);
+ const misses=events.filter(e=>e.type==='rigore_sbagliato'), reds=events.filter(e=>e.type==='rosso');
+ const bestChance=events.find(e=>e.type==='occasione'&&e.outcome==='palo')||
+   events.find(e=>e.type==='occasione'&&e.outcome==='parata');
+ const namedGoals=goals.filter(g=>g.side===me&&surname(g));
+ const counts=new Map();for(const g of namedGoals)counts.set(surname(g),(counts.get(surname(g))||0)+1);
+ const star=[...counts].sort((a,b)=>b[1]-a[1])[0];
+ const league=competition==='league';
+ const history=(st.results||[]).filter(r=>r.match&&[r.match.a,r.match.b].includes(me)&&
+  (league?!r.stage&&!r.isCoppa&&!r.isEurope:competition==='post'?!!r.stage&&!r.isEurope&&!r.isCoppa:competition==='coppa'?r.isCoppa:r.cup===competition));
+ const past=history.map(({match:g})=>Math.sign(g.a===me?g.ga-g.gb:g.gb-g.ga));
+ const breakAt=past.findIndex(x=>x!==Math.sign(margin));
+ const consecutive=1+(breakAt<0?past.length:breakAt);
+ const penaltyWinner=[m.a,m.b].includes(m.pens?.winner)?m.pens.winner:null;
+ let title,lead;
+ if(penaltyWinner){
+  title=bare+(penaltyWinner===me?' vince ai rigori':' cede ai rigori');
+  lead=club+' e '+opposition+' chiudono sul '+score+'. Ai rigori si impone '+pressClub(penaltyWinner)+(m.pens.score?' per '+m.pens.score:'')+'.';
+ }else if(league&&margin<0&&consecutive>=4){
+  title=bare+' in crisi, '+consecutive+' sconfitte di fila';
+  lead='Questa volta è '+opposition+' a fermare '+pressClub(me)+'. Il '+theirs+'-'+ours+' porta a '+consecutive+' le sconfitte consecutive in campionato.';
+ }else if(comeback){
+  title=margin>0&&surname(winner)?bare+', '+surname(winner)+' completa la rimonta':margin>0?bare+' ribalta '+pressClubName(rival):bare+', il vantaggio sfuma';
+  lead=margin>0?club+' va sotto contro '+opposition+', poi rovescia la partita e vince '+score+'.':
+   club+' si porta avanti, ma '+opposition+' rimonta e vince '+theirs+'-'+ours+'.';
+ }else if(winner&&winner.minute>=80&&surname(winner)){
+  title=margin>0?surname(winner)+' al '+winner.minute+'′, '+bare+' passa nel finale':bare+' cede al '+winner.minute+'′';
+  lead=subject(winner)+' rompe l’equilibrio al '+winner.minute+'′. '+club+(margin>0?' batte ':' perde contro ')+opposition+' per '+(margin>0?score:theirs+'-'+ours)+'.';
+ }else if(complete&&margin>0&&star?.[1]>=2){
+  title=star[1]===2?'Doppietta di '+star[0]+', '+bare+' festeggia':star[0]+', '+star[1]+' gol per '+bare;
+  lead=star[0]+' segna '+(star[1]===2?'due':star[1])+' volte. '+club+' batte '+opposition+' per '+score+'.';
+ }else if(!margin&&last&&last.minute>=80){
+  title=last.side===me?bare+' agguanta il pari al '+last.minute+'′':bare+', vittoria sfumata al '+last.minute+'′';
+  lead=subject(last)+' firma il '+score+' al '+last.minute+'′. '+club+(last.side===me?' evita la sconfitta.':' vede sfumare il vantaggio.');
+ }else if(!margin&&!ours){
+  title=bare+'–'+pressClubName(rival)+', reti inviolate';
+  lead=misses.length?'Il pallone più pesante arriva dal dischetto. '+subject(misses[0])+' fallisce al '+misses[0].minute+'′ e la gara tra '+pressClub(me)+' e '+opposition+' finisce 0-0.':
+   bestChance?.outcome==='palo'?'Il palo ferma '+subject(bestChance)+' al '+bestChance.minute+'′. È l’occasione più vicina al gol nello 0-0 tra '+pressClub(m.a)+' e '+pressClub(m.b)+'.':
+   'Finisce senza reti la sfida tra '+pressClub(m.a)+' e '+pressClub(m.b)+'.';
+ }else if(Math.abs(margin)>=3){
+  title=margin>0?bare+' segna '+ours+' volte contro '+pressClubName(rival):bare+' cede di schianto, '+pressClubName(rival)+' ne fa '+theirs;
+  lead=margin>0?club+' batte '+opposition+' '+score+'. '+(theirs?'Il margine finale è di '+margin+' gol.':'Chiude anche con la porta inviolata.'):
+   opposition.charAt(0).toUpperCase()+opposition.slice(1)+' batte '+pressClub(me)+' '+theirs+'-'+ours+'.';
+ }else if(league&&margin>0&&past[0]===-1&&past[1]===-1){
+  title=bare+' torna a vincere contro '+pressClubName(rival);
+  lead=club+' ritrova la vittoria '+(home?'in casa':'in trasferta')+'. Contro '+opposition+' finisce '+score+'.';
+ }else if(winner&&goals.length===1&&surname(winner)){
+  title=margin>0?bare+', basta '+surname(winner):surname(winner)+' ferma '+bare;
+  const when=winner.minute<=45?'nel primo tempo':'nella ripresa';
+  lead=margin>0?'Un gol di '+surname(winner)+' '+when+' dà '+pressClubPrep('a',me)+' la vittoria contro '+opposition+'.':
+   'Decide '+surname(winner)+' '+when+'. '+club+' perde di misura contro '+opposition+'.';
+ }else{
+  title=margin>0?bare+(home?' batte ':' vince contro ')+pressClubName(rival):margin<0?bare+' si arrende a '+pressClubName(rival):bare+' e '+pressClubName(rival)+' chiudono sul '+score;
+  lead=margin>0?club+' supera '+opposition+' per '+score+(home?' in casa.':' in trasferta.'):margin<0?club+' perde '+theirs+'-'+ours+' contro '+opposition+'.':'Finisce '+score+' tra '+pressClub(m.a)+' e '+pressClub(m.b)+'.';
+ }
+ const body=[lead];
+ // L’azione d’apertura e l’episodio decisivo bastano nel testo; il tabellino conserva tutti i marcatori.
+ if(last){
+  const first=goals[0],turns=[first];
+  const parity=goals.filter(g=>g.lead===0&&g!==last).at(-1);
+  if(parity&&comeback)turns.push(parity);
+  if(winner&&winner!==first&&winner!==last)turns.push(winner);
+  if(last!==first)turns.push(last);
+  const lines=[];
+  for(const g of turns){
+   const detail=g.action&&!g.reginaRiscatto?' '+g.action:g.kind==='rigore'?' dal dischetto':g.kind==='punizione'?' su punizione':'';
+   if(lead.includes('al '+g.minute+'′')&&turns.length>1&&g===last&&!detail)continue;
+   const who=subject(g);
+   if(g===first&&parity&&comeback&&parity===goals[1]&&!detail){
+    lines.push(pressClub(g.side,true)+' passa al '+g.minute+'′ con '+who+'.');
+   }else if(g===first&&turns.length===1&&detail&&lead.includes('al '+g.minute+'′'))lines.push('La rete arriva'+detail+'.');
+   else if(g===first)lines.push(who+' apre le marcature al '+g.minute+'′'+detail+'.');
+   else if(g.a===g.b){
+    const half=g.minute>45&&first.minute<=45?'Nella ripresa ':'';
+    lines.push(half+who+' risponde al '+g.minute+'′'+detail+'.');
+   }
+   else if(g===winner&&comeback)lines.push('Il sorpasso arriva al '+g.minute+'′: '+who+' segna'+detail+'.');
+   else lines.push('Al '+g.minute+'′ '+who+' firma il '+g.a+'-'+g.b+detail+'.');
+  }
+  if(!(goals.length===1&&lead.includes('al '+first.minute+'′')&&!first.action))body.push(lines.join(' '));
+ }
+ const incidents=[];
+ for(const e of [misses[0],reds[0]].filter(Boolean).sort((a,b)=>a.minute-b.minute)){
+  if(e===misses[0]&&lead.startsWith('Il pallone'))continue;
+  incidents.push(e.type==='rosso'?'Al '+e.minute+'′ l’arbitro espelle '+subject(e)+' ('+pressClubName(e.side)+').':
+   subject(e)+' fallisce un rigore al '+e.minute+'′.');
+ }
+ if(!goals.length&&!incidents.length&&bestChance&&!lead.includes('palo')){
+  const e=bestChance;
+  incidents.push(e.outcome==='palo'?subject(e)+' colpisce il palo al '+e.minute+'′.':
+   'Al '+e.minute+'′ '+subject(e)+' trova la parata '+(e.opponent&&e.opponent!=='il portiere'?'di '+surnameForPress(e.opponent):'del portiere')+'.');
+ }
+ const shots=m.stats?.shots,on=m.stats?.onTarget,i=home?0:1,j=1-i;
+ if(Array.isArray(shots)&&shots.every(Number.isFinite)&&Math.abs(shots[i]-shots[j])>=5){
+  const side=shots[i]>shots[j]?me:rival,idx=side===m.a?0:1;
+  incidents.push(pressClub(side,true)+' conclude '+shots[idx]+' volte'+(Number.isFinite(on?.[idx])?' ('+on[idx]+' nello specchio)':'')+', contro le '+shots[1-idx]+' conclusioni '+pressClubPrep('di',side===me?rival:me)+'.');
+ }
+ if(incidents.length)body.push(incidents.join(' '));
+ let context='';
+ if(league){
+  if(consecutive>=2&&!(margin<0&&consecutive>=4))context='Con questa sono '+consecutive+(margin>0?' vittorie':margin<0?' sconfitte':' pareggi')+(margin===0?' consecutivi':' consecutive')+' in campionato. ';
+  else if(margin>0&&past[0]===-1&&past[1]===-1){const end=past.findIndex(n=>n!==-1);context='Si chiude così una serie di '+(end<0?past.length:end)+' sconfitte in campionato. ';}
+  if(st.standings&&st.league){
+   const table=sortedStandings(st.league),pos=table.findIndex(t=>t.id===me),row=table[pos];
+   if(row&&Number.isFinite(row.pts)){
+    context+=club+(margin<0?' resta':' sale')+' a quota '+row.pts+', al '+(pos+1)+'° posto.';
+    const near=pos>0?table[pos-1]:table[1];
+    if(near&&Number.isFinite(near.pts)){
+     const gap=Math.abs(near.pts-row.pts);
+     const distance=gap===1?'un punto':gap+' punti';
+     context+=' '+(gap===0?'A pari punti c’è '+pressClub(near.id):pos>0?pressClub(near.id,true)+' precede '+pressClub(me)+' di '+distance:pressClub(near.id,true)+' segue a '+distance)+'.';
+     const sameRound=st.roundLog?.[0];
+     const other=sameRound?.day===st.nextDay&&sameRound.matches?.find(g=>(g.a!==m.a||g.b!==m.b)&&[g.a,g.b].includes(near.id));
+     if(other){
+      const isHome=other.a===near.id,forGoals=isHome?other.ga:other.gb,against=isHome?other.gb:other.ga;
+      context+=' '+pressClub(near.id,true)+(forGoals===against?' ha pareggiato ':forGoals>against?' ha vinto ':' ha perso ')+(forGoals>=against?forGoals+'-'+against:against+'-'+forGoals)+' contro '+pressClub(isHome?other.b:other.a)+'.';
+     }
+    }
+   }
+  }
+ }
+ if(context.trim())body.push(context.trim());
+ // Le dichiarazioni appartengono al campionato simulato e riprendono l’episodio.
+ let quote='',speaker='';
+ if(league&&margin<0&&consecutive>=4&&st.presidentName){
+  speaker=surnameForPress(st.presidentName);
+  quote='Dopo '+consecutive+' sconfitte di fila è giusto chiedere conto anche a chi dirige la società. Il primo a rispondere sono io.';
+ }else if(star?.[1]>=2&&margin>0&&complete){
+  speaker=star[0];quote='Mi tengo soprattutto il risultato. Segnare '+(star[1]===2?'due':star[1])+' volte e tornare a casa con una vittoria è un’altra cosa.';
+ }else if(st.coachName&&last?.minute>=80&&!margin){
+  speaker=surnameForPress(st.coachName);quote=last.side===me?'Il tempo per un altro pallone c’era. Siamo rimasti in partita e quel pallone è arrivato.':'A quel punto della partita volevamo portarci a casa il vantaggio. Ci è mancato poco, ma quel poco ci è costato caro.';
+ }
+ if(quote)body.push('Nel dopopartita '+speaker+' commenta: «'+quote+'»');
+ const minutes=text=>text.replace(/\b([Aa])l (1|8|11|8[0-9])′/g,(_,a,n)=>a+'ll’'+n+'′');
+ return {title:minutes(title),body:minutes(body.filter(Boolean).join('\n\n')),pressVersion:116};
+}
+const legacyArticle116=article;
+article=function(m,metrics,competition='league'){
+ if(!m||!st||![m.a,m.b].includes(st.club))return legacyArticle116(m,metrics);
+ const edition=pressEdition(m,competition);
+ const notes=sectorPressReport().map(note=>note.replace(/^(?:LA SOCIETÀ INVESTE|TENSIONI NEI REPARTI|SEGNALI DI CRESCITA|PREOCCUPAZIONE IN SOCIETÀ)\. /,''));
+ if(notes.length)edition.body+='\n\n'+notes.join(' ');
+ return edition;
+};
+window.article=article;
+const prevGaz116=gazView;
+gazView=function(){
+ const page=document.createElement('template');page.innerHTML=prevGaz116();
+ const paper=page.content.querySelector('article.newspaper');
+ if(!paper)return page.innerHTML;
+ const record=st.results[selectedReport]||st.results[0];
+ const headline=paper.querySelector(':scope > h2'),score=paper.querySelector(':scope > .report-score');
+ paper.classList.add('press116');
+ if(headline&&score){
+  const story=document.createElement('div');story.className='press116-story';
+  let node=score.nextElementSibling;
+  while(node?.tagName==='P'){const next=node.nextElementSibling;story.append(node);node=next;}
+  if(record.article?.pressVersion===116){
+   headline.textContent=record.article.title;
+   story.replaceChildren(...record.article.body.split(/\n\s*\n/).filter(Boolean).map(s=>{const p=document.createElement('p');p.textContent=s;return p;}));
+  }
+  score.after(story);
+ }
+ const archive=page.content.querySelector('section.card');
+ if(archive&&archive.querySelector('.calendar'))paper.after(archive);
+ return page.innerHTML;
+};
+const pressDesign=document.createElement('style');
+pressDesign.textContent=`
+.newspaper.press116{--ink:#282320;--red:#87342f;--rule:#bda49c;color:var(--ink);background:#fff7f0;border:1px solid #d4bcb2;border-radius:3px;padding:clamp(16px,4vw,44px);box-shadow:0 3px 12px #38262310}
+.press116 .masthead{color:var(--ink);font-family:Georgia,'Times New Roman',serif;font-weight:900;font-style:italic;letter-spacing:-.06em;line-height:1.06;padding:7px 0 11px;border:0;border-bottom:4px double var(--ink);font-size:clamp(30px,6vw,60px)}
+.press116 .masthead + :is(.row,p){font:650 11px/1.5 system-ui,sans-serif;letter-spacing:.055em;color:#654842;margin:8px 0 14px!important;gap:5px}
+.press116 .tag{border:0;border-radius:0;background:transparent;color:var(--red);font:inherit;padding:0}
+.press116 > h2{font:700 clamp(32px,6vw,64px)/1.02 Georgia,'Times New Roman',serif;text-transform:none;text-align:left;letter-spacing:-.045em;color:var(--ink);text-wrap:balance;overflow-wrap:anywhere;margin:14px 0 12px}
+.press116 .report-score{border:0;border-block:1px solid var(--rule);background:#f6e9df;font:700 clamp(13px,2vw,18px)/1.2 system-ui,sans-serif;margin:16px 0;padding:10px 6px;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);overflow-wrap:anywhere}
+.press116 .report-score strong{font-size:clamp(24px,4vw,40px);color:var(--red);font-variant-numeric:tabular-nums}
+.press116 .report-score img{width:30px;height:30px;object-fit:contain}
+.press116 .press116-story{max-width:70ch;margin:22px auto}
+.press116 .press116-story p{font:400 clamp(17px,2vw,20px)/1.53 Georgia,serif;color:var(--ink);margin:0 0 .85em!important;text-align:left}
+.press116 .press116-story p:first-child{font-size:clamp(19px,2.4vw,25px);line-height:1.36;font-weight:700}
+.press116 h3{font:700 16px/1.25 system-ui,sans-serif;border-top:1px solid var(--rule);padding:10px 0 0;color:var(--red)}
+.press116 .report-cols{border-top:3px double var(--ink);padding-top:12px}
+.press116 .report-cols h3{border:0;padding:0}
+.press116 .report-cols p{margin:4px 0 16px!important;font-size:15px}
+.press116 .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.press116 .tablewrap{max-width:100%;overflow:auto}
+@media(max-width:540px){.press116 .masthead{letter-spacing:-.065em}.press116 .report-cols{gap:10px}.press116 > h2{margin-top:16px}.press116 .table{min-width:0}}
+`;
+document.head.appendChild(pressDesign);
 if(st)render();
 })();
