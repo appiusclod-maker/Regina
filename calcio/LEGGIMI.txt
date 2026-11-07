@@ -1,5 +1,17 @@
-REGINA CALCIO 1.1.7 · La Gazzetta
+REGINA CALCIO 1.1.8
 
-Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Dopo la pubblicazione apri online e verifica v1.1.7.
+Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Riapri online dopo la pubblicazione e verifica v1.1.8.
 
-Apri Gazzetta per vedere la nuova impaginazione. Le cronache con il nuovo stile vengono scritte quando si disputa una nuova partita. L’archivio con il calendario delle edizioni si trova sotto il giornale.
+In Oggi trovi Promemoria, Spesa e Cattive abitudini.
+Ogni cattiva abitudine ha un nome, uno o più fronti e una penalità per episodio regolabile (0,25 / 0,5 / 1 / 2 punti). Il valore iniziale proposto è 0,5 punti.
+Registra con + Episodio e correggi con Annulla. Le penalità incidono sui parametri della squadra della giornata indicata, fino al minimo di zero. Il voto personale è escluso.
+
+Promemoria e spesa sono senza punteggio. I promemoria possono essere giornalieri, con orario facoltativo.
+Per Spesa usa Orario e promemoria spesa.
+Abilita notifiche richiede il permesso del browser. Gli avvisi funzionano mentre l'app è aperta e il browser la mantiene attiva. Alla riapertura vengono recuperati i promemoria scaduti. Per quelli giornalieri viene recuperata la sola occorrenza corrente.
+Per un avviso con REGINA chiusa, premi Calendario e importa il file .ics nel calendario del telefono. Verifica orario e avviso dopo l'importazione. Modificare il promemoria in REGINA richiede di aggiornare anche l'evento importato.
+L'app statica non dispone di un server push per inviare notifiche a browser chiuso.
+
+La nuova scrittura della Gazzetta si applica alle partite successive all'aggiornamento. Articoli e dichiarazioni appartengono alla simulazione. La lunghezza dipende dai dati e dagli episodi disponibili.
+
+Verificate sintassi, selettività delle penalità, isolamento giornaliero e scenari di cronaca. Da verificare sul dispositivo: grafica, tocchi, notifiche e importazione nel calendario.

@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.7 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.8 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -2264,7 +2264,7 @@ r11ReviewPanel=function(){
 };
 
 const r114OldHeader=header;
-header=function(){return r114OldHeader().replace('v1.1.3','v1.1.7')};
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.8')};
 const r114CSS=document.createElement('style');r114CSS.textContent=`
 .r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
 .r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -2497,6 +2497,137 @@ function pressEdition(m, competition='league'){
  const minutes=text=>text.replace(/\b([Aa])l (1|8|11|8[0-9])′/g,(_,a,n)=>a+'ll’'+n+'′');
  return {title:minutes(title),body:minutes(body.filter(Boolean).join('\n\n')),pressVersion:116};
 }
+// Il taglio varia con la partita e con le edizioni precedenti; la cronaca resta riproducibile.
+const concisePress=pressEdition;
+pressEdition=function(m,competition='league'){
+ const original=concisePress(m,competition),me=st.club,home=m.a===me,opp=home?m.b:m.a;
+ const gf=home?m.ga:m.gb,ga=home?m.gb:m.ga,diff=gf-ga;
+ const club=pressClub(me),rival=pressClub(opp),name=pressClubName(me);
+ const seed=(st.results||[]).length+m.ga*7+m.gb*11;
+ const pick=lines=>lines[seed%lines.length];
+ const events=(m.events||[]).filter(e=>[m.a,m.b].includes(e.side)&&Number.isFinite(Number(e.minute))).slice().sort((a,b)=>a.minute-b.minute);
+ const who=e=>e.name&&e.name!==pressClubName(e.side)?surnameForPress(e.name):pressClub(e.side);
+ const at=n=>([1,8,11].includes(+n)||(+n>=80&&+n<=89)?'all’':'al ')+n+'′';
+ const goals=events.filter(e=>e.type==='gol');
+ const reliable=goals.filter(e=>e.side===m.a).length===m.ga&&goals.filter(e=>e.side===m.b).length===m.gb;
+ const paragraphs=[],initial=original.body.split('\n\n');
+ paragraphs.push(initial[0]);
+ if(reliable&&goals.length){
+  const first=goals[0],last=goals.at(-1);
+  if(first.side===opp&&diff>0){
+   const equalizer=goals.find((e,index)=>goals.slice(0,index+1).filter(g=>g.side===me).length===goals.slice(0,index+1).filter(g=>g.side===opp).length);
+   const wait=equalizer?equalizer.minute-first.minute:0;
+   paragraphs[0]=pressClub(me,true)+' deve aspettare, inseguire e infine ribaltare la partita. '+(wait>0?'Il vantaggio '+pressClubPrep('di',opp)+' resiste per '+wait+' minuti, ':'')+'ma il '+gf+'-'+ga+' finale premia '+club+'. '+(last.side===me?who(last)+' mette l’ultima firma '+at(last.minute)+'.':'');
+  }else if(!diff&&last.minute>=80){
+   paragraphs[0]=last.side===me?'Quando la sconfitta sembra ormai vicina, '+who(last)+' trova il pallone del pari '+at(last.minute)+'. '+pressClub(me,true)+' chiude '+gf+'-'+ga+' contro '+rival+' e salva una partita che fino a quel momento stava perdendo.':
+    'Mancava poco per chiuderla con una vittoria. Invece '+who(last)+' segna '+at(last.minute)+' e costringe '+club+' al '+gf+'-'+ga+'. Il pareggio lascia soprattutto il rimpianto del vantaggio sfumato nei minuti conclusivi.';
+  }
+ }
+ let h=0,a=0;
+ const scored=new Map();
+ for(const e of goals){if(e.side===m.a)h++;else a++;scored.set(e,[h,a]);}
+ for(const second of [false,true]){
+  const phase=events.filter(e=>(e.minute>45)===second);
+  const important=phase.filter(e=>['gol','rosso','rigore_sbagliato'].includes(e.type));
+  const chance=phase.find(e=>e.type==='occasione'&&e.outcome==='palo')||phase.find(e=>e.type==='occasione'&&e.outcome==='parata');
+  if(chance)important.push(chance);
+  important.sort((a,b)=>a.minute-b.minute);
+  const lines=[];
+  if(second&&reliable&&goals.length){
+   const halfHome=goals.filter(g=>g.minute<=45&&g.side===m.a).length,halfAway=goals.filter(g=>g.minute<=45&&g.side===m.b).length;
+   if(halfHome!==halfAway)lines.push('All’intervallo '+pressClub(halfHome>halfAway?m.a:m.b)+' è avanti '+Math.max(halfHome,halfAway)+'-'+Math.min(halfHome,halfAway)+'. Il margine lascia ancora aperta la partita'+(Math.abs(halfHome-halfAway)===1?', perché basta una rete per tornare in equilibrio.':'.'));
+  }
+  for(const [index,e] of important.entries()){
+   const player=who(e),time=at(e.minute);
+   if(e.type==='gol'&&reliable){
+    const [hs,as]=scored.get(e),count=hs+as;
+    const action=e.action&&!e.reginaRiscatto?' '+e.action:e.kind==='rigore'?' dal dischetto':e.kind==='punizione'?' su punizione':'';
+    if(count===1)lines.push(pick([
+     'La prima svolta arriva '+time+'. '+player+' trova il gol'+action+' e porta avanti '+pressClub(e.side)+'.',
+     'A rompere l’equilibrio è '+player+' '+time+action+'. È il primo vantaggio della partita.',
+     pressClub(e.side,true)+' sblocca il risultato '+time+', quando '+player+' va a segno'+action+'.'
+    ]));
+    else if(hs===as)lines.push(pick([
+     'Il vantaggio dura fino '+time+', quando '+player+' rimette tutto in discussione'+action+'. Si torna in parità, sul '+hs+'-'+as+'.',
+     player+' risponde '+time+action+'. Il risultato di '+hs+'-'+as+' riapre una partita che sembrava aver preso un’altra direzione.',
+     'La risposta porta la firma di '+player+'. La rete '+time+action+' vale il '+hs+'-'+as+' e cancella il vantaggio avversario.'
+    ]));
+    else{
+     const prev=scored.get(goals[goals.indexOf(e)-1]),before=prev[0]-prev[1],after=hs-as;
+     const verb=before===0?'porta avanti '+pressClub(e.side):Math.sign(before)===Math.sign(after)?'allunga il vantaggio':'ribalta il risultato';
+     lines.push(player+' '+verb+' '+time+action+'. Il tabellone segna '+hs+'-'+as+'.');
+    }
+   }else if(e.type==='rosso'){
+    const laterGoals=goals.filter(g=>g.minute>e.minute&&g.side!==e.side).length;
+    lines.push('C’è anche il rosso a '+player+' '+time+'. '+pressClub(e.side,true)+' perde un uomo'+(laterGoals?' e, da quel momento, subisce '+(laterGoals===1?'un gol':laterGoals+' reti')+'.':' e deve affrontare i minuti restanti in inferiorità numerica.'));
+   }else if(e.type==='rigore_sbagliato'){
+    lines.push(player+' ha un’occasione dal dischetto '+time+', ma la spreca. '+(diff===0?'Un episodio che pesa ancora di più alla luce del pareggio finale.':'Il rigore fallito lascia il punteggio com’è e toglie alla sua squadra una possibilità concreta di segnare.'));
+   }else if(e.type==='occasione'){
+    const action=e.action?' con '+e.action:'';
+    lines.push(e.outcome==='palo'?player+' si avvicina al gol '+time+action+', ma trova il palo.':
+     'Da ricordare anche il tentativo di '+player+' '+time+action+': '+(e.opponent&&e.opponent!=='il portiere'?surnameForPress(e.opponent):'il portiere')+' interviene e respinge.');
+   }
+  }
+  if(lines.length)paragraphs.push(lines.join(' '));
+ }
+ if(reliable&&goals.length){
+  const last=goals.at(-1),mineLast=last.side===me;
+  if(diff!==0&&last.minute>=75){
+   const scoreBefore=goals.slice(0,-1),beforeHome=scoreBefore.filter(g=>g.side===m.a).length,beforeAway=scoreBefore.filter(g=>g.side===m.b).length;
+   if(beforeHome===beforeAway)paragraphs.push('È la rete che decide l’incontro. Arriva '+at(last.minute)+', dopo che il punteggio era rimasto in equilibrio dal '+(scoreBefore.at(-1)?.minute||0)+'′. '+(mineLast?'Per '+club+' il finale trasforma una partita da pareggio in una vittoria.':'Per '+club+' è il momento più amaro, perché il punto che sembrava possibile sfuma proprio nelle battute conclusive.'));
+  }
+ }
+ // Lettura dei numeri, legata al risultato e senza attribuire tattiche non registrate.
+ const shots=m.stats?.shots,target=m.stats?.onTarget,i=home?0:1,j=1-i;
+ if(Array.isArray(shots)&&shots.length===2&&shots.every(Number.isFinite)){
+  let analysis='';
+  if(shots[i]>=shots[j]+5)analysis=diff>0?
+   pick(['La vittoria ha anche una base nei numeri. ','Il successo trova un riscontro nel volume delle conclusioni. '])+pressClub(me,true)+' tira '+shots[i]+' volte, '+shots[j]+' '+rival+'.':
+   'Il conto dei tiri lascia un motivo di rimpianto a '+club+'. Le conclusioni sono '+shots[i]+' contro '+shots[j]+', ma questa superiorità non basta a portare a casa la vittoria.';
+  else if(shots[j]>=shots[i]+5)analysis=diff>0?
+   'Il risultato premia '+club+', anche se il conto delle conclusioni racconta una gara meno comoda del verdetto finale. '+pressClub(opp,true)+' tira '+shots[j]+' volte contro '+shots[i]+', senza riuscire a far valere quel volume di occasioni.':
+   'Anche il conto delle conclusioni dà la misura delle difficoltà '+pressClubPrep('di',me)+'. '+pressClub(opp,true)+' ne produce '+shots[j]+', contro '+shots[i]+' della squadra '+(home?'di casa':'ospite')+'.';
+  else analysis='Sul piano delle conclusioni il confronto resta vicino. '+pressClub(me,true)+' chiude con '+shots[i]+' tiri, '+rival+' con '+shots[j]+'. '+(Math.abs(diff)>=2?'Il divario nel punteggio è più ampio di quello nel numero dei tentativi.':'Gli episodi raccontati dalla cronaca acquistano così un peso particolare nel giudizio sulla partita.');
+  if(Array.isArray(target)&&target.every(Number.isFinite))analysis+=' Nello specchio finiscono rispettivamente '+target[i]+' e '+target[j]+' palloni.';
+  paragraphs.push(analysis);
+ }
+ const playerVotes=Object.entries(m.grades||{}).map(([id,v])=>({player:m.playerNames?.[id],vote:Number(v),id})).filter(x=>x.player?.name&&Number.isFinite(x.vote)&&(m.lineups?.[me]||[]).includes(x.id)).sort((a,b)=>b.vote-a.vote);
+ const best=playerVotes[0],worst=playerVotes.at(-1);
+ if(best&&best.vote>=7){
+  const player=surnameForPress(best.player.name),g=goals.filter(e=>who(e)===player&&e.side===me).length;
+  paragraphs.push(player+' è tra i migliori '+pressClubPrep('di',me)+', con '+best.vote.toLocaleString('it-IT')+' in pagella. '+(g?'Le sue '+(g===1?'giocate portano anche un gol':'reti sono '+g)+', un contributo concreto al risultato.':
+   diff<0?'Il suo voto offre un elemento positivo anche dentro una giornata che si chiude con una sconfitta.':'Il suo contributo emerge dalla valutazione complessiva della prestazione.')+
+   (worst&&worst.id!==best.id&&worst.vote<=5?' Più difficile la partita di '+surnameForPress(worst.player.name)+', che si ferma a '+worst.vote.toLocaleString('it-IT')+'.':''));
+ }
+ const context=initial.find(p=>p.includes('quota ')||p.startsWith('Con questa sono')||p.startsWith('Si chiude così'));
+ if(context)paragraphs.push(context);
+ const prior=(st.results||[]).filter(r=>r.match&&[r.match.a,r.match.b].includes(me)&&
+  (competition==='league'?!r.stage&&!r.isEurope&&!r.isCoppa:competition==='coppa'?r.isCoppa:r.cup===competition))[0];
+ if(prior){
+  const old=prior.match,own=old.a===me,opponent=own?old.b:old.a,prevFor=own?old.ga:old.gb,prevAgainst=own?old.gb:old.ga;
+  paragraphs.push('Nella precedente uscita '+club+' aveva '+(prevFor>prevAgainst?'vinto ':prevFor<prevAgainst?'perso ':'pareggiato ')+Math.max(prevFor,prevAgainst)+'-'+Math.min(prevFor,prevAgainst)+' contro '+pressClub(opponent)+'. '+(diff>0&&prevFor<prevAgainst?'Questa volta la risposta arriva nel risultato, il primo passo per lasciarsi alle spalle quella battuta d’arresto.':diff<0&&prevFor>prevAgainst?'Il successo di allora non trova continuità, e il giudizio sul momento della squadra torna a farsi più prudente.':diff>0?'Il nuovo successo rafforza la fiducia con cui affrontare il prossimo impegno.':'Anche questa partita entra ora nel bilancio del periodo, con indicazioni da portare nel prossimo incontro.'));
+ }
+ const quote=initial.find(p=>p.startsWith('Nel dopopartita '));
+ if(quote)paragraphs.push(quote);
+ else if(st.coachName){
+  const text=diff>0?pick([
+   'Mi interessa che i ragazzi capiscano quali cose hanno funzionato. Vincere aiuta, ma non rende automaticamente giusta ogni scelta.',
+   'Questa vittoria ce la prendiamo volentieri. Adesso bisogna riguardare anche i momenti in cui abbiamo fatto fatica, perché saranno quelli su cui lavorare.',
+   'Il risultato conta e ce lo teniamo stretto. La prossima partita, però, ricomincia da zero.'
+  ]):diff<0?pick([
+   'La prima cosa è assumersi le responsabilità. Non mi serve cercare un colpevole, mi serve capire insieme ai ragazzi come ripartire.',
+   'Quando perdi, il rischio è pensare che sia tutto da buttare. Dobbiamo essere più precisi di così, anche nell’analisi.',
+   'Oggi il risultato ci dà torto. Ai ragazzi chiederò risposte concrete, a partire dalla prossima partita.'
+  ]):pick([
+   'Ci sono cose da salvare e cose da rivedere. Il punto ce lo portiamo via, ma il nostro lavoro non si esaurisce nel leggere il risultato.',
+   'Avremmo voluto vincere. Ora dobbiamo capire dove potevamo fare qualcosa in più, senza raccontarci una partita diversa da quella che abbiamo giocato.',
+   'È una partita su cui tornare con calma. A caldo si vedono soprattutto le occasioni che avrebbero potuto cambiarla.'
+  ]);
+  paragraphs.push(surnameForPress(st.coachName)+' la mette così nel dopopartita: «'+text+'»');
+ }
+ original.body=paragraphs.filter(Boolean).join('\n\n');
+ return original;
+};
 const legacyArticle116=article;
 article=function(m,metrics,competition='league'){
  if(!m||!st||![m.a,m.b].includes(st.club))return legacyArticle116(m,metrics);
@@ -2550,5 +2681,144 @@ pressDesign.textContent=`
 @media(max-width:540px){.press116 .masthead{letter-spacing:-.065em}.press116 .report-cols{gap:10px}.press116 > h2{margin-top:16px}.press116 .table{min-width:0}}
 `;
 document.head.appendChild(pressDesign);
+// Dati personali inclusi nella carriera e nel suo backup.
+const habitCategories={fitness:'Forma fisica',technical:'Tecnica',discipline:'Correttezza',mental:'Motivazione',luck:'Fortuna',tactics:'Tattica'};
+function dailyExtras(){return st.reginaDailyExtras||{habits:[],entries:{},reminders:[],shopping:[]};}
+function extrasChange(edit){
+ if(!st)return false;
+ const previous=st.reginaDailyExtras;
+ st.reginaDailyExtras=structuredClone(dailyExtras());
+ edit(st.reginaDailyExtras);
+ const result=persist();
+ if(result===false){st.reginaDailyExtras=previous;alert('Salvataggio non confermato. Controlla Impostazioni.');return false;}
+ render();return true;
+}
+function habitPenalty(day){
+ const sums={};
+ for(const entry of dailyExtras().entries[day]||[]){
+  for(const cat of entry.categories||[])if(habitCategories[cat])sums[cat]=(sums[cat]||0)+Math.max(0,Number(entry.penalty)||0);
+ }
+ return sums;
+}
+const metricsBeforeHabits=taskMetrics;
+taskMetrics=function(){
+ const metrics=metricsBeforeHabits(),penalties=habitPenalty(st?.nextDay||TODAY());
+ for(const [cat,value] of Object.entries(penalties))metrics[cat]=Math.max(0,metrics[cat]-value);
+ return metrics;
+};
+function extraModal(title,content,submit){
+ document.getElementById('extras-dialog')?.remove();
+ const layer=document.createElement('div');layer.id='extras-dialog';layer.className='r114-modal';
+ layer.innerHTML='<form class="r114-dialog extras-form"><div class="row spread"><h3>'+E(title)+'</h3><button type="button" class="btn alt" data-close>Chiudi</button></div>'+content+'<p><button class="btn">Salva</button></p></form>';
+ layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('[data-close]'))layer.remove();});
+ layer.querySelector('form').onsubmit=e=>{e.preventDefault();if(submit(new FormData(e.target))!==false)layer.remove();};
+ document.body.append(layer);layer.querySelector('input')?.focus();
+}
+function reminderDay(r,day){return r.daily?(day<r.day?r.day:day):r.day;}
+function reminderDone(r,day){return !!r.done?.[reminderDay(r,day)];}
+window.reginaExtras={
+ habit(id){
+  const old=dailyExtras().habits.find(x=>x.id===id);
+  extraModal(old?'Modifica cattiva abitudine':'Cattiva abitudine',
+   '<label>Nome<input name="title" required maxlength="140" value="'+E(old?.title||'')+'"></label><fieldset><legend>Fronti interessati</legend>'+
+   Object.entries(habitCategories).map(([key,label])=>'<label class="extras-check"><input type="checkbox" name="categories" value="'+key+'" '+(old?.categories.includes(key)?'checked':'')+'>'+label+'</label>').join('')+
+   '</fieldset><label>Penalità per episodio su ciascun fronte<select name="penalty">'+[.25,.5,1,2].map(n=>'<option '+((old?.penalty||.5)===n?'selected':'')+'>'+n+'</option>').join('')+'</select></label><p class="muted">Punti sottratti al parametro della squadra (0–10). Il voto personale è escluso.</p>',
+   data=>{const categories=data.getAll('categories');if(!categories.length){alert('Seleziona almeno un fronte.');return false;}
+    const title=String(data.get('title')).trim();if(!title)return false;
+    return extrasChange(s=>{const row={id:old?.id||uid(),title,categories,penalty:Number(data.get('penalty'))};const i=s.habits.findIndex(x=>x.id===row.id);if(i<0)s.habits.push(row);else s.habits[i]=row;});
+   });
+ },
+ record(id){
+  const h=dailyExtras().habits.find(x=>x.id===id);if(!h)return;
+  const day=st.nextDay||TODAY();
+  extrasChange(s=>{(s.entries[day]||= []).push({...structuredClone(h),habitId:id,id:uid()});});
+ },
+ undo(id){const day=st.nextDay||TODAY();extrasChange(s=>{s.entries[day]=(s.entries[day]||[]).filter(x=>x.id!==id);});},
+ removeHabit(id){if(confirm('Eliminare questa cattiva abitudine dall’elenco?'))extrasChange(s=>{s.habits=s.habits.filter(x=>x.id!==id);});},
+ reminder(id){
+  const old=dailyExtras().reminders.find(x=>x.id===id);
+  const shopping=id==='shopping';
+  extraModal(old?'Modifica promemoria':'Nuovo promemoria',
+   '<label>Promemoria<input name="title" required maxlength="160" value="'+E(old?.title||(shopping?'Spesa':''))+'"></label>'+
+   '<label>Data<input name="day" type="date" required value="'+E(old?.day||TODAY())+'"></label>'+
+   '<label>Ora facoltativa<input name="time" type="time" value="'+E(old?.time||'')+'"></label>'+
+   '<label class="extras-check"><input name="daily" type="checkbox" '+(old?.daily?'checked':'')+'>Ogni giorno dalla data scelta</label>'+
+   '<label class="extras-check"><input name="notify" type="checkbox" '+(old?.notify?'checked':'')+'>Avviso all’orario indicato</label>'+
+   '<p class="muted">Gli avvisi automatici funzionano mentre l’app è aperta. Per un avviso ad app chiusa usa “Calendario” dopo il salvataggio.</p>',
+   data=>{const title=String(data.get('title')).trim(),time=data.get('time');if(!title)return false;
+    if(data.has('notify')&&!time){alert('Inserisci un orario per la notifica.');return false;}
+    return extrasChange(s=>{const row={id:old?.id||(shopping?'shopping':uid()),title,day:data.get('day'),time,daily:data.has('daily'),notify:data.has('notify'),done:old?.done||{},sent:{}};const i=s.reminders.findIndex(x=>x.id===row.id);if(i<0)s.reminders.push(row);else s.reminders[i]=row;});
+   });
+ },
+ done(id,day){extrasChange(s=>{const r=s.reminders.find(x=>x.id===id);if(r){r.done||={};r.done[day]=!r.done[day];}});},
+ removeReminder(id){if(confirm('Eliminare il promemoria?'))extrasChange(s=>{s.reminders=s.reminders.filter(x=>x.id!==id);});},
+ addShopping(form){
+  const title=form.elements.item.value.trim();if(!title)return;
+  extrasChange(s=>s.shopping.push({id:uid(),title,done:false}));
+ },
+ shop(id){extrasChange(s=>{const item=s.shopping.find(x=>x.id===id);if(item)item.done=!item.done;});},
+ clearShop(){extrasChange(s=>{s.shopping=s.shopping.filter(x=>!x.done);});},
+ async permission(){
+  if(!('Notification' in window)||!('serviceWorker' in navigator)){alert('Notifiche non disponibili in questo browser. Puoi usare il calendario del telefono.');return;}
+  const result=await Notification.requestPermission();
+  alert(result==='granted'?'Notifiche abilitate mentre REGINA è aperta.':'Permesso non concesso. I promemoria restano visibili in Oggi.');
+ },
+ calendar(id){
+  const r=dailyExtras().reminders.find(x=>x.id===id);if(!r)return;
+  const day=r.daily?((r.day>TODAY())?r.day:TODAY()):r.day;
+  const date=day.replaceAll('-',''),time=(r.time||'09:00').replace(':','')+'00';
+  const escape=s=>String(s).replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/[,;]/g,'\\$&');
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//REGINA//Promemoria//IT','BEGIN:VEVENT','UID:'+r.id+'@regina',
+   'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''),
+   'DTSTART:'+date+'T'+time,'SUMMARY:'+escape(r.title)];
+  if(r.daily)lines.push('RRULE:FREQ=DAILY');
+  if(r.notify&&r.time)lines.push('BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:'+escape(r.title),'END:VALARM');
+  lines.push('END:VEVENT','END:VCALENDAR');
+  const url=URL.createObjectURL(new Blob([lines.join('\r\n')+'\r\n'],{type:'text/calendar;charset=utf-8'})),a=document.createElement('a');
+  a.href=url;a.download='Promemoria_REGINA.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+ }
+};
+function extrasPanel(){
+ const s=dailyExtras(),day=st.nextDay||TODAY(),today=TODAY();
+ const arg=value=>E(JSON.stringify(value));
+ const reminders=s.reminders.filter(r=>r.day<=today&&(!reminderDone(r,today)||r.daily||r.day===today)).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+ const reminderRow=r=>{const d=reminderDay(r,today),done=reminderDone(r,today);
+  return '<div class="extras-line"><label class="extras-check"><input type="checkbox" '+(done?'checked':'')+' onchange="reginaExtras.done('+arg(r.id)+','+arg(d)+')"><span>'+E(r.title)+'<small>'+E(r.time||'Senza orario')+(!r.daily&&r.day<today?' · Da '+E(r.day):'')+(r.daily?' · Ogni giorno':'')+'</small></span></label><div class="row"><button class="btn alt" onclick="reginaExtras.reminder('+arg(r.id)+')">Modifica</button><button class="btn alt" onclick="reginaExtras.calendar('+arg(r.id)+')">Calendario</button><button class="btn alt" onclick="reginaExtras.removeReminder('+arg(r.id)+')">Elimina</button></div></div>';
+ };
+ return '<section class="card extras118"><h3>Promemoria · '+E(today)+'</h3>'+reminders.map(reminderRow).join('')+
+ '<button class="btn" onclick="reginaExtras.reminder()">+ Promemoria</button> <button class="btn alt" onclick="reginaExtras.permission()">Abilita notifiche</button>'+
+ '<details><summary>Prossimi promemoria</summary>'+s.reminders.filter(r=>r.day>today).map(reminderRow).join('')+'</details>'+
+ '<p class="muted">Avvisi con l’app aperta. Con “Calendario” puoi importare il promemoria nel calendario del telefono e verificarne la sveglia.</p>'+
+ '<details open><summary>Spesa · '+s.shopping.filter(x=>!x.done).length+' da comprare</summary><button class="btn alt" onclick="reginaExtras.reminder(&quot;shopping&quot;)">Orario e promemoria spesa</button>'+s.shopping.map(x=>'<label class="extras-check"><input type="checkbox" '+(x.done?'checked':'')+' onchange="reginaExtras.shop('+arg(x.id)+')"><span style="'+(x.done?'text-decoration:line-through':'')+'">'+E(x.title)+'</span></label>').join('')+
+ '<form onsubmit="event.preventDefault();reginaExtras.addShopping(this)"><div class="row"><input name="item" required maxlength="160" placeholder="Aggiungi alla spesa" aria-label="Cosa comprare"><button class="btn">Aggiungi</button></div></form><button class="btn alt" onclick="reginaExtras.clearShop()">Rimuovi acquistati</button></details></section>'+
+ '<section class="card extras118"><h3>Cattive abitudini · '+E(day)+'</h3>'+s.habits.map(h=>'<div class="extras-line"><b>'+E(h.title)+'</b><small>−'+h.penalty+' per episodio · '+h.categories.map(c=>E(habitCategories[c])).join(', ')+'</small><div class="row"><button class="btn" onclick="reginaExtras.record('+arg(h.id)+')">+ Episodio</button><button class="btn alt" onclick="reginaExtras.habit('+arg(h.id)+')">Modifica</button><button class="btn alt" onclick="reginaExtras.removeHabit('+arg(h.id)+')">Elimina</button></div></div>').join('')+
+ '<button class="btn alt" onclick="reginaExtras.habit()">+ Cattiva abitudine</button>'+
+ ((s.entries[day]||[]).length?'<h4>Episodi registrati</h4>':'')+(s.entries[day]||[]).map(e=>'<div class="extras-line row spread"><span>'+E(e.title)+' · −'+e.penalty+'</span><button class="btn alt" onclick="reginaExtras.undo('+arg(e.id)+')">Annulla</button></div>').join('')+'</section>';
+}
+const beforeExtrasToday=todayView;
+todayView=function(){return beforeExtrasToday()+(st?extrasPanel():'');};
+let remindersBusy=false;
+async function checkReminders(){
+ if(!st||remindersBusy||!('Notification' in window)||Notification.permission!=='granted'||!navigator.serviceWorker)return;
+ remindersBusy=true;
+ try{
+  const registration=await navigator.serviceWorker.getRegistration();
+  if(!registration?.active)return;
+  const now=new Date(),day=TODAY(),clock=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  for(const r of dailyExtras().reminders){
+   const d=reminderDay(r,day),key=d+'T'+r.time;
+   if(!r.notify||!r.time||r.day>day||reminderDone(r,day)||r.sent?.[key]||d>day||(d===day&&r.time>clock))continue;
+   // Un tag stable fusionne les doublons éventuels entre deux onglets.
+   await registration.showNotification(r.title,{body:d<day?'Promemoria da recuperare ('+d+')':'Promemoria delle '+r.time,tag:'regina-'+r.id+'-'+key,renotify:false});
+   extrasChange(s=>{const live=s.reminders.find(x=>x.id===r.id);if(live){live.sent||={};live.sent[key]=true;}});
+  }
+ }catch(error){console.warn('Avviso promemoria non inviato',error);}
+ finally{remindersBusy=false;}
+}
+setInterval(checkReminders,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders();});
+const extrasCSS=document.createElement('style');extrasCSS.textContent=`
+.extras118{overflow-wrap:anywhere}.extras118 small{display:block;color:#52685e;margin:5px 0}.extras-line{padding:12px 0;border-bottom:1px solid #dce5df;margin-bottom:10px}.extras-check{display:flex;align-items:center;gap:10px;min-height:42px}.extras-check input{width:20px;height:20px;flex-shrink:0}.extras118 summary{padding:14px 0;font-weight:700;cursor:pointer}.extras118 input:not([type=checkbox]),.extras-form input:not([type=checkbox]),.extras-form select{padding:10px;border:1px solid #bccdc4;border-radius:8px;max-width:100%;font-size:16px}.extras118 form input{flex:1;min-width:100px}.extras-form>label{display:grid;gap:5px;margin:12px 0}.extras-form fieldset{border:1px solid #ccd9d0}.extras118 button{min-height:42px}
+`;document.head.append(extrasCSS);
 if(st)render();
 })();
