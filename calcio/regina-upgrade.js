@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.8 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.9 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -2264,7 +2264,7 @@ r11ReviewPanel=function(){
 };
 
 const r114OldHeader=header;
-header=function(){return r114OldHeader().replace('v1.1.3','v1.1.8')};
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.9')};
 const r114CSS=document.createElement('style');r114CSS.textContent=`
 .r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
 .r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -2753,7 +2753,7 @@ window.reginaExtras={
  done(id,day){extrasChange(s=>{const r=s.reminders.find(x=>x.id===id);if(r){r.done||={};r.done[day]=!r.done[day];}});},
  removeReminder(id){if(confirm('Eliminare il promemoria?'))extrasChange(s=>{s.reminders=s.reminders.filter(x=>x.id!==id);});},
  addShopping(form){
-  const title=form.elements.item.value.trim();if(!title)return;
+  const title=String(form.elements.namedItem('item')?.value||'').trim();if(!title)return;
   extrasChange(s=>s.shopping.push({id:uid(),title,done:false}));
  },
  shop(id){extrasChange(s=>{const item=s.shopping.find(x=>x.id===id);if(item)item.done=!item.done;});},

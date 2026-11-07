@@ -1,6 +1,6 @@
-REGINA CALCIO 1.1.8
+REGINA CALCIO 1.1.9
 
-Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Riapri online dopo la pubblicazione e verifica v1.1.8.
+Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Riapri online dopo la pubblicazione e verifica v1.1.9.
 
 In Oggi trovi Promemoria, Spesa e Cattive abitudini.
 Ogni cattiva abitudine ha un nome, uno o più fronti e una penalità per episodio regolabile (0,25 / 0,5 / 1 / 2 punti). Il valore iniziale proposto è 0,5 punti.
