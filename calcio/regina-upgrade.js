@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.9 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.11 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -119,7 +119,7 @@ function goalListForDay(day){
 readTaskOccurrences=function(day){
  return goalListForDay(day).map(t=>{
   let g=tasks(),front=(g?.fronts||[]).find(x=>x.id===t.frontId)||{};
-  return Object.assign({},t,{frontTitle:front.title||'',category:typeof taskCategory==='function'?taskCategory(front.cat,t.title,front.id):t.cat,done:t.status==='done',fraction:t.status==='done'?1:Math.max(0,Math.min(1,Number(t.progressFraction)||0)),fromOriginal:true});
+  return Object.assign({},t,{footballCategories:Array.isArray(front.footballCategories)?front.footballCategories.slice():undefined,frontTitle:front.title||'',category:front.footballCategories?.find(k=>CATKEYS.includes(k))|| (typeof taskCategory==='function'?taskCategory(front.cat,t.title,front.id):t.cat),done:t.status==='done',fraction:t.status==='done'?1:Math.max(0,Math.min(1,Number(t.progressFraction)||0)),fromOriginal:true});
  });
 };
 function periodDays(date,mode){
@@ -289,7 +289,7 @@ taskMetrics=function(){
   }
  }
  for(const cat of CATKEYS){
-  if(!today.some(t=>t.category===cat))m[cat]=10;
+  if(!today.some(t=>taskHasCategory(t,cat)))m[cat]=10;
   else m[cat]=sectorBounds(Number(m[cat])||0);
  }
  return m;
@@ -366,6 +366,15 @@ objectivesView=function(){
   det.open=expandedUndatedFronts.has(front);
   det.setAttribute('ontoggle','reginaGoalPanels.toggle(this.dataset.goalFront,this.open)');
   const title=document.createElement('summary');title.textContent=(fronts.get(front)||'Senza fronte')+' · '+rows.length+' '+(rows.length===1?'tappa':'tappe');
+  if(fronts.has(front)){
+   const actions=document.createElement('span');actions.className='regina-front-actions';
+   for(const [label,handler] of [['+ Tappa','goalOpenTask(null,'+JSON.stringify(front)+')'],['Modifica fronte','goalOpenFront('+JSON.stringify(front)+')']]){
+    const button=document.createElement('button');button.type='button';button.className='btn alt tiny';button.textContent=label;
+    button.setAttribute('onclick','event.preventDefault();event.stopPropagation();'+handler);
+    actions.appendChild(button);
+   }
+   title.appendChild(actions);
+  }
   det.appendChild(title);for(const row of rows)det.appendChild(row);
   undated.appendChild(det);
  }
@@ -623,7 +632,7 @@ todayTasks=function(){const d=st?.nextDay||TODAY();return rOriginalTodayTasks().
 const rBaseMetrics=taskMetrics;
 taskMetrics=function(){
  const m=rBaseMetrics(),list=todayTasks();
- for(const cat of CATKEYS){const x=list.filter(t=>t.category===cat);if(!x.length){m[cat]=10;continue;}
+ for(const cat of CATKEYS){const x=list.filter(t=>taskHasCategory(t,cat));if(!x.length){m[cat]=10;continue;}
   const simple=x.reduce((n,t)=>n+rLim(t.fraction,0,1),0)/x.length;
   const ww=x.reduce((n,t)=>n+rTaskMeta(t).difficulty,0);
   const weighted=x.reduce((n,t)=>n+rLim(t.fraction,0,1)*rTaskMeta(t).difficulty,0)/Math.max(1,ww);
@@ -648,7 +657,7 @@ function rSpecialTriggers(){
   if(kind==='critical')crits.push({task:t,category:t.category});
   if(kind==='risk'||kind==='reward'){
    const delta=(kind==='reward'?1:-1)*.30*(.65+meta.difficulty*.14),metric=CATKEYS.includes(t.category)?t.category:'mental';
-   adjustments[metric]=Math.max(-1.6,Math.min(1.6,(adjustments[metric]||0)+delta));
+   for(const target of taskCategories(t).filter(k=>CATKEYS.includes(k)))adjustments[target]=Math.max(-1.6,Math.min(1.6,(adjustments[target]||0)+delta));
    if(kind==='risk')risk++;else rewards++;
   }
  }
@@ -2193,7 +2202,7 @@ const r114PreviousMetrics=taskMetrics;
 taskMetrics=function(){
  const m=r114PreviousMetrics(),data=r114Hours(st?.nextDay||TODAY());
  if(!data.total)return m;
- const techTasks=todayTasks().filter(t=>t.category==='technical');
+ const techTasks=todayTasks().filter(t=>taskHasCategory(t,'technical'));
  if(techTasks.length){
   const planned=techTasks.reduce((n,t)=>n+rTaskMeta(t).difficulty,0);
   const finished=techTasks.reduce((n,t)=>n+rTaskMeta(t).difficulty*rLim(t.fraction,0,1),0);
@@ -2264,7 +2273,7 @@ r11ReviewPanel=function(){
 };
 
 const r114OldHeader=header;
-header=function(){return r114OldHeader().replace('v1.1.3','v1.1.9')};
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.11')};
 const r114CSS=document.createElement('style');r114CSS.textContent=`
 .r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
 .r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -2757,6 +2766,10 @@ window.reginaExtras={
   extrasChange(s=>s.shopping.push({id:uid(),title,done:false}));
  },
  shop(id){extrasChange(s=>{const item=s.shopping.find(x=>x.id===id);if(item)item.done=!item.done;});},
+ priority(id,value){
+  if(!['','urgent','ideal','low'].includes(value))return;
+  extrasChange(s=>{const item=s.shopping.find(x=>x.id===id);if(item)item.priority=value;});
+ },
  clearShop(){extrasChange(s=>{s.shopping=s.shopping.filter(x=>!x.done);});},
  async permission(){
   if(!('Notification' in window)||!('serviceWorker' in navigator)){alert('Notifiche non disponibili in questo browser. Puoi usare il calendario del telefono.');return;}
@@ -2789,7 +2802,7 @@ function extrasPanel(){
  '<button class="btn" onclick="reginaExtras.reminder()">+ Promemoria</button> <button class="btn alt" onclick="reginaExtras.permission()">Abilita notifiche</button>'+
  '<details><summary>Prossimi promemoria</summary>'+s.reminders.filter(r=>r.day>today).map(reminderRow).join('')+'</details>'+
  '<p class="muted">Avvisi con l’app aperta. Con “Calendario” puoi importare il promemoria nel calendario del telefono e verificarne la sveglia.</p>'+
- '<details open><summary>Spesa · '+s.shopping.filter(x=>!x.done).length+' da comprare</summary><button class="btn alt" onclick="reginaExtras.reminder(&quot;shopping&quot;)">Orario e promemoria spesa</button>'+s.shopping.map(x=>'<label class="extras-check"><input type="checkbox" '+(x.done?'checked':'')+' onchange="reginaExtras.shop('+arg(x.id)+')"><span style="'+(x.done?'text-decoration:line-through':'')+'">'+E(x.title)+'</span></label>').join('')+
+ '<details open><summary>Spesa · '+s.shopping.filter(x=>!x.done).length+' da comprare</summary><button class="btn alt" onclick="reginaExtras.reminder(&quot;shopping&quot;)">Orario e promemoria spesa</button>'+s.shopping.map(x=>'<div class="shopping-priority-row"><label class="extras-check"><input type="checkbox" '+(x.done?'checked':'')+' onchange="reginaExtras.shop('+arg(x.id)+')"><span style="'+(x.done?'text-decoration:line-through':'')+'">'+E(x.title)+'</span></label><select class="shopping-priority" aria-label="Priorità di '+E(x.title)+'" onchange="reginaExtras.priority('+arg(x.id)+',this.value)">'+[['','Da valutare'],['urgent','Indispensabile subito'],['ideal','Ideale'],['low','Meno importante']].map(([value,label])=>'<option value="'+value+'" '+((x.priority||'')===value?'selected':'')+'>'+label+'</option>').join('')+'</select></div>').join('')+
  '<form onsubmit="event.preventDefault();reginaExtras.addShopping(this)"><div class="row"><input name="item" required maxlength="160" placeholder="Aggiungi alla spesa" aria-label="Cosa comprare"><button class="btn">Aggiungi</button></div></form><button class="btn alt" onclick="reginaExtras.clearShop()">Rimuovi acquistati</button></details></section>'+
  '<section class="card extras118"><h3>Cattive abitudini · '+E(day)+'</h3>'+s.habits.map(h=>'<div class="extras-line"><b>'+E(h.title)+'</b><small>−'+h.penalty+' per episodio · '+h.categories.map(c=>E(habitCategories[c])).join(', ')+'</small><div class="row"><button class="btn" onclick="reginaExtras.record('+arg(h.id)+')">+ Episodio</button><button class="btn alt" onclick="reginaExtras.habit('+arg(h.id)+')">Modifica</button><button class="btn alt" onclick="reginaExtras.removeHabit('+arg(h.id)+')">Elimina</button></div></div>').join('')+
  '<button class="btn alt" onclick="reginaExtras.habit()">+ Cattiva abitudine</button>'+
@@ -2818,7 +2831,15 @@ async function checkReminders(){
 setInterval(checkReminders,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders();});
 const extrasCSS=document.createElement('style');extrasCSS.textContent=`
+.shopping-priority-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,168px);gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #e1e8e3}.shopping-priority-row label{min-width:0}.shopping-priority{width:100%;min-width:0;min-height:44px;font-size:14px;border:1px solid #baccc0;border-radius:8px;background:#fff;color:#244b39;padding:6px 4px}
 .extras118{overflow-wrap:anywhere}.extras118 small{display:block;color:#52685e;margin:5px 0}.extras-line{padding:12px 0;border-bottom:1px solid #dce5df;margin-bottom:10px}.extras-check{display:flex;align-items:center;gap:10px;min-height:42px}.extras-check input{width:20px;height:20px;flex-shrink:0}.extras118 summary{padding:14px 0;font-weight:700;cursor:pointer}.extras118 input:not([type=checkbox]),.extras-form input:not([type=checkbox]),.extras-form select{padding:10px;border:1px solid #bccdc4;border-radius:8px;max-width:100%;font-size:16px}.extras118 form input{flex:1;min-width:100px}.extras-form>label{display:grid;gap:5px;margin:12px 0}.extras-form fieldset{border:1px solid #ccd9d0}.extras118 button{min-height:42px}
 `;document.head.append(extrasCSS);
 if(st)render();
 })();
+
+// Front controls remain accessible while the accordion is collapsed.
+(function(){const style=document.createElement('style');style.textContent=`
+.fin-no-date-details>summary{white-space:normal}
+.regina-front-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}
+.regina-front-actions button{min-height:36px;padding:7px 10px}
+`;document.head.appendChild(style)})();

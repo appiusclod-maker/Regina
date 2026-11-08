@@ -1,17 +1,19 @@
-REGINA CALCIO 1.1.9
+REGINA CALCIO 1.1.11 — Fronti e parametri
 
-Esporta il backup da Impostazioni. Carica insieme index.html, regina-upgrade.js e service-worker.js nella cartella calcio del repository Regina. Riapri online dopo la pubblicazione e verifica v1.1.9.
+Nella cartella calcio di GitHub sostituisci:
+- index.html
+- regina-upgrade.js
+- service-worker.js
+Mantieni gli altri file già presenti (icone e manifest).
 
-In Oggi trovi Promemoria, Spesa e Cattive abitudini.
-Ogni cattiva abitudine ha un nome, uno o più fronti e una penalità per episodio regolabile (0,25 / 0,5 / 1 / 2 punti). Il valore iniziale proposto è 0,5 punti.
-Registra con + Episodio e correggi con Annulla. Le penalità incidono sui parametri della squadra della giornata indicata, fino al minimo di zero. Il voto personale è escluso.
+Novità:
+- Nei gruppi a tendina delle tappe senza data, + Tappa e Modifica fronte sono accessibili anche a gruppo chiuso.
+- In Modifica fronte puoi selezionare uno o più parametri calcistici.
+- Le tappe incidono su tutti i parametri selezionati, senza duplicare il conteggio delle attività.
+- Nessuna casella selezionata: resta l'associazione automatica precedente.
+- Bonus ore lavoro/studio, penalità, promemoria e priorità della spesa restano disponibili.
 
-Promemoria e spesa sono senza punteggio. I promemoria possono essere giornalieri, con orario facoltativo.
-Per Spesa usa Orario e promemoria spesa.
-Abilita notifiche richiede il permesso del browser. Gli avvisi funzionano mentre l'app è aperta e il browser la mantiene attiva. Alla riapertura vengono recuperati i promemoria scaduti. Per quelli giornalieri viene recuperata la sola occorrenza corrente.
-Per un avviso con REGINA chiusa, premi Calendario e importa il file .ics nel calendario del telefono. Verifica orario e avviso dopo l'importazione. Modificare il promemoria in REGINA richiede di aggiornare anche l'evento importato.
-L'app statica non dispone di un server push per inviare notifiche a browser chiuso.
-
-La nuova scrittura della Gazzetta si applica alle partite successive all'aggiornamento. Articoli e dichiarazioni appartengono alla simulazione. La lunghezza dipende dai dati e dagli episodi disponibili.
-
-Verificate sintassi, selettività delle penalità, isolamento giornaliero e scenari di cronaca. Da verificare sul dispositivo: grafica, tocchi, notifiche e importazione nel calendario.
+Riapri online e ricarica la pagina dopo l'aggiornamento. La versione visibile deve essere 1.1.11.
+Non cancellare i dati del sito. Prima dell'aggiornamento è consigliato esportare il backup.
+Controllati sintassi JavaScript, salvataggio/rilettura delle scelte e calcolo su più parametri.
+La resa sul telefono non è stata verificata direttamente.
