@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.11 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.13 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -303,6 +303,39 @@ function normalizeVote(v){
 }
 function normalizeMatchVotes(m){
  if(!m)return m;
+ // Le pagelle valutano la gara conclusa, non il valore di mercato o il
+ // punteggio degli obiettivi. Ricalcolo puro: nessun bonus si accumula.
+ if(m.lineups&&m.playerNames&&Number.isFinite(m.ga)&&Number.isFinite(m.gb)){
+  const clip=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const events=m.events||[];m.grades={...(m.grades||{})};
+  for(const [index,side] of [[0,m.a],[1,m.b]]){
+   const goals=index===0?m.ga:m.gb,against=index===0?m.gb:m.ga,margin=goals-against;
+   const ids=[...new Set([...(m.lineups[side]||[]),...(m.subs||[]).filter(s=>s.side===side).map(s=>s.id||s.inId).filter(Boolean)])];
+   const forms=ids.map(id=>m.forms?.[id]?.effective).filter(Number.isFinite);
+   const average=forms.length?forms.reduce((n,v)=>n+v,0)/forms.length:6;
+   const target=m.stats?.onTarget;
+   const control=Array.isArray(target)?clip((target[index]-target[1-index])*.025,-.15,.15):0;
+   const base=6+(margin>0?.2:margin<0?-.1:0)+clip(margin*.08,-.24,.24)+control;
+   for(const id of ids){
+    const p=m.playerNames[id];if(!p?.name)continue;
+    const own=events.filter(e=>e.side===side&&e.name===p.name);
+    const strikes=own.filter(e=>e.type==='gol');
+    const scoring=Math.min(2.4,strikes.reduce((n,e)=>n+(e.kind==='rigore'?.6:.85),0));
+    const effective=m.forms?.[id]?.effective;
+    const individual=Number.isFinite(effective)?clip((effective-average)*.2,-.3,.3):0;
+    let vote=base+individual+scoring;
+    if(p.pos==='P'){
+     const saves=Array.isArray(target)?Math.max(0,target[1-index]-against):0;
+     vote+=Math.min(.6,saves*.08)+(against===0?.25:0)-Math.min(.8,Math.max(0,against-1)*.2);
+    }else if(p.pos==='D')vote+=(against===0?.2:0)-Math.min(.6,Math.max(0,against-1)*.15);
+    if(own.some(e=>e.type==='rosso'))vote-=1.5;
+    else if(own.some(e=>e.type==='giallo'))vote-=.15;
+    vote-=Math.min(1.4,own.filter(e=>e.type==='rigore_sbagliato').length*.7);
+    m.grades[id]=normalizeVote(vote);
+   }
+   if(side===st?.club&&m.coach!=null)m.coach=normalizeVote(base);
+  }
+ }
  if(m.grades)for(const key of Object.keys(m.grades))m.grades[key]=normalizeVote(m.grades[key]);
  if(m.coach!=null)m.coach=normalizeVote(m.coach);
  return m;
@@ -1476,6 +1509,13 @@ function r111Readiness(m){
  return Object.entries(w).reduce((v,[key,weight])=>v+rLim(m?.[key]??5.5)*weight,0);
 }
 function r111DesiredResult(m,own,opp){
+ // Il limite usa lo stesso voto del bilancio, prima di qualsiasi bonus
+ // calcistico o garanzia di vittoria dovuta alla preparazione della squadra.
+ if(!st)return null;
+ const review=r11Review(st.nextDay||TODAY());
+ if(Number.isFinite(review?.grade)&&review.grade<6){
+  return {maximumResult:'D',grade:review.grade};
+ }
  if(!st||!(todayTasks()||[]).length)return null;
  const metrics=m.metrics?.[own];if(!metrics)return null;
  const score=r111Readiness(metrics),baseQuality=r111Quality(m,own),rivalQuality=r111Quality(m,opp);
@@ -1504,6 +1544,18 @@ calcMatch=function(a,b,ma=null,mb=null){
  const own=st.club,opp=own===a?b:a,policy=r111DesiredResult(m,own,opp);
  if(!policy)return m;
  const scored=()=>own===m.a?m.ga:m.gb,conceded=()=>own===m.a?m.gb:m.ga;
+ if(policy.maximumResult==='D'){
+  const needed=Math.max(0,scored()-conceded());
+  for(let i=0;i<needed;i++){
+   rAddGoal(m,opp,r111MinuteForRecovery(m,own,i,needed),false);
+  }
+  // Applicato prima di classifica, articolo e archivio: nessun risultato
+  // salvato viene riscritto. Una sconfitta non viene promossa a pareggio.
+  m.reginaFairPlay={dailyGrade:policy.grade,maximumResult:'D',correctedGoals:needed};
+  m.events.sort((x,y)=>(Number(x.minute)||0)-(Number(y.minute)||0));
+  r11MatchFix(m);normalizeMatchVotes(m);
+  return m;
+ }
  // Il risultato nasce da reti effettivamente segnate: ogni rete supplementare
  // ha marcatore, minuto, azione, tiro, voto, cronaca e classifica coerenti.
  const needed=Math.max(0,conceded()+(policy.required==='W'?1:0)-scored());
@@ -2273,7 +2325,7 @@ r11ReviewPanel=function(){
 };
 
 const r114OldHeader=header;
-header=function(){return r114OldHeader().replace('v1.1.3','v1.1.11')};
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.13')};
 const r114CSS=document.createElement('style');r114CSS.textContent=`
 .r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
 .r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -2834,6 +2886,16 @@ const extrasCSS=document.createElement('style');extrasCSS.textContent=`
 .shopping-priority-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,168px);gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #e1e8e3}.shopping-priority-row label{min-width:0}.shopping-priority{width:100%;min-width:0;min-height:44px;font-size:14px;border:1px solid #baccc0;border-radius:8px;background:#fff;color:#244b39;padding:6px 4px}
 .extras118{overflow-wrap:anywhere}.extras118 small{display:block;color:#52685e;margin:5px 0}.extras-line{padding:12px 0;border-bottom:1px solid #dce5df;margin-bottom:10px}.extras-check{display:flex;align-items:center;gap:10px;min-height:42px}.extras-check input{width:20px;height:20px;flex-shrink:0}.extras118 summary{padding:14px 0;font-weight:700;cursor:pointer}.extras118 input:not([type=checkbox]),.extras-form input:not([type=checkbox]),.extras-form select{padding:10px;border:1px solid #bccdc4;border-radius:8px;max-width:100%;font-size:16px}.extras118 form input{flex:1;min-width:100px}.extras-form>label{display:grid;gap:5px;margin:12px 0}.extras-form fieldset{border:1px solid #ccd9d0}.extras118 button{min-height:42px}
 `;document.head.append(extrasCSS);
+// Anche l'archivio mostra pagelle coerenti con il risultato definitivo.
+// Si usa una copia: risultati, classifica e salvataggio storico non cambiano.
+const r113BalancedGaz=gazView;
+gazView=function(){
+ const rec=st?.results?.[selectedReport]||st?.results?.[0];
+ if(!rec?.match)return r113BalancedGaz();
+ const original=rec.match;
+ rec.match=normalizeMatchVotes({...original,grades:{...(original.grades||{})}});
+ try{return r113BalancedGaz()}finally{rec.match=original;}
+};
 if(st)render();
 })();
 
