@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.13 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.15 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -1509,28 +1509,55 @@ function r111Readiness(m){
  return Object.entries(w).reduce((v,[key,weight])=>v+rLim(m?.[key]??5.5)*weight,0);
 }
 function r111DesiredResult(m,own,opp){
- // Il limite usa lo stesso voto del bilancio, prima di qualsiasi bonus
- // calcistico o garanzia di vittoria dovuta alla preparazione della squadra.
  if(!st)return null;
- const review=r11Review(st.nextDay||TODAY());
- if(Number.isFinite(review?.grade)&&review.grade<6){
-  return {maximumResult:'D',grade:review.grade};
+ const review=r11Review(st.nextDay||TODAY()),grade=Number(review?.grade);
+ if(review?.grade==null||!Number.isFinite(grade))return null;
+ const ownQ=r111Quality(m,own),oppQ=r111Quality(m,opp);
+ const techGap=ownQ!=null&&oppQ!=null?oppQ-ownQ:0;
+ const ourForm=r111Readiness(m.metrics?.[own]);
+ const rivalForm=r111Readiness(m.metrics?.[opp]);
+ const formGap=rivalForm-ourForm;
+ const tiers=r111Tier(opp)-r111Tier(own);
+ // Paragoniamo anche forma e serie, non soltanto il valore tecnico.
+ const strength=techGap+.37*Math.max(-2.4,Math.min(2.4,formGap))+tiers*1.35;
+ const band=strength>=2.05?'molto_piu_forte':strength>=.7?'piu_forte':
+  strength<=-2.05?'molto_piu_debole':strength<=-.7?'piu_debole':'simile';
+ let options;
+ if(grade<5){
+  // 0–5: sconfitta anche contro una squadra enormemente inferiore.
+  options=grade<2?[-4,-3,-2,-1]:[-3,-2,-1];
+ }else if(grade<6){
+  // 5–6: il pareggio e' ammesso SOLO contro avversarie molto piu' deboli.
+  options=band==='molto_piu_debole'?[0]:[-3,-2,-1];
+ }else if(grade<7){
+  // 6–7: con squadre piu' forti o significativamente piu' in forma si perde;
+  // negli altri casi si pareggia. Una vittoria contro un club molto piu'
+  // debole rimane eccezionale (2%), NON una vittoria casuale normale.
+  const superior=band==='molto_piu_forte'||band==='piu_forte'||formGap>=.9;
+  options=superior?[-2,-1]:band==='molto_piu_debole'&&Math.random()<.02?[1]:[0];
+ }else if(grade<8){
+  if(band==='molto_piu_forte')options=[-1];
+  else if(band==='piu_forte')options=grade>=7.6?[0,0,-1]:[-1,0];
+  else if(band==='simile')options=grade>=7.5?[0,1,1]:[0,0,1];
+  else options=[1];
+ }else if(grade<9){
+  if(band==='molto_piu_forte')options=grade>=8.7?[0,1,1]:[0,0,1];
+  else if(band==='piu_forte')options=grade>=8.5?[0,1,1]:[0,0,1];
+  else if(band==='simile')options=grade>=8.6?[1,2,2]:[1,1,2];
+  else if(band==='piu_debole')options=grade>=8.6?[3,4,4]:[3,3,4];
+  else options=grade>=8.6?[4,5,5]:[4,4,5];
+ }else{
+  // 9–10: perfino la squadra nettamente superiore puo' essere battuta.
+  if(band==='molto_piu_forte')options=[1];
+  else if(band==='piu_forte')options=grade>=9.5?[2,3,3]:[2,2,3];
+  else if(band==='simile')options=grade>=9.5?[3,4,4]:[3,3,4];
+  else if(band==='piu_debole')options=grade>=9.5?[5,6,6]:[5,5,6];
+  else options=grade>=9.5?[6,7,7]:[6,6,7];
  }
- if(!st||!(todayTasks()||[]).length)return null;
- const metrics=m.metrics?.[own];if(!metrics)return null;
- const score=r111Readiness(metrics),baseQuality=r111Quality(m,own),rivalQuality=r111Quality(m,opp);
- if(score<8.0)return null;
- const gap=(baseQuality!=null&&rivalQuality!=null)?rivalQuality-baseQuality:0;
- const tierGap=Math.max(0,r111Tier(opp)-r111Tier(own));
- // Contro avversari dello stesso livello, con un distacco tecnico non enorme,
- // un'ottima giornata equivale a VITTORIA CERTA, senza sconfitte casuali.
- // Squadra di categoria superiore o differenza enorme: minimo PAREGGIO;
- // una giornata ancora migliore permette di conquistare anche i tre punti.
- const unbalanced=tierGap>0||gap>1.65;
- const heroicWinThreshold=9.2+.22*tierGap+.16*Math.max(0,gap-1.65);
- const required=(!unbalanced||score>=heroicWinThreshold)?'W':'D';
- return {score:+score.toFixed(2),gap:+gap.toFixed(2),tierGap,required};
+ return {grade,band,techGap:+techGap.toFixed(2),formGap:+formGap.toFixed(2),
+  strength:+strength.toFixed(2),tiers,options};
 }
+
 function r111MinuteForRecovery(m,opp,ordinal,count){
  const opponentGoals=(m.events||[]).filter(x=>x.side===opp&&x.type==='gol');
  const lastOpp=Math.max(0,...opponentGoals.map(x=>Number(x.minute)||0));
@@ -1538,39 +1565,81 @@ function r111MinuteForRecovery(m,opp,ordinal,count){
  const end=Math.max(74,Math.min(90,lastOpp+3));
  return Math.max(2,Math.min(90,Math.round(start+(end-start)*(ordinal+1)/count)));
 }
+// Converte una rete NORMALE in una parata / occasione mancata.
+// Nessuna rete obbligatoria degli obiettivi decisivi o critici viene cancellata.
+function r111SavedGoals(m,side,count){
+ if(count<=0)return 0;
+ const other=side===m.a?m.b:m.a;
+ const keeperId=(m.lineups?.[other]||[]).find(id=>m.playerNames?.[id]?.pos==='P');
+ const keeper=m.playerNames?.[keeperId]?.name||'il portiere avversario';
+ const regular=(m.events||[]).filter(e=>e.side===side&&e.type==='gol'&&!e.reginaGuaranteed)
+  .sort((a,b)=>(Number(b.minute)||0)-(Number(a.minute)||0));
+ let removed=0;
+ for(const e of regular){
+  if(removed>=count)break;
+  if(e.kind==='rigore'){
+   e.type='rigore_sbagliato';e.action='rigore respinto dal portiere';
+  }else{
+   e.type='occasione';e.action='conclusione respinta';e.outcome='parata';e.opponent=keeper;
+  }
+  e.reginaParataDecisiva=true;
+  if(side===m.a)m.ga=Math.max(0,m.ga-1);else m.gb=Math.max(0,m.gb-1);
+  removed++;
+ }
+ return removed;
+}
+function r111AllowedTarget(policy,originalDifference){
+ const list=policy.options;
+ if(list.includes(originalDifference))return originalDifference;
+ const unique=[...new Set(list)];
+ if(unique.length===1)return unique[0];
+ // Selezioniamo un risultato fra quelli consentiti. Nessuna estrazione
+ // potra' mai uscire dagli esiti prescritti per questa fascia di voto.
+ return list[Math.floor(Math.random()*list.length)];
+}
 calcMatch=function(a,b,ma=null,mb=null){
  const m=r111PrevMatch(a,b,ma,mb);
  if(!m?.events||!st||!(a===st.club||b===st.club))return m;
  const own=st.club,opp=own===a?b:a,policy=r111DesiredResult(m,own,opp);
  if(!policy)return m;
  const scored=()=>own===m.a?m.ga:m.gb,conceded=()=>own===m.a?m.gb:m.ga;
- if(policy.maximumResult==='D'){
-  const needed=Math.max(0,scored()-conceded());
-  for(let i=0;i<needed;i++){
-   rAddGoal(m,opp,r111MinuteForRecovery(m,own,i,needed),false);
+ const initialDiff=scored()-conceded();
+ const target=r111AllowedTarget(policy,initialDiff);
+ let changes=0;
+ if(initialDiff<target){
+  // Soprattutto nelle giornate alte evitiamo il pareggio 7–7: trasformiamo
+  // prima i gol NON garantiti degli avversari in parate verosimili.
+  const ceiling=policy.grade>=9?1:policy.grade>=8?2:policy.grade>=7?2:3;
+  const surplus=Math.max(0,conceded()-ceiling);
+  changes+=r111SavedGoals(m,opp,Math.min(surplus,target-(scored()-conceded())));
+  // Se rimane uno squilibrio, preferiamo altre parate prima di inventare
+  // una lunghissima serie di gol della squadra dell'utente.
+  if(scored()-conceded()<target){
+   const gap=target-(scored()-conceded());
+   const canSave=Math.max(0,conceded()-(policy.grade>=8?1:0));
+   changes+=r111SavedGoals(m,opp,Math.min(gap,canSave));
   }
-  // Applicato prima di classifica, articolo e archivio: nessun risultato
-  // salvato viene riscritto. Una sconfitta non viene promossa a pareggio.
-  m.reginaFairPlay={dailyGrade:policy.grade,maximumResult:'D',correctedGoals:needed};
-  m.events.sort((x,y)=>(Number(x.minute)||0)-(Number(y.minute)||0));
-  r11MatchFix(m);normalizeMatchVotes(m);
-  return m;
- }
- // Il risultato nasce da reti effettivamente segnate: ogni rete supplementare
- // ha marcatore, minuto, azione, tiro, voto, cronaca e classifica coerenti.
- const needed=Math.max(0,conceded()+(policy.required==='W'?1:0)-scored());
- if(needed){
-  for(let i=0;i<needed;i++){
-   const minute=r111MinuteForRecovery(m,opp,i,needed);
-   rAddGoal(m,own,minute,false);
-   const goal=m.events.at(-1);if(goal){goal.reginaRiscatto=true;
-    goal.action=i===needed-1&&policy.required==='W'?'con una conclusione che completa il riscatto della squadra':'al termine di un’azione insistita';}
+  const gap=Math.max(0,target-(scored()-conceded()));
+  for(let i=0;i<gap;i++){
+   rAddGoal(m,own,r111MinuteForRecovery(m,opp,i,Math.max(1,gap)),false);
+   const last=m.events.at(-1);
+   if(last){last.reginaRiscatto=true;last.action='al termine di una manovra offensiva insistita';}
   }
-  m.reginaRiscatto=true;
+  changes+=gap;
+ }else if(initialDiff>target){
+  // Le reti davvero garantite restano; se non si possono annullare si
+  // materializza il contraccolpo sul campo tramite gol avversari.
+  changes+=r111SavedGoals(m,own,initialDiff-target);
+  const gap=Math.max(0,(scored()-conceded())-target);
+  for(let i=0;i<gap;i++)rAddGoal(m,opp,r111MinuteForRecovery(m,own,i,Math.max(1,gap)),false);
+  changes+=gap;
  }
- // Restano immutati i gol subiti, i rigori, le espulsioni e ogni evento critico.
- m.reginaFairPlay={readiness:policy.score,technicalGap:policy.gap,higherTier:policy.tierGap,
-  minimumResult:policy.required,correctedGoals:needed};
+ // Fallisce esplicitamente se un caso limite non e' stato normalizzato.
+ const finalDiff=scored()-conceded();
+ if(finalDiff!==target)throw Error('Vincolo di risultato non rispettato: '+finalDiff+' / '+target);
+ m.reginaFairPlay={dailyGrade:policy.grade,opponentBand:policy.band,
+  strengthGap:policy.strength,formGap:policy.formGap,minimumDifference:target,
+  initialDifference:initialDiff,adjustments:changes,ruleVersion:'1.1.15'};
  m.events.sort((x,y)=>(Number(x.minute)||0)-(Number(y.minute)||0));
  r11MatchFix(m);normalizeMatchVotes(m);
  return m;
@@ -2325,7 +2394,7 @@ r11ReviewPanel=function(){
 };
 
 const r114OldHeader=header;
-header=function(){return r114OldHeader().replace('v1.1.3','v1.1.13')};
+header=function(){return r114OldHeader().replace('v1.1.3','v1.1.15')};
 const r114CSS=document.createElement('style');r114CSS.textContent=`
 .r114-hours-card{border:1px solid #c8e0e2;border-radius:13px;padding:13px;margin:18px 0;background:#f3faf9}
 .r114-hours-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
