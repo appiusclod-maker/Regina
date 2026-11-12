@@ -1,4 +1,4 @@
-/* REGINA CALCIO - addon 1.1.15 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
+/* REGINA CALCIO - addon 1.1.16 (include tutte le funzioni 1.0.0, 1.1.0 e 1.1.1): categorie neutre al massimo, pagelle, fronti espandibili e finanze settoriali.
    Funziona con l'app attuale senza sovrascrivere REGINA città. */
 (function(){
 'use strict';
@@ -2965,6 +2965,159 @@ gazView=function(){
  rec.match=normalizeMatchVotes({...original,grades:{...(original.grades||{})}});
  try{return r113BalancedGaz()}finally{rec.match=original;}
 };
+// ============================================================================
+// REGINA CALCIO 1.1.16 — MALUS BENESSERE: 10 bicchieri / 8 ore di sonno.
+// Obiettivi quotidiani di benessere: sotto le soglie si riducono Forma e voto.
+// Ai valori massimi nessun bonus; non crea tappe normali da completare.
+// ============================================================================
+function r116Day(day){return rD(day)||st?.nextDay||TODAY()}
+function r116Wellness(day){
+ const d=r116Day(day),raw=st?.reginaWellness?.[d]||{};
+ const water=Math.min(10,Math.max(0,Math.floor(Number(raw.water)||0)));
+ const sleep=Math.min(8,Math.max(0,Math.round((Number(raw.sleep)||0)*4)/4));
+ return {day:d,water,sleep,waterRatio:water/10,sleepRatio:sleep/8};
+}
+function r116Format(n){return Number(n).toLocaleString('it-IT',{maximumFractionDigits:2})}
+function r116ReadInput(value,name,max,step){
+ const text=String(value??'').trim();if(!text)return 0;
+ const n=Number(text.replace(',','.'));
+ if(!Number.isFinite(n)||n<0||n>max||Math.abs(n/step-Math.round(n/step))>1e-6)
+  throw Error(name+': valore fra 0 e '+max+', a intervalli di '+r116Format(step)+'.');
+ return Math.round(n/step)*step;
+}
+window.reginaWellness={
+ save(day,water,sleep){
+  if(!st)return alert('Prima avvia una carriera calcistica.');
+  const d=rD(day);if(!d)return alert('Data non valida.');
+  let w,h;
+  try{w=r116ReadInput(water,'Bicchieri',10,1);h=r116ReadInput(sleep,'Ore di sonno',8,.25)}
+  catch(e){alert(e.message);return false}
+  const old=st.reginaWellness?structuredClone(st.reginaWellness):null;
+  st.reginaWellness=st.reginaWellness||{};
+  if(w||h)st.reginaWellness[d]={water:w,sleep:h,updatedAt:new Date().toISOString()};
+  else delete st.reginaWellness[d];
+  const ok=persist();
+  if(ok===false){st.reginaWellness=old||{};alert('Salvataggio non riuscito: controlla Impostazioni.');return false}
+  document.getElementById('r116-wellness-dialog')?.remove();render();return true;
+ },
+ today(){
+  const box=document.getElementById('r116-wellness-today');if(!box)return;
+  return this.save(box.dataset.day,box.querySelector('[name="water"]')?.value,box.querySelector('[name="sleep"]')?.value);
+ },
+ bump(delta){
+  const day=st?.nextDay||TODAY(),x=r116Wellness(day);
+  return this.save(day,Math.max(0,Math.min(10,x.water+delta)),x.sleep);
+ },
+ edit(day){
+  if(!st)return;
+  document.getElementById('r116-wellness-dialog')?.remove();
+  const x=r116Wellness(day),modal=document.createElement('div');
+  modal.className='r114-modal';modal.id='r116-wellness-dialog';
+  const archived=(st.results||[]).some(r=>r.day===x.day);
+  modal.innerHTML='<section class="r114-dialog" role="dialog" aria-modal="true" aria-label="Acqua e sonno">'+
+   '<div class="r114-dialog-top"><h3>💧 Benessere · Forma fisica</h3><button class="btn alt" type="button" data-close>✕</button></div>'+
+   '<p class="muted">'+E(x.day)+' · Obiettivi giornalieri di benessere: gli scostamenti riducono Forma fisica e voto.</p>'+
+   '<div class="r114-hour-inputs">'+
+   '<label>💧 Bicchieri d’acqua<input type="number" inputmode="numeric" name="water" min="0" max="10" step="1" value="'+x.water+'"></label>'+
+   '<label>🌙 Ore di sonno<input type="number" inputmode="decimal" name="sleep" min="0" max="8" step="0.25" value="'+x.sleep+'"></label></div>'+
+   '<p class="muted">Obiettivi: 10 bicchieri e 8 ore. Ogni valore mancante comporta un malus proporzionale; arrivare al massimo azzera il malus.</p>'+
+   (archived?'<p class="r114-note">🔒 Partita già disputata: i dati entrano nello storico, senza modificare risultato o voto archiviato.</p>':'')+
+   '<div class="row"><button class="btn" type="button" data-save>Salva</button><button class="btn alt" type="button" data-close>Annulla</button></div></section>';
+  modal.addEventListener('click',ev=>{
+   if(ev.target===modal||ev.target.closest('[data-close]')){modal.remove();return}
+   if(ev.target.closest('[data-save]'))this.save(x.day,modal.querySelector('[name="water"]').value,modal.querySelector('[name="sleep"]').value);
+  });
+  document.body.appendChild(modal);
+ },
+ record(day){return r116Wellness(day)}
+};
+// Il malus si calcola rispetto ai traguardi personali 10 bicchieri e 8 ore.
+// Non vengono aggiunte tappe. Valori non inseriti = zero per la giornata.
+// Pieni entrambi: malus zero, nessun bonus supplementare.
+function r116Penalties(day){
+ const v=r116Wellness(day),lackWater=1-v.waterRatio,lackSleep=1-v.sleepRatio;
+ return {water:2.0*lackWater,sleep:2.5*lackSleep,
+  fitness:2.0*lackWater+2.5*lackSleep,
+  grade:.65*lackWater+.85*lackSleep};
+}
+const r116PreviousMetrics=taskMetrics;
+taskMetrics=function(){
+ const m=r116PreviousMetrics(),v=r116Wellness(st?.nextDay||TODAY());
+ const penalty=r116Penalties(v.day);
+ m.fitness=rLim((Number(m.fitness)||0)-penalty.fitness);
+ m.reginaWaterGlasses=v.water;
+ m.reginaSleepHours=v.sleep;
+ m.reginaWellnessFitnessPenalty=penalty.fitness;
+ return m;
+};
+// Il calo della Forma fisica passa già dal normale calcolo di calcTeam:
+// applicarlo anche qui significherebbe sottrarre due volte lo stesso malus.
+// Il voto è quello del Bilancio della giornata, usato anche per i limiti
+// del risultato: meno acqua/sonno => voto minore, senza premi per il 100%.
+const r116PreviousReviewLive=r11ReviewLive;
+r11ReviewLive=function(day){
+ const x=r116PreviousReviewLive(day),v=r116Wellness(day),penalty=r116Penalties(day);
+ x.reginaWellness={water:v.water,sleep:v.sleep,fitnessMalus:penalty.fitness,
+  gradeMalus:penalty.grade};
+ if(Number.isFinite(x.grade))x.grade=Math.max(0,Math.round((x.grade-penalty.grade)*10)/10);
+ return x;
+};
+function r116WellnessBlock(day){
+ const x=r116Wellness(day),block=document.createElement('details');
+ block.className='r116-wellness-card';block.id='r116-wellness-today';block.dataset.day=day;
+ const waterPct=Math.round(x.waterRatio*100),sleepPct=Math.round(x.sleepRatio*100);
+ block.innerHTML='<summary class="r116-wellness-summary"><span>💧 Acqua e sonno <small>Riduci il malus alla Forma fisica</small></span>'+
+ '<strong>'+x.water+'/10 · '+r116Format(x.sleep)+'/8 h</strong></summary>'+
+ '<div class="r116-wellness-progress"><div><span>💧 Acqua</span><span>'+x.water+'/10</span></div><progress max="10" value="'+x.water+'"></progress>'+ 
+ '<div><span>🌙 Sonno</span><span>'+r116Format(x.sleep)+'/8 h</span></div><progress max="8" value="'+x.sleep+'"></progress></div>'+
+ '<div class="r114-hour-inputs r116-fields">'+
+ '<label>Bicchieri d’acqua<input name="water" type="number" inputmode="numeric" min="0" max="10" step="1" value="'+x.water+'"></label>'+
+ '<label>Ore di sonno<input name="sleep" type="number" inputmode="decimal" min="0" max="8" step="0.25" value="'+x.sleep+'"></label></div>'+
+ '<div class="r116-wellness-actions"><button type="button" class="btn alt" onclick="reginaWellness.bump(1)">💧 +1 bicchiere</button>'+ 
+ '<button type="button" class="btn alt" onclick="reginaWellness.bump(-1)">−1</button>'+ 
+ '<button type="button" class="btn" onclick="reginaWellness.today()">Salva</button></div>'+
+ '<p class="tiny muted">10 bicchieri e 8 ore azzerano il malus. Valori inferiori (o non inseriti) riducono Forma fisica e voto del giorno.</p>';
+ return block;
+}
+const r116PreviousTodayView=todayView;
+todayView=function(){
+ const html=r116PreviousTodayView();if(!st)return html;
+ const doc=document.createElement('template');doc.innerHTML=html;
+ const block=r116WellnessBlock(st.nextDay||TODAY());
+ const hours=doc.content.querySelector('#r114-hours-today');
+ if(hours)hours.after(block);
+ else{
+  const h=[...doc.content.querySelectorAll('h3')].find(x=>x.textContent.includes('Tappe previste per la giornata'));
+  if(h)h.before(block);else doc.content.querySelector('.card')?.append(block);
+ }
+ return doc.innerHTML;
+};
+const r116PreviousReviewPanel=r11ReviewPanel;
+r11ReviewPanel=function(){
+ const html=r116PreviousReviewPanel(),v=r116Wellness(r11ReviewDay),archived=!!st?.reginaDailyReviews?.[r11ReviewDay];
+ const line='<div class="r116-review-wellness"><div>💧 '+v.water+'/10 bicchieri · 🌙 '+r116Format(v.sleep)+'/8 h di sonno'+
+  '<small>'+(v.water===10&&v.sleep===8?'Obiettivi benessere raggiunti: malus 0':'Malus: −'+r116Format(r116Penalties(r11ReviewDay).fitness)+' Forma fisica e fino a −'+r116Format(r116Penalties(r11ReviewDay).grade)+' voto')+
+  (archived?' · partita archiviata':'')+'</small></div>'+
+  '<button type="button" class="btn alt" onclick="reginaWellness.edit(\''+E(r11ReviewDay)+'\')">✎ Modifica</button></div>';
+ const pos=html.lastIndexOf('</section>');return pos>=0?html.slice(0,pos)+line+html.slice(pos):html+line;
+};
+const r116PreviousHeader=header;
+header=function(){return r116PreviousHeader().replace('v1.1.15','v1.1.16')};
+const r116Styles=document.createElement('style');r116Styles.textContent=`
+.r116-wellness-card{border:1px solid #c8e1e6;background:#f5fafc;border-radius:13px;margin:13px 0;padding:13px}
+.r116-wellness-summary{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;color:#165b73;font-weight:750}
+.r116-wellness-summary small{display:block;color:#66828c;font-weight:500;font-size:11px;margin-top:4px}
+.r116-wellness-summary strong{background:#d5f1ef;padding:7px 9px;border-radius:9px;font-size:12px;color:#155c55;white-space:nowrap}
+.r116-wellness-progress{margin:14px 0;display:grid;gap:5px}.r116-wellness-progress div{display:flex;justify-content:space-between;font-size:11px;color:#466a79;margin:5px 0 0}
+.r116-wellness-progress progress{width:100%;height:9px;accent-color:#2090a4}
+.r116-fields{margin-top:11px}.r116-wellness-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.r116-wellness-actions button{flex:1;min-width:93px;min-height:39px;padding:7px 10px;font-size:12px}
+.r116-wellness-card .tiny{font-size:11px;line-height:1.4}
+.r116-review-wellness{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;margin-top:8px;border-top:1px solid #e0ebed;font-size:12px}
+.r116-review-wellness small{display:block;color:#647d85;font-size:11px;margin-top:4px}.r116-review-wellness button{flex-shrink:0}
+@media(max-width:370px){.r116-wellness-summary{align-items:flex-start}.r116-wellness-summary strong{font-size:11px}.r116-wellness-actions button{min-width:80px}}
+`;document.head.appendChild(r116Styles);
+
 if(st)render();
 })();
 

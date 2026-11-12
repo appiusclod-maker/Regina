@@ -1,8 +1,8 @@
-/* REGINA CALCIO PWA 1.1.15 — scope esclusivo /calcio/.
+/* REGINA CALCIO PWA 1.1.16 — scope esclusivo /calcio/.
    Il salvataggio di REGINA Calcio rimane autonomo e locale.
    L'addon si aggiorna con rete disponibile e funziona anche offline. */
 'use strict';
-const VERSION='regina-calcio-pwa-1115';
+const VERSION='regina-calcio-pwa-1116';
 const SHELL=VERSION+'-core',CRESTS='regina-calcio-stemmi-2026-27-v1';
 const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js'];
 self.addEventListener('install',event=>{
