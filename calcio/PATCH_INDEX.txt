@@ -1,0 +1,12 @@
+File: calcio/index.html
+
+CERCA la riga dello script Traguardi (in genere in fondo al file):
+
+<script src="./regina-traguardi.js?v=1117"></script>
+oppure
+<script src="./regina-traguardi.js?v=1118"></script>
+
+SOSTITUISCI CON:
+<script src="./regina-traguardi.js?v=1119"></script>
+
+Non cambiare il resto di index.html: tutti i dati della carriera restano intatti.

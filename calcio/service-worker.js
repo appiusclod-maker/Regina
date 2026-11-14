@@ -1,10 +1,9 @@
-/* REGINA CALCIO PWA 1.1.16 — scope esclusivo /calcio/.
-   Il salvataggio di REGINA Calcio rimane autonomo e locale.
-   L'addon si aggiorna con rete disponibile e funziona anche offline. */
+/* REGINA CALCIO PWA 1.1.19 — scope esclusivo /calcio/.
+   I dati restano locali; il modulo Traguardi è disponibile anche offline. */
 'use strict';
-const VERSION='regina-calcio-pwa-1116';
+const VERSION='regina-calcio-pwa-1119';
 const SHELL=VERSION+'-core',CRESTS='regina-calcio-stemmi-2026-27-v1';
-const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js'];
+const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js','./regina-traguardi.js'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(STATIC)).then(()=>self.skipWaiting()));
 });
@@ -24,12 +23,13 @@ self.addEventListener('fetch',event=>{
        if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put('./index.html',clone)).catch(()=>{});}
        return res;
      }).catch(async()=>await caches.match('./index.html')||new Response('App non ancora memorizzata. Riapri online.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}})));
-   }else if(url.pathname.endsWith('/regina-upgrade.js')){
-     // Evita che la vecchia versione dello script resti bloccata nella cache.
+   }else if(url.pathname.endsWith('/regina-upgrade.js')||url.pathname.endsWith('/regina-traguardi.js')){
+     // Risorse aggiornate con priorità alla rete, e copia sicura offline.
+     const fallback=url.pathname.endsWith('/regina-traguardi.js')?'./regina-traguardi.js':'./regina-upgrade.js';
      event.respondWith(fetch(req,{cache:'no-store'}).then(res=>{
-       if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put(req,clone)).catch(()=>{});}
+       if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put(fallback,clone)).catch(()=>{});}
        return res;
-     }).catch(async()=>await caches.match(req)||await caches.match('./regina-upgrade.js')||new Response('Modulo non disponibile offline.',{status:503})));
+     }).catch(async()=>await caches.match(req)||await caches.match(fallback)||new Response('Modulo non disponibile offline.',{status:503})));
    }else{
      event.respondWith(caches.match(req).then(c=>c||fetch(req).then(res=>{
        if(res.ok)caches.open(SHELL).then(cache=>cache.put(req,res.clone())).catch(()=>{});
@@ -46,7 +46,6 @@ self.addEventListener('fetch',event=>{
    }));
  }
 });
-
 self.addEventListener('notificationclick',event=>{
  event.notification.close();
  event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(windows=>{
