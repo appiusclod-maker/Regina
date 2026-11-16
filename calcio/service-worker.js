@@ -1,9 +1,9 @@
-/* REGINA CALCIO PWA 1.1.20 — scope esclusivo /calcio/.
+/* REGINA CALCIO PWA 1.1.21 — scope esclusivo /calcio/.
    I dati restano locali; il modulo Traguardi è disponibile anche offline. */
 'use strict';
-const VERSION='regina-calcio-pwa-1120';
+const VERSION='regina-calcio-pwa-1121';
 const SHELL=VERSION+'-core',CRESTS='regina-calcio-stemmi-2026-27-v1';
-const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js','./regina-traguardi.js'];
+const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js','./regina-traguardi.js','./regina-hninn-export.js'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(STATIC)).then(()=>self.skipWaiting()));
 });
@@ -23,9 +23,9 @@ self.addEventListener('fetch',event=>{
        if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put('./index.html',clone)).catch(()=>{});}
        return res;
      }).catch(async()=>await caches.match('./index.html')||new Response('App non ancora memorizzata. Riapri online.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}})));
-   }else if(url.pathname.endsWith('/regina-upgrade.js')||url.pathname.endsWith('/regina-traguardi.js')){
+   }else if(url.pathname.endsWith('/regina-upgrade.js')||url.pathname.endsWith('/regina-traguardi.js')||url.pathname.endsWith('/regina-hninn-export.js')){
      // Risorse aggiornate con priorità alla rete, e copia sicura offline.
-     const fallback=url.pathname.endsWith('/regina-traguardi.js')?'./regina-traguardi.js':'./regina-upgrade.js';
+     const fallback=url.pathname.endsWith('/regina-traguardi.js')?'./regina-traguardi.js':url.pathname.endsWith('/regina-hninn-export.js')?'./regina-hninn-export.js':'./regina-upgrade.js';
      event.respondWith(fetch(req,{cache:'no-store'}).then(res=>{
        if(res.ok){const clone=res.clone();caches.open(SHELL).then(c=>c.put(fallback,clone)).catch(()=>{});}
        return res;

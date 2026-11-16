@@ -1,0 +1,14 @@
+REGINA CALCIO (calcio/index.html, in fondo):
+
+<script src="./regina-upgrade.js?v=1116"></script>
+<script src="./regina-traguardi.js?v=1120"></script>
+<script src="./regina-hninn-export.js?v=1121"></script>
+
+Conservare il parametro di regina-upgrade.js se già più aggiornato.
+
+FARM & TABLE (file HTML principale della fattoria, in fondo dopo lo script originale):
+
+<script src="./farm-regina-import.js?v=1"></script>
+
+I due file JS nuovi vanno caricati nella rispettiva cartella e NON direttamente dentro l'altra app.
+Prima esportare entrambi i backup completi, per sicurezza.
