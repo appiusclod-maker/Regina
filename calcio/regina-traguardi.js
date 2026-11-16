@@ -1,4 +1,4 @@
-/* REGINA CALCIO 1.1.19 — Grandi obiettivi: tappe binarie, date e colori.
+/* REGINA CALCIO 1.1.20 — Grandi obiettivi: tappe binarie, date e colori.
    Sostituisce il precedente regina-traguardi.js. Si carica DOPO regina-upgrade.js.
    Il backup della carriera include reginaLongTerm e l'archivio Obiettivi.
    Non scrive né modifica l'archivio della vecchia REGINA Città. */
@@ -109,8 +109,12 @@
     services: { name: 'Burocrazia / Soldi / Tasse / Servizi', color: 'Nero', key: 'services', football: ['discipline'] },
     study:    { name: 'Studio',         color: 'Giallo / Arancio', key: 'creative', football: ['technical'] },
     home:     { name: 'Casa',           color: 'Blu', key: 'home',     football: ['tactics'] },
-    other:    { name: 'Altro',          color: 'Viola', key: 'creative', football: ['luck'] }
+    other:    { name: 'Altro',          color: 'Viola', key: 'creative', football: ['luck'] },
+    contacts: { name: 'Contatti',       color: 'Rosa',  key: 'social',   football: ['mental'] }
   };
+  // Ordine fisso in TUTTE le sezioni che elencano obiettivi.
+  const THEME_ORDER=['health','work','services','study','home','other','contacts'];
+  const themeRank=x=>{const k=THEME_ORDER.indexOf(x);return k<0?THEME_ORDER.length:k;};
   const themeOf = g => THEMES[g?.category] ? g.category : 'other';
   const data = () => st?.reginaLongTerm && Array.isArray(st.reginaLongTerm.goals)
     ? st.reginaLongTerm : { goals: [] };
@@ -182,6 +186,7 @@
         a.fronts.push(front);
       }
       if (front) {
+        front.reginaTheme=g.category; // Colore visibile anche nel fronte collegato in Obiettivi.
         front.title = g.title;
         front.deadline = validDate(g.targetDate);
         front.reginaTimeframe=normalizedTimeframe(g.timeframe,g.targetDate);
@@ -344,7 +349,7 @@
     if (!st) return '<section class="card">Avvia prima una carriera.</section>';
     let a;
     try { a = archive(); } catch (err) { return '<section class="card">' + esc(err.message) + '</section>'; }
-    const goals = [...data().goals].sort((a1, b1) => Number(complete(a1, a)) - Number(complete(b1, a)));
+    const goals = [...data().goals].sort((a1, b1) => themeRank(themeOf(a1)) - themeRank(themeOf(b1)) || Number(complete(a1,a)) - Number(complete(b1,a)));
     const active = goals.filter(g => !complete(g, a)).length, done = goals.length - active;
     const avg = goals.length ? Math.round(goals.reduce((sum, g) => sum + progress(g, a), 0) / goals.length) : 0;
     return `<div class="rlt-page"><section class="rlt-intro"><span class="rlt-kicker">LA TUA STRADA</span>
@@ -374,7 +379,7 @@
   todayView = function (...args) { return view === PAGE ? pageView() : oldToday.apply(this, args); };
   const oldHeader = header;
   header = function (...args) {
-    let html = oldHeader.apply(this, args).replace(/v1\.1\.(?:1[6-9])/g, 'v1.1.19');
+    let html = oldHeader.apply(this, args).replace(/v1\.1\.(?:1[6-9]|20)/g, 'v1.1.20');
     if (html.includes("changeView('longterm')")) return html;
     const b = `<button class="${view === PAGE ? 'active' : ''}" onclick="changeView('${PAGE}')">🎯 Traguardi</button>`;
     const match = html.match(/<button\b[^>]*onclick="changeView\('objectives'\)"[^>]*>Obiettivi<\/button>/);
@@ -518,6 +523,155 @@
     if (ev.target.id === 'rlt-editor') ev.target.remove();
   }, true);
 
+
+  // REGINA CALCIO 1.1.20 — la medesima palette anche per Fronti/Tappe normali.
+  // La categoria cromatica NON cambia gli effetti calcistici già scelti.
+  // I vecchi record non vengono riscritti: colore determinato automaticamente
+  // per la visualizzazione, con possibilità di salvarne uno personalizzato.
+  function inferTheme(f) {
+    const cat=String(f?.cat||'').toLowerCase();
+    const tx=String(f?.title||'').toLowerCase();
+    if(cat==='health')return 'health';
+    if(cat==='services')return 'services';
+    if(cat==='home')return 'home';
+    if(cat==='social')return 'contacts';
+    if(cat==='work')return 'work';
+    if(cat==='creative')return /\b(stud|studio|studiare|corso|corsi|esame|esami|lezion|lingu|grammatic|ripass|test|scuola|universit|formazion|impar|apprend|birmano|inglese|cinese|lettura didattica)/i.test(tx)?'study':'other';
+    if(/contatt|amic|relazion|famigli|telefon|chiam|messagg|socialit/i.test(tx))return 'contacts';
+    if(/stud|esam|cors|lezion|lingu|grammat|birmano|cinese|formazion/i.test(tx))return 'study';
+    if(/fisc|tass|sold|burocr|document|serviz|inps|isee|commercialista/i.test(tx))return 'services';
+    if(/allen|sport|salut|cors[ae]|palestr|sonn|acqua|igien/i.test(tx))return 'health';
+    if(/cas[ae]|puliz|bagno|cucin|abitazion/i.test(tx))return 'home';
+    if(/lavor|client|lezion|fattur/i.test(tx))return 'work';
+    return 'other';
+  }
+  const normalFrontTheme=f=>{
+    const linkedGoal=f?.reginaLongTermGoalId&&data().goals.find(g=>g.id===f.reginaLongTermGoalId);
+    return linkedGoal?themeOf(linkedGoal):(THEMES[f?.reginaTheme]?f.reginaTheme:inferTheme(f));
+  };
+  const normalTaskTheme=(t,a)=>{
+    if(!t)return 'other';
+    const linkedGoal=t.reginaLongTermGoalId&&data().goals.find(g=>g.id===t.reginaLongTermGoalId);
+    if(linkedGoal)return themeOf(linkedGoal);
+    if(THEMES[t.reginaTheme])return t.reginaTheme;
+    const f=a.fronts.find(f=>f.id===t.frontId);
+    return f?normalFrontTheme(f):inferTheme(t);
+  };
+  function taskById(a,id){
+    if(!id)return null;
+    const direct=a.tasks.find(t=>t.id===id);if(direct)return direct;
+    const m=/^virtual:(.+):\d{4}-\d{2}-\d{2}$/.exec(id);
+    return m?a.tasks.find(t=>(t.repeatGroup||t.id)===m[1]&&!t.isGenerated)||a.tasks.find(t=>(t.repeatGroup||t.id)===m[1]):null;
+  }
+  function themeOptions(current,allowInherit=false,inherited=''){
+    return (allowInherit?`<option value="" ${!current?'selected':''}>Eredita dal fronte (${esc(THEMES[inherited]?.name||'Altro')})</option>`:'')+
+      THEME_ORDER.map(k=>`<option value="${k}" ${k===current?'selected':''}>${esc(THEMES[k].name)} · ${esc(THEMES[k].color)}</option>`).join('');
+  }
+  const colorTag=(theme)=>`<span class="rlt-normal-badge">${esc(THEMES[theme]?.name||'Altro')}</span>`;
+  const tone=(node,k)=>{if(node){node.classList.add('rlt-tone-'+k);node.dataset.rltTheme=k;}return node;};
+  const sortNodes=(nodes,fn)=>{
+    nodes.map((node,index)=>({node,index,k:themeRank(fn(node))})).sort((a,b)=>a.k-b.k||a.index-b.index).forEach(x=>x.node.parentNode?.appendChild(x.node));
+  };
+  function onclickId(node,name){
+    const button=[...node.querySelectorAll('button[onclick]')].find(b=>String(b.getAttribute('onclick')).includes(name+'('));
+    const match=button?.getAttribute('onclick')?.match(new RegExp(name+'\\(\\s*(["\\x27])([^"\\x27]+)\\1'));
+    return match?.[2]||'';
+  }
+  function frontByName(a,txt){
+    const name=String(txt||'').split(' · ')[0].trim();
+    return a.fronts.find(f=>f.title===name)||null;
+  }
+  function paintOrdinaryMarkup(html,section){
+    if(!st)return html;
+    let a;try{a=archive();}catch(e){return html;}
+    const tpl=document.createElement('template');tpl.innerHTML=html;
+    if(section==='objectives'){
+      const dash=tpl.content.querySelector('.go-dashboard');if(!dash)return html;
+      if(!dash.querySelector('.rlt-color-legend')){
+        const note=dash.querySelector('.notice');
+        if(note)note.insertAdjacentHTML('afterend',colorLegend());
+      }
+      // Giorni cronologici immutati; all'interno di ciascun giorno ordina per colore.
+      for(const day of dash.querySelectorAll('.go-day')){
+        const rows=[...day.querySelectorAll(':scope > article.go-task')];
+        for(const row of rows){
+          const t=taskById(a,onclickId(row,'goalOpenTask'));
+          tone(row,normalTaskTheme(t,a));
+        }
+        sortNodes(rows,row=>row.dataset.rltTheme||'other');
+        const fronts=[...day.querySelectorAll(':scope > .go-front')];
+        for(const row of fronts){
+          const f=a.fronts.find(f=>f.id===onclickId(row,'goalOpenFront'));
+          const theme=normalFrontTheme(f);tone(row,theme);
+          if(!row.querySelector('.rlt-normal-badge'))row.querySelector('b')?.insertAdjacentHTML('afterend',' '+colorTag(theme));
+        }
+        sortNodes(fronts,row=>row.dataset.rltTheme||'other');
+        const undated=[...day.querySelectorAll(':scope > details.fin-no-date-details')];
+        for(const group of undated){
+          const f=a.fronts.find(f=>f.id===group.dataset.goalFront);
+          tone(group,normalFrontTheme(f));
+          const rows=[...group.querySelectorAll(':scope > article.go-task')];
+          for(const row of rows){const t=taskById(a,onclickId(row,'goalOpenTask'));tone(row,normalTaskTheme(t,a));}
+          sortNodes(rows,row=>row.dataset.rltTheme||'other');
+        }
+        sortNodes(undated,node=>node.dataset.rltTheme||'other');
+      }
+      // Calendario: non cambiare giorni / fasce orarie, soltanto l'ordine dei compiti dentro la fascia.
+      for(const item of dash.querySelectorAll('.regina-pl-item')){
+        tone(item,normalTaskTheme(taskById(a,item.dataset.reginaId),a));
+      }
+      for(const slot of dash.querySelectorAll('.regina-pl-drop')){
+        const items=[...slot.querySelectorAll(':scope > .regina-pl-item')];
+        sortNodes(items,node=>node.dataset.rltTheme||'other');
+      }
+      for(const group of dash.querySelectorAll('.regina-pl-backfront')){
+        tone(group,normalFrontTheme(frontByName(a,group.querySelector('summary')?.textContent)));
+        const items=[...group.querySelectorAll(':scope > .regina-pl-item')];
+        sortNodes(items,node=>node.dataset.rltTheme||'other');
+      }
+      const backlog=dash.querySelector('.regina-pl-backlog');
+      if(backlog)sortNodes([...backlog.querySelectorAll(':scope > .regina-pl-backfront')],n=>n.dataset.rltTheme||'other');
+      const select=dash.querySelector('select[onchange*="goalSetFront"]');
+      if(select){const opts=[...select.querySelectorAll('option')].filter(x=>x.value!=='all');
+        sortNodes(opts,opt=>normalFrontTheme(a.fronts.find(f=>f.id===opt.value)));
+      }
+    }else if(section==='today'){
+      const holder=tpl.content.querySelector('.regina-today-goals');
+      if(holder){
+        if(!holder.querySelector('.rlt-color-legend'))holder.insertAdjacentHTML('afterbegin',colorLegend());
+        for(const group of holder.querySelectorAll('.regina-today-front')){
+          const f=frontByName(a,group.querySelector('summary b')?.textContent);
+          tone(group,normalFrontTheme(f));
+          const rows=[...group.querySelectorAll(':scope > .regina-today-item')];
+          for(const row of rows){
+            const id=row.querySelector('[data-task-id]')?.dataset.taskId;
+            tone(row,normalTaskTheme(taskById(a,id),a));
+          }
+          sortNodes(rows,row=>row.dataset.rltTheme||'other');
+        }
+        sortNodes([...holder.querySelectorAll(':scope > .regina-today-front')],n=>n.dataset.rltTheme||'other');
+      }
+    }
+    return tpl.innerHTML;
+  }
+  function colorLegend(){
+    return '<div class="rlt-color-legend" aria-label="Ordine dei colori delle categorie">'+
+      THEME_ORDER.map(k=>`<span class="rlt-legend-item rlt-tone-${k}"><i></i>${esc(THEMES[k].name)}</span>`).join('')+'</div>';
+  }
+  // L'ordine modificato è SOLO visivo: IDs, date, stati e pesi della partita sono invariati.
+  const beforeColoredObjectives=objectivesView;
+  objectivesView=function(...args){return paintOrdinaryMarkup(beforeColoredObjectives.apply(this,args),'objectives');};
+  const beforeColoredToday=todayView;
+  todayView=function(...args){return view===PAGE?beforeColoredToday.apply(this,args):paintOrdinaryMarkup(beforeColoredToday.apply(this,args),'today');};
+  // Anche gli altri riepiloghi che leggono oggi ereditano un ordine cromatico stabile.
+  const previousTodayTasks=todayTasks;
+  todayTasks=function(...args){
+    const list=previousTodayTasks.apply(this,args);
+    if(!Array.isArray(list))return list;
+    let a;try{a=archive();}catch(e){return list;}
+    return [...list].sort((x,y)=>themeRank(normalTaskTheme(x,a))-themeRank(normalTaskTheme(y,a)));
+  };
+
   // Stesse scelte temporali anche nei normali Fronti e nelle normali Tappe.
   // Non vengono creati obiettivi paralleli: il form originale rimane quello
   // utilizzato dal motore delle partite. La data effettiva è deadline/deadlineDate.
@@ -532,6 +686,18 @@
         const f=archive().fronts.find(x=>x.id===id);
         input.closest('label')?.insertAdjacentHTML('afterend', deadlineWidget('front',f?.reginaTimeframe,input.value,'Scadenza del fronte (facoltativa)'));
         input.closest('label').hidden=true;
+      }
+      // Il colore è indipendente dai parametri calcistici esistenti.
+      if(!form.querySelector('[name="reginaTheme"]')){
+        const id=form.querySelector('[name="id"]')?.value||'';
+        const f=archive().fronts.find(x=>x.id===id),category=form.querySelector('[name="cat"]');
+        const linked=Boolean(f?.reginaLongTermGoalId);
+        const pick=f?normalFrontTheme(f):inferTheme({cat:category?.value,title:form.querySelector('[name="title"]')?.value});
+        const markup=`<label class="label rlt-theme-field">Colore tematico
+          <select name="reginaTheme" ${linked?'disabled':''}>${themeOptions(pick)}</select>
+          ${linked?'<small>Modifica il colore di questo fronte nella sezione Traguardi.</small>':'<small>Il colore organizza e identifica l’obiettivo; non cambia i suoi effetti sulla squadra.</small>'}</label>`;
+        category?.closest('label')?.insertAdjacentHTML('afterend',markup);
+        if(!category)form.insertAdjacentHTML('afterbegin',markup);
       }
     }
     return result;
@@ -548,6 +714,19 @@
         input.closest('label')?.insertAdjacentHTML('afterend',deadlineWidget('task',t?.reginaTimeframe,input.value,'Scadenza della tappa (facoltativa)'));
         input.closest('label').hidden=true;
       }
+      if(!form.querySelector('[name="reginaTheme"]')){
+        const id=form.querySelector('[name="id"]')?.value||'',a=archive(),t=a.tasks.find(x=>x.id===id);
+        if(!t?.reginaLongTermStepId){
+          const frontId=form.querySelector('[name="frontId"]')?.value||'';
+          const f=a.fronts.find(x=>x.id===(t?.frontId||frontId));
+          const inherited=normalFrontTheme(f);
+          const field=`<label class="label rlt-theme-field">Colore tematico della tappa (facoltativo)
+            <select name="reginaTheme">${themeOptions(THEMES[t?.reginaTheme]?t.reginaTheme:'',true,inherited)}</select>
+            <small>Se non scegli un colore diverso, la tappa eredita quello del fronte.</small></label>`;
+          const target=form.querySelector('[name="frontId"]')?.closest('label');
+          if(target)target.insertAdjacentHTML('afterend',field);else form.insertAdjacentHTML('afterbegin',field);
+        }
+      }
     }
     return result;
   };
@@ -558,6 +737,8 @@
       const form=ev?.target,widget=form?.querySelector('[data-rlt-time]');
       if(!widget)return previous.apply(this,[ev,...rest]);
       const timeframe=readWidget(widget);
+      const themeSelect=form.querySelector('[name="reginaTheme"]');
+      const chosenTheme=themeSelect?.value||'';
       const input=form.querySelector('[name="'+field+'"]');
       if(input)input.value=timeframe.end;
       const id=form.querySelector('[name="id"]')?.value||'';
@@ -568,9 +749,16 @@
       if(!target && !id)target=arr.at(-1);
       if(target){
         target.reginaTimeframe=timeframe;
-        // Gli altri campi del normale form sono già stati salvati dai moduli storici.
+        if(type==='front' && !target.reginaLongTermGoalId && themeSelect && THEMES[chosenTheme])target.reginaTheme=chosenTheme;
+        if(type==='task' && !target.reginaLongTermStepId && themeSelect){
+          if(THEMES[chosenTheme])target.reginaTheme=chosenTheme;
+          else delete target.reginaTheme;
+        }
+        // Conserva tutti i campi originali, inclusi pesi, scadenze e completamenti.
         window.goalSaveImportedArchive(a);
         if(st)persist();
+        const pos=window.scrollY;
+        render();requestAnimationFrame(()=>window.scrollTo(0,pos));
       }
       return result;
     };
@@ -642,6 +830,26 @@
   .rlt-backdrop{position:fixed;inset:0;z-index:99999;background:#061a15ae;display:flex;align-items:center;justify-content:center;padding:15px}
   .rlt-modal{width:min(520px,100%);max-height:90dvh;overflow:auto;border-radius:16px;background:#fff;padding:20px;color:#254c40}
   .rlt-modal-title{display:flex;justify-content:space-between;align-items:center}.rlt-modal h3{margin:0 0 7px}
+  /* Palette e ordine per tutte le liste della carriera, inclusi Oggi e calendario. */
+  .rlt-tone-health{--rlt-color:#19815a;--rlt-tint:#e5f6ec}
+  .rlt-tone-work{--rlt-color:#c94745;--rlt-tint:#fff0ee}
+  .rlt-tone-services{--rlt-color:#292e35;--rlt-tint:#edeef0}
+  .rlt-tone-study{--rlt-color:#c9840d;--rlt-tint:#fff5df}
+  .rlt-tone-home{--rlt-color:#3174c5;--rlt-tint:#e8f2ff}
+  .rlt-tone-other{--rlt-color:#8056b9;--rlt-tint:#f1eaf9}
+  .rlt-tone-contacts,.rlt-cat-contacts{--rlt-color:#cf508b;--rlt-tint:#ffebf4}
+  .go-dashboard .go-front.rlt-tone-health,.go-dashboard .go-front.rlt-tone-work,.go-dashboard .go-front.rlt-tone-services,.go-dashboard .go-front.rlt-tone-study,.go-dashboard .go-front.rlt-tone-home,.go-dashboard .go-front.rlt-tone-other,.go-dashboard .go-front.rlt-tone-contacts{
+    border-left:5px solid var(--rlt-color);background:var(--rlt-tint);padding-left:11px;border-radius:7px}
+  .go-dashboard article.go-task[data-rlt-theme]{border-left:4px solid var(--rlt-color);background:linear-gradient(90deg,var(--rlt-tint),#fff 46%)}
+  .go-dashboard .fin-no-date-details[data-rlt-theme],.go-dashboard .regina-pl-backfront[data-rlt-theme]{border-left:5px solid var(--rlt-color);background:var(--rlt-tint)}
+  .regina-today-goals .regina-today-front[data-rlt-theme]{border-left:5px solid var(--rlt-color);background:var(--rlt-tint);border-radius:9px}
+  .regina-today-goals .regina-today-item[data-rlt-theme]{border-left:4px solid var(--rlt-color);background:linear-gradient(90deg,var(--rlt-tint),#fff 70%)}
+  .regina-pl-item[data-rlt-theme]{border-left:4px solid var(--rlt-color)!important;background:var(--rlt-tint)!important}
+  .rlt-normal-badge{display:inline-block;margin-left:6px;padding:2px 7px;border:1px solid var(--rlt-color);border-radius:99px;color:var(--rlt-color);font-size:10px;font-weight:800;background:#fff;vertical-align:middle}
+  .rlt-color-legend{display:flex;flex-wrap:wrap;gap:5px 9px;padding:10px 0;font-size:10px;line-height:1.25}
+  .rlt-legend-item{display:flex;align-items:center;gap:4px;color:#3f5362;font-weight:700;white-space:nowrap}
+  .rlt-legend-item i{display:inline-block;width:10px;height:10px;background:var(--rlt-color);border-radius:3px}
+  .rlt-theme-field small{font-size:11px;color:#56717c;line-height:1.4}
   @media(max-width:580px){.rlt-step-add{grid-template-columns:minmax(0,1fr) 140px}.rlt-step-add .rlt-time-widget{grid-column:1/-1}.rlt-step-add button{grid-column:1/-1}.rlt-intro,.rlt-goal{padding-right:11px}.rlt-goal{padding-left:12px}}
   @media(max-width:430px){.rlt-intro{padding:13px}.rlt-step{gap:5px;padding:8px 5px}.rlt-step-actions{max-width:60px}.rlt-step-actions button{padding:5px;min-width:24px}.rlt-pct{font-size:20px}.rlt-meta{font-size:10px}.rlt-date-row input{max-width:150px}.rlt-step-deadline .rlt-time-widget{padding:6px}.rlt-step-deadline .rlt-time-widget label{min-width:125px}}
   `;

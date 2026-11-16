@@ -1,12 +1,13 @@
-File: calcio/index.html
+REGINA CALCIO 1.1.20 — COME AGGIORNARE index.html
 
-CERCA la riga dello script Traguardi (in genere in fondo al file):
-
-<script src="./regina-traguardi.js?v=1117"></script>
-oppure
-<script src="./regina-traguardi.js?v=1118"></script>
-
-SOSTITUISCI CON:
+Nel file calcio/index.html, in fondo, sostituire la riga:
 <script src="./regina-traguardi.js?v=1119"></script>
 
-Non cambiare il resto di index.html: tutti i dati della carriera restano intatti.
+con:
+<script src="./regina-traguardi.js?v=1120"></script>
+
+Se sul repository compare ancora ?v=1117 oppure ?v=1118, sostituirla
+comunque con ?v=1120. NON cancellare o sostituire l'intero index.html.
+
+Regina-upgrade.js rimane INVARIATO e deve essere caricato PRIMA di
+regina-traguardi.js.

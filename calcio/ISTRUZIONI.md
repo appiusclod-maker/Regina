@@ -1,45 +1,44 @@
-# REGINA CALCIO 1.1.19 — Scadenze flessibili
+# REGINA Calcio 1.1.20 — Colori tematici per tutti gli obiettivi
 
-Pacchetto **cumulativo**: incorpora la 1.1.18 (grandi obiettivi a colori, tappe sì/no, collegamento Obiettivi/Oggi) e aggiunge le nuove opzioni temporali. Non è necessario installare prima la 1.1.18.
+Questa versione è **cumulativa**: contiene anche gli aggiornamenti della 1.1.18 e 1.1.19 (traguardi a tappe sì/no, date programmate, sincronizzazione con Obiettivi e Oggi e scadenze flessibili). Non occorre installare prima quelle versioni.
 
-## Pubblicazione
+## Novità
 
-Il repository di riferimento è `appiusclod-maker/Regina`, cartella `calcio`.
+Ogni **fronte/obiettivo normale** e ogni sua **tappa** assume un colore; lo stesso colore è usato anche nella sezione Traguardi. Il nuovo colore **rosa** riguarda Contatti e relazioni. L'ordine è fisso:
 
-1. **Prima di aggiornare, esporta il backup completo** della carriera dalla sezione Impostazioni e conservalo. Non cancellare la memoria del browser o i dati del sito.
-2. Sostituisci `calcio/regina-traguardi.js` con il file omonimo di questo pacchetto.
-3. Sostituisci `calcio/service-worker.js` con il file omonimo.
-4. In `calcio/index.html` cambia **solo** la riga `<script src="./regina-traguardi.js?v=1117"></script>` o `?v=1118` (se già aggiornata) in `<script src="./regina-traguardi.js?v=1119"></script>`.
-5. Committa e aggiorna REGINA Calcio dal browser, senza cancellare dati. Se la PWA è già installata, riaprila online per far aggiornare il modulo.
+1. **Verde** — Sport e salute.
+2. **Rosso** — Lavoro.
+3. **Nero** — Burocrazia, soldi, tasse e servizi.
+4. **Giallo/arancio** — Studio.
+5. **Blu** — Casa.
+6. **Viola** — Altro.
+7. **Rosa** — Contatti.
 
-**Non sostituire `index.html` con una pagina vecchia o vuota.**
+L'ordinamento si applica ai **grandi obiettivi**, all'elenco dei **fronti normali**, alle **tappe degli Obiettivi** (dentro ciascuna data), ai gruppi in **Oggi**, al **calendario settimanale** (all'interno di ciascun giorno e fascia oraria), alle attività in **Da pianificare/ripianificare** e al **filtro dei fronti**. La sequenza cronologica dei giorni e la separazione per fasce orarie **non vengono cambiate**.
 
-## Scadenze disponibili, facoltative
+### Scelta e riconoscimento del colore
 
-- Nessuna scadenza
-- Entro una data precisa
-- Entro questa settimana (domenica della settimana in corso)
-- Entro la prossima settimana (domenica successiva)
-- Entro questo mese (ultimo giorno del mese in corso)
-- Entro il mese di… (seleziona mese e anno; ultimo giorno del mese)
-- Entro un anno (stesso giorno dell'anno seguente; 29 febbraio → 28 febbraio)
+- Nei moduli **Nuovo fronte** / **Modifica fronte** c'è un selettore per la categoria cromatica. È **indipendente** dalla categoria calcistica e dai parametri che il fronte influenza: cambiare il colore non cambia tecnica, forma, tattica, ecc.
+- Nei moduli **Nuova tappa** / **Modifica tappa** c'è un selettore facoltativo. Di norma la tappa **eredita** il colore del fronte, ma può ricevere un colore differente.
+- I fronti esistenti conservano i propri dati: l'app individua il colore usando la categoria già salvata, e per `creative` distingue in via indicativa Studio da Altro grazie al titolo. **Puoi correggere qualsiasi assegnazione** da *Modifica fronte*.
+- Le tappe dei **grandi obiettivi** continuano a condividere i completamenti con Obiettivi e Oggi. Il colore di un grande obiettivo viene ereditato dal fronte collegato; se modifichi quella categoria, il fronte segue il traguardo.
+- Le categorie **Contatti** nei grandi obiettivi e **Relazioni e contatti** nei fronti normali sono rosa. L'assegnazione cromatica non tocca l'effetto delle attività sulla squadra.
+- Gli obiettivi che ricadono nella **stessa categoria** mantengono il loro ordine precedente, salvo i grandi obiettivi completati che restano dopo quelli in corso nella stessa categoria.
 
-Le opzioni sono disponibili per **grandi obiettivi, tappe dei grandi obiettivi, fronti normali e tappe normali**. Ogni scelta relativa viene trasformata in una data concreta al momento dell'inserimento, **non scorre in avanti** automaticamente. Aprendo una scadenza si vede anche la data concreta calcolata. Un termine esistente è mantenuto come «Entro una data precisa» durante la migrazione.
+## Installazione su GitHub
 
-### Data programmata ≠ scadenza
+Repository: `appiusclod-maker/Regina`, cartella `calcio`.
 
-- **Data programmata**: indica il giorno nel quale intendi svolgere la tappa e nel quale il suo completamento pesa sulla partita.
-- **Scadenza («entro…»)**: termine massimo. Se una tappa di un grande obiettivo non ha una data programmata, ma ha una scadenza, viene collegata agli Obiettivi come attività reale e compare nella giornata di **Oggi** corrispondente al giorno di scadenza, influenzando la partita *quel giorno*, non tutti i giorni precedenti.
-- Se una tappa ha sia data programmata sia scadenza, la partita dipende **dalla data programmata**, mentre la scadenza resta visibile come limite massimo: non si calcola due volte lo stesso compito.
-- Un grande obiettivo da solo non produce punteggi: a influenzare la partita sono le sue tappe pianificate/scadute.
-- Le tappe senza data programmata né scadenza rimangono solamente nella panoramica del grande obiettivo.
+1. Nell'app vai in **Impostazioni → Esporta backup completo** e conserva il file fuori da GitHub. Non svuotare la memoria del browser o i dati dell'app.
+2. Carica/sostituisci **`calcio/regina-traguardi.js`** con il file omonimo contenuto nello ZIP.
+3. Carica/sostituisci **`calcio/service-worker.js`** con il file omonimo contenuto nello ZIP.
+4. In **`calcio/index.html`** modifica **soltanto** il parametro della riga dello script Traguardi: da `?v=1119` (o una versione precedente) a **`?v=1120`**. Vedi `PATCH_INDEX.txt`.
+5. Salva le modifiche e riapri online REGINA Calcio, aggiornando la pagina per installare il nuovo service worker. Nella PWA può servire chiudere e riaprire dopo il primo aggiornamento.
 
-### Salvataggi
+**Non** sostituire l'intero `index.html` con un file vecchio, e **non** sostituire `regina-upgrade.js`. La precedente REGINA Città non viene modificata.
 
-Le scadenze e il tipo scelto sono conservati negli archivi già in uso (`reginaLongTerm` nella carriera e `regina-calcio-goals-v1` per le attività). I file della città REGINA originale non vengono modificati. La barra generale è il numero di tappe completate diviso per il totale e ogni tappa ha solo la spunta sì/no.
+## Salvataggi, partite e limiti delle verifiche
 
-## Verifiche effettuate
+Il colore scelto viene registrato nel campo `reginaTheme` dei fronti/tappe **dell'archivio obiettivi calcio** (`regina-calcio-goals-v1`). I colori dei traguardi sono in `reginaLongTerm`, già incluso nel salvataggio della carriera. Il colore **non influisce** di per sé su risultato o pagelle: i normali effetti calcistici restano invariati.
 
-- `node --check` del file JavaScript e del service worker.
-- Test browser sintetico con Chromium: nuovo grande obiettivo, date di fine settimana, tappa collegata solo con scadenza, completamento/annullamento, data programmata separata, mese specifico, anno successivo e scadenze nei moduli normali.
-- **Non** eseguita una prova completa con la carriera effettiva pubblicata su GitHub. Per l'installazione occorre pubblicare i file. GitHub non ha consentito la scrittura attraverso il connettore (403).
+Sono stati eseguiti `node --check` per entrambi gli script e test browser **simulati** in Chromium sulle sette categorie, sull'ordine delle liste Obiettivi/Oggi/Calendario, sui filtri, sui cambi colore dei fronti e delle tappe, e sulla sincronizzazione di un traguardo Contatti con una tappa datata e completata. Non è stato possibile provare il salvataggio reale dell'utente né pubblicare direttamente su GitHub: il collegamento ha risposto **403** alle richieste di scrittura. Conserva un backup prima di sostituire i file.
