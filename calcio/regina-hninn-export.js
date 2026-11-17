@@ -1,4 +1,4 @@
-/* REGINA Calcio 1.1.21 — Passaggio selettivo verso Farm & Table (Hninn).
+/* REGINA Calcio 1.1.22 — Passaggio selettivo verso Farm & Table (Hninn).
    File di scambio leggibile, senza dati finanziari, risultati o dati della rosa.
    Non modifica la carriera, la lista della spesa né gli obiettivi originali. */
 (function(){
@@ -36,7 +36,7 @@ function pack(){
   format:'REGINA_TO_FARM_V1',version:1,source:'REGINA Calcio',
   exportedAt:new Date().toISOString(),
   fronts:fronts.filter(f=>f?.id&&f.title).map(f=>({
-   id:uid(f.id),title:words(f.title),theme:projectCategory.get(f.reginaLongTermGoalId)||inferTheme(f),
+   id:uid(f.id),title:words(f.title),projectId:uid(f.reginaLongTermGoalId),theme:projectCategory.get(f.reginaLongTermGoalId)||inferTheme(f),
    deadline:date(f.deadline||f.reginaTimeframe?.end),notes:words(f.notes,500)
   })),
   tasks:tasks.filter(t=>t?.id&&t.title&&!t.isGenerated).map(t=>({
@@ -72,30 +72,69 @@ function download(data){
  a.download='REGINA_PER_HNINN_'+new Date().toISOString().slice(0,10)+'.json';
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
 }
+function chooseProjects(data, selectedIds) {
+ // Elimina i traguardi non scelti, anche se le loro tappe sono
+ // presenti nella categoria generale «Obiettivi e tappe».
+ const allProjects=data.projects;
+ const excluded=new Set(allProjects.filter(p=>!selectedIds.has(p.id)).map(p=>p.id));
+ const excludedSteps=new Set(allProjects.filter(p=>excluded.has(p.id))
+   .flatMap(p=>p.steps||[]).map(s=>s.id));
+ const excludedTasks=new Set(allProjects.filter(p=>excluded.has(p.id))
+   .flatMap(p=>p.steps||[]).map(s=>s.taskId).filter(Boolean));
+ data.projects=allProjects.filter(p=>selectedIds.has(p.id));
+ data.tasks=data.tasks.filter(t=>!excluded.has(t.projectId)&&
+   !excludedSteps.has(t.stepId)&&!excludedTasks.has(t.id));
+ data.fronts=data.fronts.filter(f=>!excluded.has(f.projectId));
+ return data;
+}
 function openModal(){
  document.getElementById('rf-export-backdrop')?.remove();
  const obj=pack();
  const box=document.createElement('div');box.id='rf-export-backdrop';
+ const projectRows=obj.projects.map(p=>
+   `<label class="rf-project-item"><input type="checkbox" name="projectId" value="${esc(p.id)}">`+
+   `<span><b>${esc(p.title)}</b><small>${esc(label[p.theme]||'Altro')} · ${(p.steps||[]).length} tappe</small></span></label>`
+ ).join('');
  box.innerHTML='<form id="rf-export-form" role="dialog" aria-modal="true" aria-label="Condividi con Hninn">'+
-  '<h2>📤 Trasferisci a Farm & Table</h2>'+ 
-  '<p>Prepara un file JSON per Hninn: contiene solo gli elementi che selezioni, <b>mai</b> saldo bancario, finanze o risultati delle partite.</p>'+ 
-  `<label><input type="checkbox" name="projects" checked> Grandi obiettivi (${obj.projects.length})</label>`+
-  `<label><input type="checkbox" name="tasks" checked> Obiettivi e tappe (${obj.tasks.length} attività · ${obj.fronts.length} fronti)</label>`+
+  '<h2>📤 Trasferisci a Farm & Table</h2>'+
+  '<p>Scegli esattamente quali traguardi condividere con Hninn. Le tappe dei traguardi esclusi non saranno trasferite.</p>'+
+  `<label><input type="checkbox" name="projects" checked> <b>Grandi obiettivi / Traguardi (${obj.projects.length})</b></label>`+
+  '<div id="rf-project-choices"><div class="rf-choose-buttons"><button type="button" data-rf-select="all">Seleziona tutti</button><button type="button" data-rf-select="none">Deseleziona tutti</button></div>'+
+  (projectRows||'<p class="rf-warning">Non ci sono ancora traguardi da condividere.</p>')+'</div>'+
+  `<label><input type="checkbox" name="tasks" checked> Obiettivi ordinari e tappe dei traguardi scelti (${obj.tasks.length} attività)</label>`+
   `<label><input type="checkbox" name="shopping" checked> Lista della spesa (${obj.shopping.length} elementi)</label>`+
-  '<p class="rf-warning">Il file contiene titoli e note delle attività scelte, anche quelle personali. Condividilo soltanto con Hninn.</p>'+ 
+  '<p class="rf-warning">Il file contiene i titoli e le note degli elementi selezionati. Non include finanze, risultati delle partite o rosa.</p>'+
   '<div class="rf-btns"><button type="submit">⬇ Esporta per Hninn</button><button type="button" data-rf-close>Chiudi</button></div></form>';
  document.body.appendChild(box);
+ const f=box.querySelector('form');
+ const items=()=>[...f.querySelectorAll('input[name="projectId"]')];
+ function refresh(){
+  const enabled=f.elements.projects.checked;
+  box.querySelector('#rf-project-choices').hidden=!enabled;
+  items().forEach(i=>i.disabled=!enabled);
+ }
+ f.elements.projects.addEventListener('change',refresh);
+ f.querySelectorAll('[data-rf-select]').forEach(btn=>btn.addEventListener('click',()=>{
+  items().forEach(i=>i.checked=btn.dataset.rfSelect==='all');
+ }));
+ refresh();
  box.addEventListener('click',e=>{if(e.target===box||e.target.closest('[data-rf-close]'))box.remove()});
- box.querySelector('form').addEventListener('submit',e=>{
-  e.preventDefault();const f=e.currentTarget;
-  if(!['projects','tasks','shopping'].some(k=>f.elements[k]?.checked))return alert('Seleziona almeno una categoria.');
-  const data=pack(); // snapshot aggiornato prima del download
-  if(!f.elements.projects.checked)data.projects=[];
+ f.addEventListener('submit',e=>{
+  e.preventDefault();
+  const selected=new Set(f.elements.projects.checked?items().filter(i=>i.checked).map(i=>i.value):[]);
+  const shareProjects=f.elements.projects.checked&&selected.size>0;
+  if(!shareProjects&&!f.elements.tasks.checked&&!f.elements.shopping.checked){
+   alert('Seleziona almeno un traguardo, gli obiettivi ordinari oppure la spesa.');return;
+  }
+  const data=chooseProjects(pack(),selected);
   if(!f.elements.tasks.checked){data.tasks=[];data.fronts=[];}
   if(!f.elements.shopping.checked)data.shopping=[];
+  // Escludi i traguardi se l'intera categoria è stata disattivata.
+  if(!f.elements.projects.checked)data.projects=[];
   download(data);box.remove();
  });
 }
+
 window.reginaShareToHninn={open:openModal,prepare:pack};
 const oldHeader=header;
 header=function(...args){
@@ -109,8 +148,16 @@ const css=document.createElement('style');css.textContent=`
 #rf-export-form{background:#fff;box-shadow:0 17px 50px #0004;width:min(500px,100%);border-radius:16px;padding:24px;display:grid;gap:12px;font-size:14px}
 #rf-export-form h2{margin:0;color:#15513b}#rf-export-form p{margin:0;line-height:1.5}
 #rf-export-form label{display:flex;align-items:center;gap:9px;border-radius:9px;background:#f4f9f5;padding:10px}
-#rf-export-form label input{width:18px;height:18px}#rf-export-form .rf-warning{font-size:12px;color:#865831}
+#rf-export-form label input{width:18px;height:18px;flex:0 0 18px}#rf-export-form .rf-warning{font-size:12px;color:#865831}
 #rf-export-form .rf-btns{display:flex;gap:9px;flex-wrap:wrap}#rf-export-form button{border:0;border-radius:9px;background:#166445;color:#fff;padding:11px 13px;font-weight:800}
-#rf-export-form button[data-rf-close]{background:#e9eee9;color:#23473b}`;
+#rf-export-form button[data-rf-close]{background:#e9eee9;color:#23473b}
+#rf-export-form{max-height:calc(100dvh - 30px);overflow-y:auto}
+#rf-project-choices{display:grid;gap:7px;max-height:40vh;overflow-y:auto;padding:3px 2px}
+#rf-project-choices[hidden]{display:none}
+#rf-project-choices .rf-project-item{background:#f0f8f4;border:1px solid #ddebe3;align-items:flex-start}
+#rf-project-choices .rf-project-item span{display:grid;gap:3px;min-width:0;overflow-wrap:anywhere}
+#rf-project-choices .rf-project-item small{color:#60766b}
+#rf-export-form .rf-choose-buttons{display:flex;gap:8px;position:sticky;top:0;background:white;padding:4px 0}
+#rf-export-form .rf-choose-buttons button{padding:7px 10px;background:#e9eee9;color:#23473b;font-size:12px}`;
 document.head.appendChild(css);
 })();
