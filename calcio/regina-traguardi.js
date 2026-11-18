@@ -1,4 +1,4 @@
-/* REGINA CALCIO 1.1.20 — Grandi obiettivi: tappe binarie, date e colori.
+/* REGINA CALCIO 1.1.23 — Grandi traguardi: tappe con data prima, priorità manuale, colori.
    Sostituisce il precedente regina-traguardi.js. Si carica DOPO regina-upgrade.js.
    Il backup della carriera include reginaLongTerm e l'archivio Obiettivi.
    Non scrive né modifica l'archivio della vecchia REGINA Città. */
@@ -139,6 +139,26 @@
   const complete = (g, a) => Boolean(g.steps?.length) && g.steps.every(s => stepChecked(liveStep(s, a)));
   const progress = (g, a) => g.steps?.length
     ? Math.round(100 * g.steps.filter(s => stepChecked(liveStep(s, a))).length / g.steps.length) : 0;
+
+  // L'ordine si calcola in lettura: nessuna riscrittura o perdita delle tappe
+  // esistenti. Le frecce conservano l'ordinamento manuale dentro ogni gruppo.
+  // 0: in cima per scelta dell'utente; 1: con data o scadenza; 2: senza data;
+  // 3: completate, sempre in fondo anche se precedentemente fissate.
+  const pinRank = s => {
+    const n = Number(s?.rltPinRank);
+    return Number.isSafeInteger(n) && n > 0 ? n : 0;
+  };
+  function stepBand(s, a) {
+    const current = liveStep(s, a);
+    if (stepChecked(current)) return 3;
+    if (pinRank(s)) return 0;
+    return validDate(current.date) || validDate(current.timeframe?.end) ? 1 : 2;
+  }
+  function visibleEntries(g, a) {
+    return g.steps.map((step, index) => ({ step, index, band: stepBand(step, a) }))
+      .sort((x, y) => x.band - y.band ||
+        (x.band === 0 ? pinRank(y.step) - pinRank(x.step) : x.index - y.index));
+  }
   let expandedGoal = null;
 
   function hydrateFromArchive(d, a) {
@@ -289,10 +309,14 @@
     return s;
   }
 
-  function stepMarkup(g, s, index, a) {
+  function stepMarkup(g, s, index, a, entries) {
+    const original = s;
     s = liveStep(s, a);
     const done = stepChecked(s), id = esc(g.id), sid = esc(s.id);
-    return `<li class="rlt-step ${done ? 'done' : ''}">
+    const pinned = !done && pinRank(original) > 0;
+    const canUp = index > 0 && entries[index - 1].band === entries[index].band;
+    const canDown = index < entries.length - 1 && entries[index + 1].band === entries[index].band;
+    return `<li class="rlt-step ${done ? 'done' : ''} ${pinned ? 'rlt-step-pinned' : ''}">
       <label class="rlt-step-check"><input type="checkbox" data-rlt-check="${sid}" data-goal="${id}"
         ${done ? 'checked' : ''} aria-label="Completata: ${esc(s.title)}"></label>
       <div class="rlt-step-main"><span class="rlt-step-label">${esc(s.title)}</span>
@@ -304,16 +328,21 @@
           s.timeframe?.end ? '<small class="rlt-linked">↗ In Obiettivi e Oggi alla scadenza: influenza la partita quel giorno, non prima.</small>' :
           '<small class="rlt-muted">Scegli una data oppure una scadenza per inserirla negli Obiettivi.</small>'}
       </div>
-      <div class="rlt-step-actions"><button type="button" data-rlt-act="rename" data-goal="${id}" data-step="${sid}" aria-label="Rinomina tappa">✎</button>
-        <button type="button" data-rlt-act="up" data-goal="${id}" data-step="${sid}" aria-label="Sposta prima" ${index === 0 ? 'disabled' : ''}>↑</button>
-        <button type="button" data-rlt-act="down" data-goal="${id}" data-step="${sid}" aria-label="Sposta dopo" ${index === g.steps.length - 1 ? 'disabled' : ''}>↓</button>
+      <div class="rlt-step-actions">
+        <button type="button" class="rlt-pin ${pinned ? 'rlt-pinned' : ''}" data-rlt-act="pin" data-goal="${id}" data-step="${sid}"
+          aria-pressed="${pinned}" aria-label="${pinned ? 'Togli dalla cima' : 'Sposta in cima alle tappe non completate'}: ${esc(s.title)}"
+          title="${pinned ? 'Togli dalla cima' : 'Sposta in cima fra le non completate'}" ${done ? 'disabled' : ''}>${pinned ? '📌 Fissata' : '📌 In cima'}</button>
+        <button type="button" data-rlt-act="rename" data-goal="${id}" data-step="${sid}" aria-label="Rinomina tappa">✎</button>
+        <button type="button" data-rlt-act="up" data-goal="${id}" data-step="${sid}" aria-label="Sposta prima nel gruppo" ${canUp ? '' : 'disabled'}>↑</button>
+        <button type="button" data-rlt-act="down" data-goal="${id}" data-step="${sid}" aria-label="Sposta dopo nel gruppo" ${canDown ? '' : 'disabled'}>↓</button>
         <button type="button" class="rlt-danger" data-rlt-act="remove-step" data-goal="${id}" data-step="${sid}" aria-label="Elimina tappa">×</button></div>
     </li>`;
   }
 
   function goalMarkup(g, a) {
     const n = progress(g, a), done = complete(g, a), cat = themeOf(g);
-    const steps = g.steps.map(s => liveStep(s, a));
+    const entries = visibleEntries(g, a);
+    const steps = entries.map(({step}) => liveStep(step, a));
     const doneCount = steps.filter(stepChecked).length;
     const next = steps.find(s => !stepChecked(s));
     return `<details class="rlt-goal rlt-cat-${cat} ${done ? 'rlt-goal-done' : ''}"
@@ -330,7 +359,8 @@
           <b>${expandedGoal === g.id ? '▲ Chiudi' : '▼ Apri'}</b></div>
       </summary>
       <div class="rlt-expanded">
-        ${g.steps.length ? `<ol class="rlt-steps">${g.steps.map((s, i) => stepMarkup(g, s, i, a)).join('')}</ol>` :
+        ${g.steps.length ? `<p class="rlt-order-help">Prima le tappe fissate con 📌, poi quelle con data o scadenza, quindi quelle senza data. Le completate vanno in fondo.</p>
+          <ol class="rlt-steps">${entries.map(({step}, i) => stepMarkup(g, step, i, a, entries)).join('')}</ol>` :
           '<p class="rlt-muted">Non hai ancora inserito tappe per questo obiettivo.</p>'}
         <form class="rlt-step-add" data-rlt-form="step" data-goal="${esc(g.id)}">
           <input name="title" required maxlength="180" placeholder="Nuova tappa del percorso" aria-label="Nuova tappa">
@@ -353,7 +383,7 @@
     const active = goals.filter(g => !complete(g, a)).length, done = goals.length - active;
     const avg = goals.length ? Math.round(goals.reduce((sum, g) => sum + progress(g, a), 0) / goals.length) : 0;
     return `<div class="rlt-page"><section class="rlt-intro"><span class="rlt-kicker">LA TUA STRADA</span>
-      <h2>🎯 Grandi obiettivi</h2><p>Dividi le mete importanti in tappe. Scegli una data programmata o una scadenza flessibile:
+      <h2>🎯 Grandi obiettivi <small class="rlt-version">1.1.23</small></h2><p>Dividi le mete importanti in tappe. Scegli una data programmata o una scadenza flessibile:
       le tappe entreranno in Obiettivi e saranno valutate in Oggi nella giornata assegnata o alla scadenza.</p>
       <div class="rlt-stats"><div><strong>${active}</strong><small>In corso</small></div>
         <div><strong>${done}</strong><small>Raggiunti</small></div>
@@ -379,7 +409,7 @@
   todayView = function (...args) { return view === PAGE ? pageView() : oldToday.apply(this, args); };
   const oldHeader = header;
   header = function (...args) {
-    let html = oldHeader.apply(this, args).replace(/v1\.1\.(?:1[6-9]|20)/g, 'v1.1.20');
+    let html = oldHeader.apply(this, args).replace(/v1\.1\.(?:1[6-9]|2[0-2])/g, 'v1.1.23');
     if (html.includes("changeView('longterm')")) return html;
     const b = `<button class="${view === PAGE ? 'active' : ''}" onclick="changeView('${PAGE}')">🎯 Traguardi</button>`;
     const match = html.match(/<button\b[^>]*onclick="changeView\('objectives'\)"[^>]*>Obiettivi<\/button>/);
@@ -471,11 +501,31 @@
       const newer = prompt('Nome della tappa:', s.title);
       if (newer === null || !newer.trim()) return;
       update(d => { findStep(d, id, sid).title = newer.trim().slice(0, 180); });
+    } else if (action === 'pin') {
+      update(d => {
+        const g = findGoal(d, id), s = findStep(d, id, sid);
+        // Una tappa completata non può salire sopra quelle ancora da fare.
+        if (stepChecked(liveStep(s, archive()))) return;
+        if (pinRank(s)) s.rltPinRank = 0;
+        else s.rltPinRank = Math.max(0, ...g.steps.map(pinRank)) + 1;
+      });
     } else if (action === 'up' || action === 'down') {
       update(d => {
-        const g = findGoal(d, id), i = g.steps.findIndex(x => x.id === sid);
+        const g = findGoal(d, id), entries = visibleEntries(g, archive());
+        const i = entries.findIndex(x => x.step.id === sid);
         const j = i + (action === 'up' ? -1 : 1);
-        if (i >= 0 && j >= 0 && j < g.steps.length) [g.steps[i], g.steps[j]] = [g.steps[j], g.steps[i]];
+        if (i < 0 || j < 0 || j >= entries.length || entries[i].band !== entries[j].band) return;
+        const first = entries[i].step, second = entries[j].step;
+        if (entries[i].band === 0) {
+          // Due tappe fissate: scambia la loro priorità, non le altre tappe.
+          const tmp = first.rltPinRank;
+          first.rltPinRank = second.rltPinRank;
+          second.rltPinRank = tmp;
+        } else {
+          // Senza alterare la partizione data/senza data/completate.
+          const pi = g.steps.indexOf(first), pj = g.steps.indexOf(second);
+          [g.steps[pi], g.steps[pj]] = [g.steps[pj], g.steps[pi]];
+        }
       });
     }
   }, true);
@@ -803,8 +853,11 @@
   .rlt-meta{display:flex;flex-wrap:wrap;gap:6px 13px;font-size:11px;color:#647770}
   .rlt-meta b{margin-left:auto;color:var(--rlt-color)}
   .rlt-expanded{border-top:1px solid #e2eeea;padding:11px 0 15px}
-  .rlt-steps{list-style:none;margin:11px 0;padding:0;display:grid;gap:7px}
+  .rlt-steps{list-style:none;margin:8px 0 11px;padding:0;display:grid;gap:7px}
+  .rlt-version{font-size:11px;font-weight:600;color:#66887a;vertical-align:middle;white-space:nowrap}
+  .rlt-order-help{font-size:11px;line-height:1.45;color:#59746a;background:#f2f9f5;border-radius:8px;padding:8px 10px;margin:3px 0}
   .rlt-step{display:flex;align-items:flex-start;gap:8px;padding:10px 7px;border:1px solid #dce9e4;border-radius:10px;background:#fafdfb;min-width:0}
+  .rlt-step-pinned{border-color:var(--rlt-color);box-shadow:inset 3px 0 0 var(--rlt-color)}
   .rlt-step.done{background:var(--rlt-tint)}
   .rlt-step-check{padding-top:4px}.rlt-step-check input{width:19px;height:19px;accent-color:var(--rlt-color)}
   .rlt-step-main{min-width:0;flex:1}.rlt-step-label{font-weight:650;font-size:13px;overflow-wrap:anywhere;display:block;margin-bottom:7px}
@@ -814,6 +867,8 @@
   .rlt-step-actions{display:flex;gap:2px;flex-wrap:wrap;max-width:115px;justify-content:flex-end}
   .rlt-step-actions button,.rlt-goal-actions button,.rlt-modal-title button{border:1px solid #cbdcd4;border-radius:6px;background:#fff;color:#346b58;padding:6px;cursor:pointer;font-size:13px;min-width:26px}
   .rlt-step-actions button:disabled{opacity:.25}.rlt-danger{color:#ac4c40!important}
+  .rlt-step-actions .rlt-pin{width:100%;font-size:11px;font-weight:750;min-width:68px;white-space:normal}
+  .rlt-step-actions .rlt-pin.rlt-pinned{border-color:var(--rlt-color);background:var(--rlt-tint);color:var(--rlt-color)}
   .rlt-step-add{display:grid;grid-template-columns:minmax(0,1fr) 145px minmax(170px,1.2fr);gap:6px;margin:13px 0}
   .rlt-step-add button{grid-column:1/-1;justify-self:start}
   .rlt-time-widget{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 10px;margin:8px 0;background:#f4f7fa;border:1px solid #e0e5ed;border-radius:8px;padding:8px;font-size:12px}
@@ -851,7 +906,7 @@
   .rlt-legend-item i{display:inline-block;width:10px;height:10px;background:var(--rlt-color);border-radius:3px}
   .rlt-theme-field small{font-size:11px;color:#56717c;line-height:1.4}
   @media(max-width:580px){.rlt-step-add{grid-template-columns:minmax(0,1fr) 140px}.rlt-step-add .rlt-time-widget{grid-column:1/-1}.rlt-step-add button{grid-column:1/-1}.rlt-intro,.rlt-goal{padding-right:11px}.rlt-goal{padding-left:12px}}
-  @media(max-width:430px){.rlt-intro{padding:13px}.rlt-step{gap:5px;padding:8px 5px}.rlt-step-actions{max-width:60px}.rlt-step-actions button{padding:5px;min-width:24px}.rlt-pct{font-size:20px}.rlt-meta{font-size:10px}.rlt-date-row input{max-width:150px}.rlt-step-deadline .rlt-time-widget{padding:6px}.rlt-step-deadline .rlt-time-widget label{min-width:125px}}
+  @media(max-width:430px){.rlt-intro{padding:13px}.rlt-step{gap:5px;padding:8px 5px}.rlt-step-actions{max-width:83px;min-width:76px}.rlt-step-actions button{padding:5px;min-width:24px}.rlt-step-actions .rlt-pin{font-size:10px;min-width:76px}.rlt-pct{font-size:20px}.rlt-meta{font-size:10px}.rlt-date-row input{max-width:150px}.rlt-step-deadline .rlt-time-widget{padding:6px}.rlt-step-deadline .rlt-time-widget label{min-width:125px}}
   `;
   document.head.appendChild(css);
   if (st) render();

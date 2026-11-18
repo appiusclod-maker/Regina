@@ -1,7 +1,7 @@
-/* REGINA CALCIO PWA 1.1.21 — scope esclusivo /calcio/.
+/* REGINA CALCIO PWA 1.1.23 — scope esclusivo /calcio/.
    I dati restano locali; il modulo Traguardi è disponibile anche offline. */
 'use strict';
-const VERSION='regina-calcio-pwa-1121';
+const VERSION='regina-calcio-pwa-1123';
 const SHELL=VERSION+'-core',CRESTS='regina-calcio-stemmi-2026-27-v1';
 const STATIC=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon.svg','./regina-upgrade.js','./regina-traguardi.js','./regina-hninn-export.js'];
 self.addEventListener('install',event=>{
