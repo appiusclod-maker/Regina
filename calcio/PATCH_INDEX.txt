@@ -1,10 +1,14 @@
-Nel file GitHub calcio/index.html cerca la riga esistente:
+In fondo a calcio/index.html, DOPO i moduli che hai già:
 
-<script src="./regina-traguardi.js?v=1117"></script>
-
-(o qualsiasi versione precedente) e cambia SOLO il parametro v:
-
+<script src="./regina-upgrade.js?v=1116"></script>
 <script src="./regina-traguardi.js?v=1123"></script>
+<script src="./regina-hninn-export.js?v=1122"></script>
 
-LASCIA INVARIATA la riga regina-hninn-export.js (1122 se hai installato 1.1.22).
-NON rimpiazzare index.html con versioni precedenti.
+AGGIUNGI QUESTA SOLA RIGA (prima di </body>):
+
+<script src="./regina-ricorrenze.js?v=1124"></script>
+
+IMPORTANTE:
+- Le versioni v=... delle prime tre righe sono ESEMPI: non modificarle.
+- Non eliminare nessun modulo già presente.
+- Se la riga regina-ricorrenze.js è già presente, modificala in ?v=1124, senza duplicarla.

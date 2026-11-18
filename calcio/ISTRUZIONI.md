@@ -1,42 +1,57 @@
-# REGINA Calcio 1.1.23 — Priorità delle tappe nei Grandi traguardi
+# REGINA Calcio 1.1.24 — Recupero delle ricorrenze
 
-## Novità
+## Correzione
 
-All'interno di ciascun grande traguardo le tappe sono mostrate in quest'ordine:
+Le tappe da svolgere **una volta a settimana**, **ogni due settimane** o **una volta al mese**
+(e le ricorrenze settimanali con un solo giorno personalizzato) che rimangono incomplete
+passano automaticamente al giorno successivo e continuano a scorrere di giorno in giorno
+fino al completamento.
 
-1. **📌 In cima**: tappe ancora non completate fissate manualmente (l'ultima fissata va per prima).
-2. **Da fare con data programmata O scadenza**: salgono automaticamente sopra quelle senza data.
-3. **Da fare senza data né scadenza**.
-4. **Completate**: restano in fondo, anche se erano state fissate.
+Esempio: una tappa settimanale prevista lunedì e non fatta rimane visibile martedì,
+mercoledì eccetera. Quando viene completata, la prossima ricorrenza mantiene il
+calendario originario (lunedì della settimana seguente), non riparte da +7 giorni
+rispetto al completamento.
 
-Fra le tappe di uno stesso gruppo resta l'ordine manuale esistente. Le frecce **↑/↓**
-spostano le tappe soltanto nel proprio gruppo, senza annullare il criterio automatico.
-Il nuovo pulsante **📌 In cima** è accanto a ogni tappa ancora da fare: premi per fissarla
-sopra le altre tappe incompiute, premi **📌 Fissata** per togliere la priorità.
-Si possono fissare più tappe. Le priorità restano memorizzate nella carriera.
-Se una tappa viene completata, finisce automaticamente nel gruppo delle completate.
+Se un'attività rimane indietro oltre il successivo appuntamento settimanale/mensile,
+REGINA mantiene una sola attività in recupero: non accumula duplicati per ogni periodo.
+Una volta completata, se nello stesso periodo è già maturata una nuova scadenza,
+il completamento tardivo soddisfa anche quella settimana/mese e si riparte dal ciclo seguente.
 
-L'ordinamento funziona anche quando assegni/rimuovi una data o cambi una scadenza
-flessibile; le tappe sono sempre sincronizzate con Obiettivi/Oggi come prima.
-Non è cambiato il comportamento di partite, punteggi, scadenze o esportazione per Hninn.
+Sono preservati progressi parziali, orari, categorie, colori, grandi traguardi,
+lista della spesa e collegamento a Hninn. Non sono toccati gli impegni
+**ogni giorno**, quelli **lun-ven** o senza ricorrenza.
 
-## Installazione su GitHub (telefono)
+La casella presente in Modifica tappa **«Non riportare in avanti tappe non riuscite»**
+continua ad avere priorità: se spuntata, la tappa NON viene recuperata automaticamente.
+
+## Installazione su GitHub (da telefono)
 
 Cartella: https://github.com/appiusclod-maker/Regina/tree/main/calcio
 
-1. Prima dell'aggiornamento esporta un backup completo dall'app e conservalo sul telefono.
-2. Sostituisci **solo** `calcio/regina-traguardi.js` e `calcio/service-worker.js` con gli omonimi dello ZIP.
-3. Apri `calcio/index.html`, trova la riga `regina-traguardi.js` verso il fondo
-   e cambia solo il parametro `?v=...` in `?v=1123` (vedi PATCH_INDEX.txt).
-4. Premi **Commit changes**. Apri REGINA nel browser **online** e aggiorna la pagina;
-   nella PWA installata potrebbe essere necessario chiudere e riaprire l'app.
+1. Esporta un **backup completo** da REGINA e conservalo sul telefono.
+2. Carica `regina-ricorrenze.js` nella cartella `calcio` del repository.
+3. Sostituisci `service-worker.js` nella medesima cartella con quello di questo ZIP.
+4. Apri `calcio/index.html`, vai **alla fine**, poco prima di `</body>`,
+   e aggiungi questa riga (DOPO tutti gli altri `<script src=...>`):
 
-**Non** cancellare cache, dati del sito, obiettivi o l'app. Non caricare il file `index.html`
-di una versione vecchia, non modificare `regina-upgrade.js` e **mantieni** il modulo
-`regina-hninn-export.js` della 1.1.22.
+   `<script src="./regina-ricorrenze.js?v=1124"></script>`
 
-## Compatibilità e test
+5. Salva con **Commit changes**. Riapri REGINA online (nel browser se la PWA
+   continua a usare una vecchia copia).
 
-Aggiornamento cumulativo del modulo traguardi 1.1.20 (include le versioni 1.1.18–1.1.20).
-Aggiunge solo `rltPinRank` alle tappe fissate, senza migrazioni invasive.
-Le tappe normali e i dati già salvati non sono cancellati.
+**Non** sostituire `index.html` con un file vecchio, non modificare gli altri
+JavaScript e non cancellare la cache / i dati del sito: i salvataggi sono locali.
+
+## Verifiche effettuate
+
+- Sintassi JavaScript di entrambi i moduli verificata con Node.js.
+- 14 scenari automatici, fra cui settimanale, mensile al giorno 31,
+  ogni due settimane, attività già completate, esclusioni (`skipDates`),
+  `noCarry`, progressi parziali, mantenimento dell'orario e nessun doppione.
+- Le prove riguardano la logica del modulo in ambiente simulato;
+  non equivalgono a un collaudo completo della PWA installata su telefono.
+
+## Compatibilità
+
+Aggiornamento **aggiuntivo** per REGINA Calcio 1.1.23.
+Non modifica `regina-traguardi.js`, `regina-hninn-export.js`, `regina-upgrade.js`.
