@@ -1976,6 +1976,98 @@ const r112CSS=document.createElement('style');r112CSS.textContent=`
 @media(max-width:400px){.regina-today-item{align-items:flex-start;flex-wrap:wrap}.regina-today-actions{margin-left:auto}.regina-save-line{font-size:10px}}
 `;document.head.appendChild(r112CSS);
 // Non scrivere salvataggi vuoti durante il boot. Prima recupera il migliore.
+/* REGINA — correzione salvataggi 23-11-2026 */
+{
+ const oldPersist117=persist;
+ const oldRecover117=r112Recover;
+ let ready117=false, idbOK117=false;
+
+ persist=function(){
+  if(!ready117)return false;
+
+  const revisionBefore=r112Revision;
+  const localOK=oldPersist117();
+
+  if(!st||r112Blocked&&!r112AllowDowngrade)
+   return false;
+
+  const queued=r112Revision>revisionBefore;
+  if(!queued)return localOK;
+
+  let snapshot;
+  try{
+   snapshot=JSON.stringify(st);
+  }catch(e){
+   return localOK;
+  }
+
+  const pending=r112IdbPromise;
+
+  pending.then(async()=>{
+   const capsule=await r112ReadDB();
+
+   if(!capsule?.football||
+      JSON.stringify(capsule.football)!==snapshot)
+    return;
+
+   try{
+    const raw=localStorage.getItem(APPKEY);
+
+    if(raw&&!r112HasNewer(
+       JSON.parse(raw),capsule.football)){
+     localStorage.removeItem(APPKEY);
+    }
+   }catch(e){
+    console.warn('REGINA: pulizia copia locale',e);
+   }
+  }).catch(e=>
+   console.warn('REGINA: pulizia sospesa',e)
+  );
+
+  if(idbOK117){
+   r112Notice('saving',
+    '💾 Salvataggio nell’archivio sicuro in corso…');
+   return true;
+  }
+
+  return localOK;
+ };
+
+ r112Recover=async function(){
+  await oldRecover117();
+
+  try{
+   await r112ReadDB();
+   idbOK117=true;
+  }catch(e){
+   idbOK117=false;
+  }
+
+  ready117=true;
+
+  if(idbOK117&&st)persist();
+ };
+
+ window.reginaData.check=async function(){
+  if(!ready117)
+   return alert('Recupero della carriera in corso.');
+
+  try{
+   await r112IdbPromise;
+   const capsule=await r112ReadDB();
+
+   const same=!!st&&
+    JSON.stringify(capsule?.football)===
+    JSON.stringify(st);
+
+   alert(same?
+    '✅ Verifica completa riuscita: ore e progressi coincidono.':
+    '⚠️ Archivio non aggiornato: esporta subito il backup completo.');
+  }catch(e){
+   alert('⚠️ Archivio non disponibile: esporta il backup completo.');
+  }
+ };
+} 
 r112Recover();
 
 // ============================================================================
