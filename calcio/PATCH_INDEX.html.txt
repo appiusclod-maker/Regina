@@ -1,0 +1,3 @@
+Aggiungere dopo il tag di regina-ricorrenze.js, subito prima di </body>:
+
+<script src="./regina-portiere-emergenza.js?v=1125"></script>
