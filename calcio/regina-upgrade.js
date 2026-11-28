@@ -1976,99 +1976,262 @@ const r112CSS=document.createElement('style');r112CSS.textContent=`
 @media(max-width:400px){.regina-today-item{align-items:flex-start;flex-wrap:wrap}.regina-today-actions{margin-left:auto}.regina-save-line{font-size:10px}}
 `;document.head.appendChild(r112CSS);
 // Non scrivere salvataggi vuoti durante il boot. Prima recupera il migliore.
-/* REGINA — correzione salvataggi 23-11-2026 */
+/* REGINA CALCIO 1.1.26 — salvataggi verificati, storico e boot protetto.
+   Sostituisce il blocco «correzione salvataggi 23-11-2026» in regina-upgrade.js.
+   Non cancella i vecchi salvataggi, usa la stessa IndexedDB v1/backups. */
 {
- const oldPersist117=persist;
- const oldRecover117=r112Recover;
- let ready117=false, idbOK117=false;
-
- persist=function(){
-  if(!ready117)return false;
-
-  const revisionBefore=r112Revision;
-  const localOK=oldPersist117();
-
-  if(!st||r112Blocked&&!r112AllowDowngrade)
-   return false;
-
-  const queued=r112Revision>revisionBefore;
-  if(!queued)return localOK;
-
-  let snapshot;
-  try{
-   snapshot=JSON.stringify(st);
-  }catch(e){
-   return localOK;
-  }
-
-  const pending=r112IdbPromise;
-
-  pending.then(async()=>{
-   const capsule=await r112ReadDB();
-
-   if(!capsule?.football||
-      JSON.stringify(capsule.football)!==snapshot)
-    return;
-
-   try{
-    const raw=localStorage.getItem(APPKEY);
-
-    if(raw&&!r112HasNewer(
-       JSON.parse(raw),capsule.football)){
-     localStorage.removeItem(APPKEY);
+  const RS_PREFIX='history:', RS_DAILY=RS_PREFIX+'daily:', RS_CHECK=RS_PREFIX+'checkpoint:';
+  const RS_NEW='regina-calcio-nuova-carriera-autorizzata';
+  let rsReady=false,rsDbOK=false,rsRevision=0,rsBusy=Promise.resolve(),rsOverride=false;
+  let rsRecovery=Promise.resolve();
+  const rsDate=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
+  const rsCareer=s=>String(s?.club||'')+'|'+String(s?.created||'')+'|'+String(s?.season||1);
+  const rsScore=s=>(Number(s?.season)||1)*1000000+(Number(s?.game)||0)*100+(s?.results?.length||0);
+  const rsMeta=c=>({club:c?.football?.club||'',league:c?.football?.league||'',season:c?.football?.season||1,
+    game:c?.football?.game||0,results:c?.football?.results?.length||0,
+    nextDay:c?.football?.nextDay||'',created:c?.football?.created||'',savedAt:c?.savedAt||c?.football?._reginaSavedAt||0});
+  const rsClone=o=>typeof structuredClone==='function'?structuredClone(o):JSON.parse(JSON.stringify(o));
+  const rsLabel=c=>{const f=c?.football||{};return (teamById(f.club)?.name||f.club||'Squadra sconosciuta')+
+    ' · stagione '+(f.season||1)+' · '+(f.game||0)+' giornate · '+(f.nextDay||'data non nota')};
+  async function rsPack(c){
+    const json=JSON.stringify(c);
+    if(typeof CompressionStream==='function'){
+      const packed=await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();
+      return {format:'REGINA_HISTORY_GZIP_1126',meta:rsMeta(c),data:new Uint8Array(packed)};
     }
-   }catch(e){
-    console.warn('REGINA: pulizia copia locale',e);
-   }
-  }).catch(e=>
-   console.warn('REGINA: pulizia sospesa',e)
-  );
-
-  if(idbOK117){
-   r112Notice('saving',
-    '💾 Salvataggio nell’archivio sicuro in corso…');
-   return true;
+    return {format:'REGINA_HISTORY_TEXT_1126',meta:rsMeta(c),data:json};
   }
-
-  return localOK;
- };
-
- r112Recover=async function(){
-  await oldRecover117();
-
-  try{
-   await r112ReadDB();
-   idbOK117=true;
-  }catch(e){
-   idbOK117=false;
+  async function rsUnpack(x){
+    if(!x)return null;if(x.football?.club)return x;
+    if(x.format==='REGINA_HISTORY_GZIP_1126'){
+      const raw=await new Response(new Blob([x.data]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+      return JSON.parse(raw);
+    }
+    if(x.format==='REGINA_HISTORY_TEXT_1126')return JSON.parse(x.data);
+    return null;
   }
-
-  ready117=true;
-
-  if(idbOK117&&st)persist();
- };
-
- window.reginaData.check=async function(){
-  if(!ready117)
-   return alert('Recupero della carriera in corso.');
-
-  try{
-   await r112IdbPromise;
-   const capsule=await r112ReadDB();
-
-   const same=!!st&&
-    JSON.stringify(capsule?.football)===
-    JSON.stringify(st);
-
-   alert(same?
-    '✅ Verifica completa riuscita: ore e progressi coincidono.':
-    '⚠️ Archivio non aggiornato: esporta subito il backup completo.');
-  }catch(e){
-   alert('⚠️ Archivio non disponibile: esporta il backup completo.');
+  function rsAll(){return r112DB().then(db=>new Promise((resolve,reject)=>{
+    const entries=[],tx=db.transaction(R112_STORE,'readonly');
+    const req=tx.objectStore(R112_STORE).openCursor();
+    req.onsuccess=()=>{const cur=req.result;if(cur){const v=cur.value;
+      if(cur.key==='current'||String(cur.key).startsWith(RS_PREFIX))entries.push({key:String(cur.key),value:v,meta:v?.meta||rsMeta(v)});
+      cur.continue();}};
+    tx.oncomplete=()=>{db.close();resolve(entries)};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e||Error('Lettura archivio fallita'))};
+    tx.onabort=()=>{const e=tx.error;db.close();reject(e||Error('Lettura annullata'))};
+  }));}
+  async function rsGet(key){const db=await r112DB();return new Promise((resolve,reject)=>{
+    const tx=db.transaction(R112_STORE,'readonly'),q=tx.objectStore(R112_STORE).get(key);let value=null;
+    q.onsuccess=()=>value=q.result||null;
+    tx.oncomplete=()=>{db.close();resolve(value)};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e||Error('Errore archivio'))};
+    tx.onabort=()=>{const e=tx.error;db.close();reject(e||Error('Lettura annullata'))};
+  })}
+  function rsWriteOps(operations){return r112DB().then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction(R112_STORE,'readwrite'),store=tx.objectStore(R112_STORE);
+    for(const [key,value] of operations)store.put(value,key);
+    tx.oncomplete=()=>{db.close();resolve(true)};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e||Error('Scrittura fallita'))};
+    tx.onabort=()=>{const e=tx.error;db.close();reject(e||Error('Scrittura annullata'))};
+  }));}
+  function rsHistoryKey(c){return RS_DAILY+rsDate()+':'+rsCareer(c.football).replace(/[^\w|.-]/g,'_')}
+  async function rsStore(c,tag){
+    const before=await rsGet('current');
+    if(before?.football?.club&&rsCareer(before.football)===rsCareer(c.football)&&
+       rsScore(before.football)>rsScore(c.football)&&!rsOverride){
+      throw Error('Un’altra scheda contiene una carriera più avanzata. Non ho sovrascritto il salvataggio.');
+    }
+    const hist=await rsPack(c),operations=[['current',c],[rsHistoryKey(c),hist]];
+    if(before?.football?.club&&rsCareer(before.football)!==rsCareer(c.football)){
+      // Il cambio carriera crea un checkpoint separato nella STESSA transazione.
+      operations.push([RS_CHECK+Date.now()+':'+Math.random().toString(36).slice(2,8),before]);
+    }
+    if(tag)operations.push([RS_CHECK+Date.now()+':'+tag,hist]);
+    await rsWriteOps(operations);
+    const [current,daily]=await Promise.all([rsGet('current'),rsGet(rsHistoryKey(c))]);
+    if(!current?.football||current.football._reginaSavedAt!==c.football._reginaSavedAt||
+        current.football.club!==c.football.club||!daily)
+      throw Error('Verifica dopo scrittura non riuscita');
+    return true;
   }
- };
-} 
-r112Recover();
+  async function rsPrune(){
+    const all=await rsAll(),daily=all.filter(x=>x.key.startsWith(RS_DAILY)).sort((a,b)=>b.meta.savedAt-a.meta.savedAt),
+      checks=all.filter(x=>x.key.startsWith(RS_CHECK)).sort((a,b)=>b.meta.savedAt-a.meta.savedAt);
+    const days=new Set(),toDelete=[];
+    for(const entry of daily){const d=entry.key.slice(RS_DAILY.length,RS_DAILY.length+10);if(!days.has(d)&&days.size>=30)toDelete.push(entry.key);else days.add(d)}
+    for(const item of checks.slice(20))toDelete.push(item.key);
+    if(!toDelete.length)return;
+    const db=await r112DB();await new Promise((resolve,reject)=>{
+      const tx=db.transaction(R112_STORE,'readwrite'),store=tx.objectStore(R112_STORE);
+      toDelete.forEach(key=>store.delete(key));
+      tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)};
+      tx.onabort=()=>{db.close();reject(tx.error)};
+    });
+  }
+  function rsQueue(c,revision,tag){
+    let captured;try{captured=rsClone(c)}catch(e){r112Notice('error','❌ Impossibile copiare il salvataggio');return Promise.reject(e)}
+    const job=rsBusy.catch(()=>{}).then(()=>rsStore(captured,tag)).then(()=>{
+      if(revision===rsRevision)r112Notice('ok','✅ Carriera verificata + storico di sicurezza');
+      rsPrune().catch(e=>console.warn('REGINA: pulizia storico non riuscita',e));
+      return true;
+    }).catch(e=>{
+      if(revision===rsRevision)r112Notice('error','❌ Archivio di sicurezza NON verificato: esporta un JSON. '+e.message);
+      console.error('REGINA autosave',e);throw e;
+    });
+    rsBusy=job.catch(()=>{});r112IdbPromise=rsBusy;return job;
+  }
+  function rsPersist(){
+    if(!rsReady||!st)return false;
+    try{
+      r112SlimRoundLog();st._reginaSavedAt=Math.max(Date.now(),Number(st._reginaSavedAt||0)+1);
+      const data=JSON.stringify(st);let local=false;
+      try{localStorage.setItem(APPKEY,data);local=localStorage.getItem(APPKEY)===data}
+      catch(e){console.warn('REGINA: memoria locale piena; resta IndexedDB',e)}
+      r112LocalOK=local;
+      const rev=++rsRevision;
+      r112Notice('saving','💾 Scrittura e verifica di 2 copie in corso…');
+      rsQueue(r112Capsule(),rev).catch(()=>{});
+      return true;
+    }catch(e){r112Notice('error','❌ Errore nella preparazione del salvataggio: '+e.message);return false}
+  }
+  persist=rsPersist;
+  r112PushSave=function(c){if(!rsReady||!st)return Promise.resolve(false);
+    const n=++rsRevision;return rsQueue(c,n).catch(()=>false)};
+  async function rsCheckpoint(tag){
+    const current=await rsGet('current');
+    const snap=st?rsClone(r112Capsule()):null;
+    const ops=[];let n=0;
+    for(const c of [current,snap]){
+      if(!c?.football?.club)continue;
+      const key=RS_CHECK+Date.now()+':'+tag+':'+n++;
+      ops.push([key,await rsPack(c)]);
+    }
+    if(!ops.length)return true;
+    await rsWriteOps(ops);
+    for(const [key] of ops)if(!(await rsGet(key)))return false;
+    return true;
+  }
+  function rsRecoverGoals(data){
+    try{if(data?.goals?.fronts&&data.goals.tasks&&!localStorage.getItem(GK))window.goalSaveImportedArchive(data.goals);
+      if(data?.finance?.accounts&&!localStorage.getItem(FK)){f=data.finance;r112OldFinSave()}
+    }catch(e){console.warn('REGINA: dati accessori da verificare',e)}
+  }
+  function rsSet(c){st=rsClone(c.football);rsRecoverGoals(c);r112SlimRoundLog();render()}
+  async function rsBoot(){
+    let local=st?.club?rsClone(st):null,needsSync=false;
+    try{
+      const all=await rsAll();rsDbOK=true;
+      const ranked=all.filter(x=>x.meta?.club).sort((a,b)=>
+        (rsScore(b.meta)-rsScore(a.meta))||(Number(b.meta.savedAt)||0)-(Number(a.meta.savedAt)||0));
+      let best=null;
+      if(ranked.length){best=await rsUnpack(ranked[0].value)}
+      const deliberate=sessionStorage.getItem(RS_NEW)==='yes';
+      if(!ranked.length&&local)needsSync=true;
+      if(best?.football?.club&&!deliberate){
+        if(!local){rsSet(best);needsSync=true;r112Notice('ok','✅ Carriera recuperata dall’archivio sicuro')}
+        else if(rsCareer(best.football)===rsCareer(local)&&
+           (rsScore(best.football)>rsScore(local)||(rsScore(best.football)===rsScore(local)&&
+             (best.football._reginaSavedAt||0)>(local._reginaSavedAt||0)))){rsSet(best);needsSync=true}
+        else if(rsCareer(best.football)!==rsCareer(local)&&rsScore(best.football)>rsScore(local)){
+          if(confirm('⚠️ Trovata una carriera precedente più avanzata:\n'+rsLabel(best)+
+            '\n\nVuoi recuperarla invece della carriera attualmente aperta? La carriera attuale sarà conservata nello storico.')){
+            // Non sovrascriviamo la nuova carriera senza proteggerla.
+            if(st)await rsCheckpoint('prima_recupero');
+            rsSet(best);needsSync=true;
+          }
+        }
+      }
+      if(local&&best?.football?.club&&rsCareer(best.football)===rsCareer(local)&&
+         (rsScore(local)>rsScore(best.football)||(rsScore(local)===rsScore(best.football)&&
+          (local._reginaSavedAt||0)>(best.football._reginaSavedAt||0))))needsSync=true;
+    }catch(e){rsDbOK=false;console.warn('REGINA: archivio di sicurezza non accessibile',e)}
+    rsReady=true;
+    document.documentElement.classList.remove('regina-boot-locked');
+    if(st){r112Notice(rsDbOK?'ok':'warning',rsDbOK?'✅ Salvataggi disponibili: controlla lo storico':'⚠️ Archivio di sicurezza non accessibile: esporta backup');
+      if(rsDbOK&&needsSync)persist()}
+    else r112Notice(rsDbOK?'warning':'error',rsDbOK?'Nessuna carriera trovata: puoi iniziare una nuova stagione':'⚠️ Impossibile controllare i salvataggi: NON creare una nuova carriera senza verificarli');
+  }
+  const rsPrevStart=start;
+  start=function(...args){
+    if(!rsReady)return alert('Attendi il controllo degli archivi prima di creare una carriera.');
+    if(!rsDbOK&&!confirm('L’archivio di sicurezza non è leggibile. Creare una nuova carriera potrebbe sovrascrivere i dati precedenti. Vuoi procedere?'))return;
+    if(st?.club)return alert('Esiste già una carriera. Usa la gestione delle carriere per cambiarla senza perderla.');
+    sessionStorage.removeItem(RS_NEW);
+    return rsPrevStart.apply(this,args);
+  };
+  async function rsImportFile(ev){
+    const file=ev?.target?.files?.[0];if(!file)return;
+    try{
+      if(!rsReady)throw Error('Attendi la verifica del salvataggio.');
+      const data=JSON.parse(await file.text()),football=data?.football?.club?data.football:data?.club?data:null;
+      if(!football?.club||!football?.squad||!Array.isArray(football.results))throw Error('Backup della carriera non riconosciuto');
+      if(!confirm('Ripristinare '+rsLabel({football})+'?\n\nLa carriera attuale sarà prima conservata nello storico.'))return;
+      await rsBusy;
+      if(st&&!(await rsCheckpoint('prima_importazione')))throw Error('Impossibile proteggere la carriera attuale');
+      rsOverride=true;st=rsClone(football);if(data?.goals?.fronts&&Array.isArray(data.goals.tasks))window.goalSaveImportedArchive(data.goals);
+      if(data?.finance?.accounts){f=rsClone(data.finance);r112OldFinSave()}
+      r112SlimRoundLog();if(!persist())throw Error('Salvataggio non avviato');await rsBusy;
+      const verified=await rsGet('current');
+      if(verified?.football?.club!==football.club||verified?.football?.nextDay!==football.nextDay||
+         verified.football._reginaSavedAt!==st._reginaSavedAt)throw Error('Il file non è stato verificato');
+      rsOverride=false;alert('✅ Ripristino riuscito. Giornata: '+st.nextDay+'.');location.reload();
+    }catch(e){rsOverride=false;alert('❌ Ripristino non completato: '+e.message)}
+    finally{if(ev?.target)ev.target.value=''}
+  }
+  restoreFootball=rsImportFile;window.reginaData.import=rsImportFile;
+  window.reginaData.check=async function(){
+    if(!rsReady)return alert('Controllo degli archivi ancora in corso');
+    try{await rsBusy;const current=await rsGet('current'),hist=current&&await rsGet(rsHistoryKey(current));
+      const ok=!!st&&current?.football?.club===st.club&&current.football._reginaSavedAt===st._reginaSavedAt&&!!hist;
+      alert(ok?'✅ Carriera e storico verificati.\nSquadra: '+rsLabel(current):'⚠️ Salvataggio non verificato. Esporta subito il backup JSON.');
+    }catch(e){alert('⚠️ Verifica fallita: '+e.message+'\nEsporta un backup JSON.')}
+  };
+  async function rsRestoreHistory(entry){
+    try{
+      const c=await rsUnpack(entry.value);if(!c?.football?.club)throw Error('Archivio incompleto');
+      if(!confirm('Ripristinare questa versione?\n'+rsLabel(c)+'\n\nLa carriera attuale sarà archiviata prima del ripristino.'))return;
+      await rsBusy;if(st)await rsCheckpoint('prima_ripristino_storico');
+      rsOverride=true;rsSet(c);
+      if(c.goals?.fronts&&c.goals?.tasks)window.goalSaveImportedArchive(c.goals);
+      if(c.finance?.accounts){f=rsClone(c.finance);r112OldFinSave()}
+      persist();await rsBusy;rsOverride=false;location.reload();
+    }catch(e){rsOverride=false;alert('❌ Recupero non riuscito: '+e.message)}
+  }
+  window.reginaSafeHistory=async function(){
+    try{
+      await rsBusy;const rows=(await rsAll()).filter(x=>x.meta?.club).sort((a,b)=>(b.meta.savedAt||0)-(a.meta.savedAt||0));
+      const layer=document.createElement('div');layer.style='position:fixed;z-index:99999;inset:0;background:#061e32da;padding:14px;overflow:auto';
+      const panel=document.createElement('div');panel.style='max-width:680px;margin:auto;background:#fff;padding:18px;border-radius:15px;color:#1c3447';layer.append(panel);
+      const head=document.createElement('h2');head.textContent='🛡️ Storico dei salvataggi';panel.append(head);
+      const intro=document.createElement('p');intro.textContent='Le copie automatiche sono conservate sul dispositivo, non su GitHub. Prima di cambiare telefono, esporta un JSON.';panel.append(intro);
+      const close=document.createElement('button');close.className='btn alt';close.textContent='Chiudi';close.onclick=()=>layer.remove();panel.append(close);
+      for(const e of rows){const row=document.createElement('div');row.style='padding:11px;margin:10px 0;border:1px solid #dae8ef;border-radius:11px';
+        const label=document.createElement('div');label.textContent=(e.key==='current'?'ATTUALE · ':e.key.startsWith(RS_DAILY)?'Giornaliero · ':'Protezione · ')+
+          (teamById(e.meta.club)?.name||e.meta.club)+' · '+e.meta.game+' partite · '+e.meta.nextDay+' · '+
+          (e.meta.savedAt?new Date(e.meta.savedAt).toLocaleString('it-IT'):'data sconosciuta');row.append(label);
+        const down=document.createElement('button');down.className='btn alt';down.textContent='⬇ Esporta';down.style='margin:8px 7px 0 0';
+        down.onclick=async()=>{try{const c=await rsUnpack(e.value);jsonFile(c,'REGINA_STORICO_'+e.meta.club+'_'+e.meta.nextDay+'.json')}
+          catch(err){alert('Esportazione fallita: '+err.message)}};row.append(down);
+        const restore=document.createElement('button');restore.className='btn';restore.textContent='⤺ Ripristina';restore.style='margin-top:8px';restore.onclick=()=>rsRestoreHistory(e);
+        row.append(restore);panel.append(row);
+      }
+      if(!rows.length){const p=document.createElement('p');p.textContent='Nessun salvataggio disponibile';panel.append(p)}
+      document.body.append(layer);
+    }catch(e){alert('Storico non leggibile: '+e.message)}
+  };
+  const rsPrevSettings=settingsView;settingsView=function(){return rsPrevSettings()+
+    '<section class="card"><h3>🛡️ Cronologia e recupero</h3><p>Fino a 30 giornate di salvataggi automatici, più checkpoint per importazioni e cambi di carriera. Lo storico è locale: esporta periodicamente un JSON.</p>'+
+    '<button class="btn" type="button" onclick="reginaSafeHistory()">Sfoglia e ripristina le versioni</button></section>'};
+  window.reginaData.clear=async function(){
+    if(!confirm('Vuoi abbandonare questa carriera? La sua copia rimarrà nello storico di sicurezza.'))return;
+    try{await rsBusy;await rsCheckpoint('prima_nuova_carriera');sessionStorage.setItem(RS_NEW,'yes');
+      localStorage.removeItem(APPKEY);st=null;location.reload()}
+    catch(e){alert('Non posso proteggere la carriera attuale: '+e.message)}
+  };
+  resetAll=function(){window.reginaData.clear()};
+  rsRecovery=rsBoot();
+}
+
 
 // ============================================================================
 // REGINA CALCIO 1.1.3 — Planner mobile, scorrimento bidirezionale e riepilogo

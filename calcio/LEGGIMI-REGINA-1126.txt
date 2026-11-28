@@ -1,0 +1,9 @@
+IMPORTANTE — REGINA 1.1.26
+
+1. Conserva il JSON della carriera già recuperato.
+2. Estrai e carica SOLO index.html, regina-upgrade.js, service-worker.js dentro la cartella calcio su GitHub: sostituisci i tre file omonimi.
+3. Attendi GitHub Pages e riapri online REGINA.
+4. Nelle Impostazioni → Cronologia e recupero verifica che il salvataggio sia protetto.
+5. SOLO DOPO importa il backup combinato del Pescara del 28 novembre.
+
+NON cancellare i dati di Chrome. Il nuovo storico è locale al dispositivo; continua a esportare JSON.
