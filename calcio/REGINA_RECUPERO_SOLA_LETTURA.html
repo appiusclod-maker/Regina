@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REGINA Calcio • Diagnosi e recupero (sola lettura)</title>
+<style>
+:root{font-family:system-ui,Arial,sans-serif;color:#173343;background:#eef5f5}*{box-sizing:border-box}body{max-width:720px;margin:0 auto;padding:15px}h1{font-size:25px;margin:12px 0}p{line-height:1.5}.panel{background:white;border:1px solid #cedfe2;border-radius:14px;padding:17px;margin:13px 0;box-shadow:0 2px 9px #1429360d}.danger{background:#fff5e9;border-color:#f0ce9a}.good{background:#edf9ef;border-color:#bde0c2}.muted{color:#526a73;font-size:14px}button{border:0;padding:12px 15px;min-height:42px;border-radius:9px;background:#095877;color:white;font-weight:700;margin:5px 4px 5px 0}button:disabled{background:#a0b4bb}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;font-size:12px;overflow-wrap:anywhere}.record{border:1px solid #cddfe1;border-radius:12px;padding:13px;margin:11px 0;background:#fcffff}.record strong{color:#094d67}.rows{line-height:1.65}#status{font-weight:650}.badge{display:inline-block;padding:3px 8px;background:#d6e9f2;border-radius:6px;margin:4px 0}.ok{color:#126e40}.bad{color:#a0520b}a{color:#145d76}
+</style></head><body>
+<h1>🔎 REGINA Calcio — recupero</h1>
+<div class="panel danger"><strong>⚠️ Non ripristinare ancora il backup del 23 novembre.</strong><p>Questa pagina serve esclusivamente a verificare ed esportare eventuali salvataggi ancora presenti sul dispositivo. Non crea carriere, non importa dati, non modifica né elimina i salvataggi e non invia nulla in rete.</p></div>
+<div class="panel"><p><strong>Importante:</strong> questa pagina deve essere aperta <em>sullo stesso sito e nello stesso browser</em> che usi per REGINA Calcio. Aprirla come file locale sul telefono non dà accesso ai salvataggi del sito.</p><p class="muted" id="origin"></p><button id="go" type="button">🔍 Cerca i salvataggi</button><p id="status" aria-live="polite">Premi il pulsante per iniziare.</p></div>
+<div class="panel" id="out" hidden><h2>Salvataggi individuati</h2><div id="results"></div></div>
+<div class="panel"><h2>Come interpretare i dati</h2><p>Se compare la vecchia squadra e l'ultima giornata vicina al 28 novembre, usa il pulsante <b>Esporta</b> per mettere al sicuro quel JSON. <strong>Non premere nessun comando di ripristino nell'app finché non hai scaricato il file.</strong></p><p>Se compare soltanto una carriera appena iniziata, questa verifica non dimostra che il vecchio salvataggio sia recuperabile. Il backup del 23 novembre rimane comunque utilizzabile.</p><p class="muted">Le informazioni vengono lette localmente e il download viene prodotto sul dispositivo. Conserva con cura i JSON: possono contenere obiettivi personali e informazioni finanziarie.</p></div>
+<script>
+'use strict';
+const STORE_KEY='regina-football-prototype-v01',DB_NAME='regina-calcio-sicurezza-v1';
+const list=[];
+const $=id=>document.getElementById(id);
+$('origin').textContent='Indirizzo di origine: '+location.origin+' — percorso: '+location.pathname;
+function escaped(s){return String(s??'').replace(/[&<>"']/g,k=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[k]));}
+function download(name,data){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}
+function infoFor(item){const f=item?.football?.club?item.football:item?.club&&item?.squad?item:null;return f?{f,club:f.club,season:f.season,day:f.nextDay,games:f.game,results:f.results?.length,stamp:f._reginaSavedAt,kind:item.kind||'Salvataggio carriera'}:null}
+function record(name,content){const inf=infoFor(content);if(!inf)return false;list.push({name,content,inf});return true}
+async function readDB(){
+ if(!window.indexedDB)return 'IndexedDB non disponibile in questo browser.';
+ if(typeof indexedDB.databases!=='function')return 'Il browser non permette di elencare gli archivi senza modificarli. Non è stato aperto alcun database.';
+ let infos;try{infos=await indexedDB.databases()}catch(e){return 'Impossibile elencare gli archivi: '+e.message}
+ if(!infos.some(d=>d.name===DB_NAME))return 'Archivio di sicurezza non trovato in questo profilo del browser.';
+ return new Promise(resolve=>{
+  const req=indexedDB.open(DB_NAME);let ended=false;
+  const done=(msg)=>{if(!ended){ended=true;resolve(msg)}};
+  req.onerror=()=>done('Errore accesso archivio: '+(req.error?.message||'sconosciuto'));
+  req.onupgradeneeded=e=>{e.target.transaction.abort();done('Archivio in una versione inattesa; apertura annullata per sicurezza.')};
+  req.onsuccess=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains('backups')){db.close();done('Archivio esistente ma senza raccolta backups.');return}
+   const tx=db.transaction('backups','readonly'),st=tx.objectStore('backups');
+   const get=st.get('current');get.onsuccess=()=>{if(get.result){record('IndexedDB / backups / current',get.result);done('Archivio di sicurezza letto correttamente.')}else done('Archivio presente ma nessun salvataggio current.')};
+   get.onerror=()=>done('Archivio presente ma lettura non riuscita.');
+   tx.oncomplete=()=>db.close();tx.onabort=()=>db.close();
+  };
+ });
+}
+function show(msg){
+ const result=$('results');result.innerHTML='';
+ if(!list.length){const p=document.createElement('p');p.textContent='Non sono state trovate carriere valide nella memoria locale o nell’archivio di sicurezza.';result.appendChild(p)}
+ list.forEach((a,i)=>{
+  const {inf}=a,wrap=document.createElement('div');wrap.className='record';
+  const stamp=Number(inf.stamp)>0?new Date(Number(inf.stamp)).toLocaleString('it-IT'):'non presente';
+  wrap.innerHTML=`<strong>${escaped(a.name)}</strong><div class="rows">Squadra (ID): <b>${escaped(inf.club)}</b><br>Stagione: ${escaped(inf.season)}<br>Prossima giornata: <b>${escaped(inf.day)}</b><br>Giornate giocate: <b>${escaped(inf.games)}</b><br>Partite archiviate: <b>${escaped(inf.results)}</b><br>Ultimo salvataggio: ${escaped(stamp)}<br>Tipo: ${escaped(inf.kind)}</div>`;
+  const btn=document.createElement('button');btn.textContent='⬇ Esporta questo salvataggio';btn.addEventListener('click',()=>{const content=a.content?.football?.club?a.content:{kind:'REGINA_CALCIO_BACKUP_V4',football:a.content,exportedAt:new Date().toISOString(),source:a.name};download('REGINA_SALVATAGGIO_TROVATO_'+(inf.day||'senza-data')+'_'+(i+1)+'.json',content)});
+  wrap.appendChild(btn);result.appendChild(wrap);
+ });
+ const p=document.createElement('p');p.className='muted';p.textContent=msg;result.appendChild(p);
+}
+$('go').addEventListener('click',async()=>{
+ $('go').disabled=true;$('status').textContent='Ricerca in corso…';$('out').hidden=false;list.length=0;
+ let localMsg='';try{const raw=localStorage.getItem(STORE_KEY);if(raw){if(!record('Memoria locale / '+STORE_KEY,JSON.parse(raw)))localMsg='La memoria locale contiene dati, ma non una carriera valida.'}else localMsg='Memoria locale: nessuna carriera nella chiave principale.'}catch(e){localMsg='Memoria locale non leggibile: '+e.message}
+ const dbMsg=await readDB();show(localMsg+' '+dbMsg);$('status').textContent='Verifica terminata. '+list.length+' salvataggio/i leggibile/i.';$('go').disabled=false;
+});
+</script>
+</body></html>
